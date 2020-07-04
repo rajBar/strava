@@ -8,7 +8,6 @@ class Home extends Component {
         this.state = {
             activities: [],
             users: [],
-            distances: {},
         }
     }
 
@@ -42,17 +41,6 @@ class Home extends Component {
                     activities: newActivities
                 })
             });
-    }
-
-    setDistance(index) {
-        const currentDistances = {run: 40, cycle: 130}
-        const lastDistances = {run: 30, cycle: 100}
-
-        if (index === 0) {
-            return currentDistances
-        } else {
-            return lastDistances;
-        }
     }
 
     async reAuthFunc() {
@@ -121,25 +109,16 @@ class Home extends Component {
     }
 
     createUserObj(athleteID, name) {
-        const runDistance = this.state.distances.run;
-        const bikeDistance = this.state.distances.cycle;
-
         const userRun = this.findAllSpecificActivity("Run", athleteID);
         const userTotalRan = userRun.length > 0 ? (userRun.reduce(this.getAllKm,0) / 1000) : 0;
-        const userRunPercent = userTotalRan > runDistance ? 100 : (userTotalRan / runDistance) * 100;
         const userBike = this.findAllSpecificActivity("Ride", athleteID);
         const userTotalBike = userBike.length > 0 ? (userBike.reduce(this.getAllKm,0) / 1000) : 0;
-        const userBikePercent = userTotalBike > bikeDistance ? 100 : userTotalBike;
-        const userTotalPercent = (userRunPercent + userBikePercent) / 2;
         const userObj = {
             name: name,
             runQuantity: userRun.length,
             runDistance: userTotalRan,
-            runPercentage: userRunPercent,
             bikeQuantity: userBike.length,
             bikeDistance: userTotalBike,
-            bikePercentage: userBikePercent,
-            totalPercent: userTotalPercent,
             allRuns: userRun.map((r, i) => {
                 const dist = r.distance / 1000;
                 const time = r.moving_time / 60;
@@ -169,8 +148,6 @@ class Home extends Component {
                 return {date: date, activity: "Cycle", distance: distance, movingTime: movingTime, averageSpeed: averageSpeed, elevationGain: elevationGain};
             }),
         };
-
-        // console.log(userObj.allRuns);
 
         return userObj;
     }

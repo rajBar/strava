@@ -80,15 +80,12 @@ class StravaTable extends Component {
     detailedRows(rows) {
         const user = this.state.user;
 
-        let userRows = {};
-
-        rows.forEach(row => {
-            if (row.name === user) {
-                userRows = row;
-            } else {
-                userRows = {};
+        let userRows;
+        for (let i=0; i < rows.length; i++) {
+            if (rows[i].name == user) {
+                userRows = rows[i];
             }
-        });
+        }
 
         if (user === "") {
             return <br />;
@@ -127,8 +124,6 @@ class StravaTable extends Component {
     render() {
         const { allRows } = this.props;
 
-        const sortedRows = allRows.length > 0 ? allRows.sort((a,b) => a.totalPercent > b.totalPercent ? -1 : 1) : [];
-
         return (
             <div>
                 <table className="myTable">
@@ -136,13 +131,13 @@ class StravaTable extends Component {
                         <tr>{this.getHeader(this.state.tableHead)}</tr>
                     </thead>
                     <tbody>
-                        {sortedRows.map((row, i) => {
+                        {allRows.map((row, i) => {
                             return this.getRowsData(row, i)
                         })}
                     </tbody>
                 </table>
 
-                {this.detailedRows(sortedRows)}
+                {this.detailedRows(allRows)}
             </div>
         )
     }
