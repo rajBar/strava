@@ -6,7 +6,7 @@ class StravaChart extends Component {
     parseOptions(activity) {
         return {
             title: "Lifetime " + activity + "s",
-            hAxis: { title: "Activity Number" },
+            hAxis: { title: activity + " no." },
             vAxis: { title: "Speed" },
             bubble: { textStyle: { fontSize: 11 } }
         }
@@ -22,7 +22,7 @@ class StravaChart extends Component {
         rows.forEach((row, i) => {
             // const date = fixDate(row.date);
             // const dataRow =[i.toString(), row.date, row.averageSpeed, "Something", row.distance];
-            const dataRow =[(i+1).toString(), i+1, parseFloat(row.averageSpeed), activity, parseFloat(row.distance)];
+            const dataRow =[row.date.substr(0,2), i+1, parseFloat(row.averageSpeed), row.date.substr(3, 5), parseFloat(row.distance)];
             data.push(dataRow);
         })
 

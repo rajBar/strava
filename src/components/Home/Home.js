@@ -152,7 +152,8 @@ class Home extends Component {
                 const km = (floor + decimal).toFixed(2);
                 const day = r.start_date.substr(8,2);
                 const month = r.start_date.substr(5,2);
-                const date = day + "/" + month;
+                const year = r.start_date.substr(2, 2)
+                const date = day + "/" + month + "/" + year;
                 const elevationGain = r.total_elevation_gain;
                 return {date: date, activity: "Run", distance: distance, movingTime: movingTime, averageSpeed: km, elevationGain: elevationGain};
             }),
@@ -162,7 +163,8 @@ class Home extends Component {
                 const averageSpeed = (distance / (movingTime/60)).toFixed(1);
                 const day = r.start_date.substr(8,2);
                 const month = r.start_date.substr(5,2);
-                const date = day + "/" + month;
+                const year = r.start_date.substr(2, 2)
+                const date = day + "/" + month + "/" + year;
                 const elevationGain = r.total_elevation_gain;
                 return {date: date, activity: "Cycle", distance: distance, movingTime: movingTime, averageSpeed: averageSpeed, elevationGain: elevationGain};
             }),
