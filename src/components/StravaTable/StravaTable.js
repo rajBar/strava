@@ -26,9 +26,8 @@ class StravaTable extends Component {
     }
 
     getHeader(headers) {
-        // const headers = this.state.tableHead;
         return headers.map((header, i) => {
-            return <th key={i} style={{padding: "5px 10px", borderBottom: "1px solid black"}}>{header}</th>
+            return <th key={i} className="myTableHeaders">{header}</th>
         })
     }
 
@@ -49,11 +48,11 @@ class StravaTable extends Component {
 
         return (
             <tr onClick={() => this.setUser(name)}>
-                <td key={i} style={{padding: "5px 0", borderBottom: "1px solid black"}}>{name} {percentage == 100 ? "(completed)" : ""}</td>
-                <td key={i} style={{padding: "5px 0", borderBottom: "1px solid black"}}>{runNo}</td>
-                <td key={i} style={{padding: "5px 0", borderBottom: "1px solid black"}}>{runDistance} km</td>
-                <td key={i} style={{padding: "5px 0", borderBottom: "1px solid black"}}>{cycleNo}</td>
-                <td key={i} style={{padding: "5px 0", borderBottom: "1px solid black"}}>{cycleDistance} km</td>
+                <td key={i} className="myTableContents">{name} {percentage == 100 ? "(completed)" : ""}</td>
+                <td key={i} className="myTableContents">{runNo}</td>
+                <td key={i} className="myTableContents">{runDistance} km</td>
+                <td key={i} className="myTableContents">{cycleNo}</td>
+                <td key={i} className="myTableContents">{cycleDistance} km</td>
             </tr>
         )
     }
@@ -100,7 +99,7 @@ class StravaTable extends Component {
                     <button className={this.state.currentActivity === "run" ? "selectedButton" : "nonSelectedButton"} onClick={() => this.setActivity("run")}>Run</button>
                     <button className={this.state.currentActivity === "cycle" ? "selectedButton" : "nonSelectedButton"} onClick={() => this.setActivity("cycle")}>Cycle</button>
 
-                    <table style={{marginLeft: "auto", marginRight: "auto", marginTop: "5px", border: "1px solid black"}}>
+                    <table className="myTable">
                         <thead>
                             <tr>{this.getHeader(this.state.tableHeadSecond)}</tr>
                         </thead>
@@ -144,7 +143,7 @@ class StravaTable extends Component {
 
         return (
             <div>
-                <table style={{marginLeft: "auto", marginRight: "auto", marginTop: "20px", border: "1px solid black"}}>
+                <table className="myTable">
                     <thead>
                         <tr>{this.getHeader(this.state.tableHead)}</tr>
                     </thead>
