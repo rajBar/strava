@@ -14,8 +14,6 @@ class StravaChart extends Component {
     }
 
     parseData(rows) {
-        // const speedUnit = activity === "run" ? "min/km" : "km/h";
-
         const data = [];
         const header = ["ID", "Activity Number", "Speed", "Activity", "Distance"];
         data.push(header);
@@ -23,7 +21,7 @@ class StravaChart extends Component {
         rows.forEach((row, i) => {
             const dataRow =[row.date.substr(0,2), i+1, parseFloat(row.averageSpeed), row.date.substr(3, 5), parseFloat(row.distance)];
             data.push(dataRow);
-        })
+        });
 
         return data;
     }
