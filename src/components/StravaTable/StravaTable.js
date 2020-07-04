@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import './StravaTable-style.css';
+import StravaChart from "../StravaChart/StravaChart";
 
 class StravaTable extends Component {
     constructor(props) {
@@ -87,13 +88,12 @@ class StravaTable extends Component {
             } else {
                 userRows = {};
             }
-        })
-
-        console.log(userRows.allRuns);
+        });
 
         if (user === "") {
             return <br />;
         } else {
+            const rows = this.state.currentActivity === "run" ? userRows.allRuns : userRows.allCycles;
             return (
                 <div>
                     <button className={this.state.currentActivity === "run" ? "selectedButton" : "nonSelectedButton"} onClick={() => this.setActivity("run")}>Run</button>
@@ -104,26 +104,13 @@ class StravaTable extends Component {
                             <tr>{this.getHeader(this.state.tableHeadSecond)}</tr>
                         </thead>
                         <tbody>
-                            {this.state.currentActivity === "run" ?
-                            userRows.allRuns.map(row => {
+                            {rows.map(row => {
                                 return (
                                     <tr>
                                         <td>{row.date}</td>
                                         <td>{row.activity}</td>
                                         <td>{row.distance} km</td>
-                                        <td>{row.averageSpeed} min/km</td>
-                                        <td>{row.movingTime} min</td>
-                                        <td>{row.elevationGain} m</td>
-                                    </tr>
-                                )
-                            }) :
-                            userRows.allCycles.map(row => {
-                                return (
-                                    <tr>
-                                        <td>{row.date}</td>
-                                        <td>{row.activity}</td>
-                                        <td>{row.distance} km</td>
-                                        <td>{row.averageSpeed} km/h</td>
+                                        <td>{row.averageSpeed} {this.state.currentActivity === "run" ? "min/km" : "km/h"}</td>
                                         <td>{row.movingTime} min</td>
                                         <td>{row.elevationGain} m</td>
                                     </tr>
@@ -131,6 +118,9 @@ class StravaTable extends Component {
                             })}
                         </tbody>
                     </table>
+                    <br />
+                    <br />
+                    <StravaChart activity={this.state.currentActivity} rows={rows} />
                 </div>
             );
         }
