@@ -118,8 +118,6 @@ class StravaTable extends Component {
                             })}
                         </tbody>
                     </table>
-                    <br />
-                    <br />
                     <StravaChart activity={this.state.currentActivity} rows={rows} />
                 </div>
             );
