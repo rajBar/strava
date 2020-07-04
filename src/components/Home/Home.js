@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import StravaTable from "../StravaTable/StravaTable";
+import './Home-style.css';
 
 class Home extends Component {
     constructor(props) {
@@ -181,7 +182,7 @@ class Home extends Component {
 
         return (
             <div>
-                <h2 style={{padding: "20px 20px 0 20px"}}>Strava Stats</h2>
+                <h2 className="myHeading">Strava Stats</h2>
                 <StravaTable allRows={allRows} />
             </div>
         )
