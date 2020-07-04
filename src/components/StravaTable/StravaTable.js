@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import './StravaTable-style.css';
 
 class StravaTable extends Component {
     constructor(props) {
@@ -96,8 +97,8 @@ class StravaTable extends Component {
         } else {
             return (
                 <div>
-                    <button style={{color: "black", backgroundColour: "white", border: "2px solid #808080", marginTop: "10px", marginRight: "5px"}} onClick={() => this.setActivity("run")}>Run</button>
-                    <button style={{color: "black", backgroundColour: "white", border: "2px solid #808080", marginTop: "10px", marginLeft: "5px"}} onClick={() => this.setActivity("cycle")}>Cycle</button>
+                    <button className={this.state.currentActivity === "run" ? "selectedButton" : "nonSelectedButton"} onClick={() => this.setActivity("run")}>Run</button>
+                    <button className={this.state.currentActivity === "cycle" ? "selectedButton" : "nonSelectedButton"} onClick={() => this.setActivity("cycle")}>Cycle</button>
 
                     <table style={{marginLeft: "auto", marginRight: "auto", marginTop: "5px", border: "1px solid black"}}>
                         <thead>
