@@ -1,0 +1,17 @@
+get code
+https://www.strava.com/oauth/authorize?client_id=&redirect_uri=http://localhost&response_type=code&scope=activity:read
+
+
+
+get long lived token
+https://www.strava.com/oauth/token?client_id&client_secret&code&grant_type=authorization_code
+
+
+
+get short lived token
+https://www.strava.com/oauth/token?client_id=48974&client_secret=4175dc3bd00b8a4ce14886912b653faa6b041b2c&refresh_token=1bd817b355142a3fb162f46d2ee0e221f20fe315&grant_type=refresh_token
+
+
+
+get activities
+https://www.strava.com/api/v3/athlete/activities?access_token=f5ed45938d9acc749a9b4a5b60ba2f2b0d315675
