@@ -40,6 +40,7 @@ class StravaTable extends Component {
     }
 
     getRowsData(row, i) {
+        const user = this.state.user;
         const name = row.name;
         const runNo = row.runQuantity;
         const runDistance = row.runDistance;
@@ -48,7 +49,7 @@ class StravaTable extends Component {
         const percentage = row.totalPercent;
 
         return (
-            <tr className="selectableRow" onClick={() => this.setUser(name)}>
+            <tr className={user === name ? "selectedRow" : "selectableRow"} onClick={() => this.setUser(name)}>
                 <td key={i} className="myTableContents">{name} {percentage == 100 ? "(completed)" : ""}</td>
                 <td key={i} className="myTableContents">{runNo}</td>
                 <td key={i} className="myTableContents">{runDistance} km</td>

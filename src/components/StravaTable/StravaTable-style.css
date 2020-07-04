@@ -43,3 +43,7 @@
 .selectableRow:hover {
     background: #666666;
 }
+
+.selectedRow {
+    background: #bbbbbb;
+}
