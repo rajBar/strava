@@ -7,7 +7,12 @@ class StravaChart extends Component {
         const speed = activity === "run" ? "min/km" : "km/h"
         return {
             title: "Lifetime " + activity + "s",
-            hAxis: { title: activity + " no." },
+            hAxis: {
+                title: activity + " no.",
+                gridlines: {
+                    multiple: 1
+                }
+            },
             vAxis: {
                 title: speed,
                 gridlines: {
