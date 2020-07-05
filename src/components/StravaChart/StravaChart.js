@@ -30,14 +30,48 @@ class StravaChart extends Component {
         const minute = speedSplit[0];
         const second = speedSplit[1];
 
-        const rowDate = new Date(2010, 1, 1, 1, parseInt(minute), parseInt(second), 0);
+        const rowDate = new Date(0, 0, 0, 0, parseInt(minute), parseInt(second), 0);
 
         return rowDate;
     }
 
+    extractMonth(day) {
+        const date = day.split("/");
+        const monthVal = parseInt(date[0] - 1);
+        const year = date[1];
+        const monthList = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        const month = monthList[monthVal];
+
+        const newDay = month + " " + year;
+
+        return newDay;
+    }
+
+    addDaySuffix(day) {
+        let updatedDay;
+        if (day.substr(0,1) === "0") {
+            updatedDay = day.substr(1,1);
+        } else {
+            updatedDay = day;
+        }
+
+        let newDay;
+        if ((day === "01") || (day === "21") || (day === "31")) {
+            newDay = updatedDay + "st";
+        } else if ((day === "02") || (day === "22")) {
+            newDay = updatedDay + "nd";
+        } else if ((day === "03") || (day === "23")) {
+            newDay = updatedDay + "rd";
+        } else {
+            newDay = updatedDay + "th";
+        }
+
+        return newDay
+    }
+
     parseData(rows, activity) {
         const data = [];
-        const header = ["ID", "Activity Number", "Speed", "Activity", "Distance"];
+        const header = ["ID", "Activity Number", "Speed", "Month", "Distance"];
         data.push(header);
 
         rows.forEach((row, i) => {
@@ -45,7 +79,7 @@ class StravaChart extends Component {
             if (activity === "run") {
                 speed = this.formatSpeed(row.averageSpeed);
             }
-            const dataRow =[row.date.substr(0,2), i+1, speed, row.date.substr(3, 5), parseFloat(row.distance)];
+            const dataRow =[this.addDaySuffix(row.date.substr(0,2)), i+1, speed, this.extractMonth(row.date.substr(3, 5)), parseFloat(row.distance)];
             data.push(dataRow);
         });
 
