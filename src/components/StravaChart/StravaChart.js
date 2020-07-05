@@ -30,7 +30,7 @@ class StravaChart extends Component {
         const minute = speedSplit[0];
         const second = speedSplit[1];
 
-        const rowDate = new Date(0, 0, 0, 0, parseInt(minute), parseInt(second), 0);
+        const rowDate = new Date(2000, 0, 1, 1, parseInt(minute), parseInt(second), 0);
 
         return rowDate;
     }
