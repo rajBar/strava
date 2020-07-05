@@ -56,7 +56,8 @@ class StravaChart extends Component {
 
     parseData(rows, activity) {
         const data = [];
-        const header = ["ID", "Date", "N/A", "5k", "Distance"];
+        const whatSpeed = activity === "run" ? "N/A" : "speed";
+        const header = ["ID", "Date", whatSpeed, "5k", "Distance"];
         data.push(header);
 
         rows.forEach((row, i) => {
