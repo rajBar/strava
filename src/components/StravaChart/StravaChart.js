@@ -8,10 +8,7 @@ class StravaChart extends Component {
         return {
             title: "Lifetime " + activity + "s",
             hAxis: {
-                title: activity + " no.",
-                gridlines: {
-                    multiple: 1
-                }
+                title: "date"
             },
             vAxis: {
                 title: speed,
@@ -35,43 +32,31 @@ class StravaChart extends Component {
         return rowDate;
     }
 
-    extractMonth(day) {
-        const date = day.split("/");
-        const monthVal = parseInt(date[0] - 1);
-        const year = date[1];
-        const monthList = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-        const month = monthList[monthVal];
+    getDate(date) {
+        const dateSplit = date.split("/");
+        const day = parseInt(dateSplit[0]);
+        const month = parseInt(dateSplit[1]) - 1;
+        const year = parseInt(dateSplit[2]) + 2000;
 
-        const newDay = month + " " + year;
+        const newDate = new Date(year, month, day);
 
-        return newDay;
+        return newDate;
     }
 
-    addDaySuffix(day) {
-        let updatedDay;
-        if (day.substr(0,1) === "0") {
-            updatedDay = day.substr(1,1);
-        } else {
-            updatedDay = day;
-        }
+    getFiveK(distance) {
+        const newDistance = parseFloat(distance);
 
-        let newDay;
-        if ((day === "01") || (day === "21") || (day === "31")) {
-            newDay = updatedDay + "st";
-        } else if ((day === "02") || (day === "22")) {
-            newDay = updatedDay + "nd";
-        } else if ((day === "03") || (day === "23")) {
-            newDay = updatedDay + "rd";
-        } else {
-            newDay = updatedDay + "th";
-        }
+        const ceilingFive = Math.ceil(newDistance / 5) * 5;
+        const floorFive = ceilingFive - 5;
 
-        return newDay
+        const fiveKSeg = floorFive + "k - " + ceilingFive + "k";
+
+        return fiveKSeg;
     }
 
     parseData(rows, activity) {
         const data = [];
-        const header = ["ID", "Activity Number", "Speed", "Month", "Distance"];
+        const header = ["ID", "Date", "N/A", "5k", "Distance"];
         data.push(header);
 
         rows.forEach((row, i) => {
@@ -79,7 +64,7 @@ class StravaChart extends Component {
             if (activity === "run") {
                 speed = this.formatSpeed(row.averageSpeed);
             }
-            const dataRow =[this.addDaySuffix(row.date.substr(0,2)), i+1, speed, this.extractMonth(row.date.substr(3, 5)), parseFloat(row.distance)];
+            const dataRow =[row.averageSpeed, this.getDate(row.date), speed, this.getFiveK(row.distance), parseFloat(row.distance)];
             data.push(dataRow);
         });
 
