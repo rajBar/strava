@@ -32,7 +32,10 @@ class StravaTable extends Component {
         })
     }
 
-    setUser(athlete) {
+    setUser(selectedUser) {
+        const currentAthlete = this.state.user;
+        const athlete = currentAthlete === selectedUser ? "" : selectedUser;
+
         this.setState({
             ...this.state,
             user: athlete,

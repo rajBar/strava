@@ -41,9 +41,13 @@
 }
 
 .selectableRow:hover {
-    background: #666666;
+    background: #888888;
 }
 
 .selectedRow {
     background: #bbbbbb;
+}
+
+.selectedRow:hover {
+    background: #888888;
 }
