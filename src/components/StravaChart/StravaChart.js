@@ -54,18 +54,20 @@ class StravaChart extends Component {
         return fiveKSeg;
     }
 
-    parseData(rows, activity) {
+    parseData(rows, activity, unit) {
         const data = [];
         const whatSpeed = activity === "run" ? "N/A" : "Speed (km/h)";
         const header = ["ID", "Date", whatSpeed, "5k", "Distance"];
         data.push(header);
 
-        rows.forEach((row, i) => {
-            let speed = parseFloat(row.averageSpeed);
+        rows.forEach((row) => {
+            const averageSpeed = unit === "km" ? row.averageSpeed : row.averageSpeedMile;
+            const distance = unit === "km" ? row.distance : row.distanceMile;
+            let speed = parseFloat(averageSpeed);
             if (activity === "run") {
-                speed = this.formatSpeed(row.averageSpeed);
+                speed = this.formatSpeed(averageSpeed);
             }
-            const dataRow =[row.averageSpeed, this.getDate(row.date), speed, this.getFiveK(row.distance), parseFloat(row.distance)];
+            const dataRow =[averageSpeed, this.getDate(row.date), speed, this.getFiveK(distance), parseFloat(distance)];
             data.push(dataRow);
         });
 
@@ -73,9 +75,9 @@ class StravaChart extends Component {
     }
 
     render() {
-        const {activity, rows} = this.props;
+        const {activity, rows, unit} = this.props;
         const orderedRows = [].concat(rows).reverse();
-        const data = this.parseData(orderedRows, activity);
+        const data = this.parseData(orderedRows, activity, unit);
 
         const options = activity ? this.parseOptions(activity) : [];
 

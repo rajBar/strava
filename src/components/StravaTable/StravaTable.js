@@ -23,6 +23,7 @@ class StravaTable extends Component {
             ],
             currentActivity: "run",
             user: "",
+            unit: "km"
         }
     }
 
@@ -47,17 +48,20 @@ class StravaTable extends Component {
         const name = row.name;
         const runNo = row.runQuantity;
         const runDistance = row.runDistance;
+        const runDistanceMile = row.runDistanceMile;
         const cycleNo = row.bikeQuantity;
         const cycleDistance = row.bikeDistance;
+        const cycleDistanceMile = row.bikeDistanceMile;
         const percentage = row.totalPercent;
+        const unit = this.state.unit;
 
         return (
             <tr className={user === name ? "selectedRow" : "selectableRow"} onClick={() => this.setUser(name)}>
                 <td key={i} className="myTableContents">{name} {percentage == 100 ? "(completed)" : ""}</td>
                 <td key={i} className="myTableContents">{runNo}</td>
-                <td key={i} className="myTableContents">{runDistance} km</td>
+                <td key={i} className="myTableContents">{unit === "km" ? runDistance + "km" : runDistanceMile + "miles"}</td>
                 <td key={i} className="myTableContents">{cycleNo}</td>
-                <td key={i} className="myTableContents">{cycleDistance} km</td>
+                <td key={i} className="myTableContents">{unit === "km" ? cycleDistance + "km" : cycleDistanceMile + "miles"}</td>
             </tr>
         )
     }
@@ -66,6 +70,13 @@ class StravaTable extends Component {
         this.setState({
             ...this.state,
             currentActivity: activity,
+        })
+    }
+
+    setUnit(unit){
+        this.setState({
+            ...this.state,
+            unit: unit,
         })
     }
 
@@ -94,12 +105,15 @@ class StravaTable extends Component {
                         </thead>
                         <tbody>
                             {rows.map(row => {
+                                const unit = this.state.unit;
+                                const singleUnit = unit === "km" ? "km" : "mile";
+                                const speedUnit = unit === "km" ? "k" : "m"
                                 return (
                                     <tr>
                                         <td>{row.date}</td>
                                         <td>{row.activity}</td>
-                                        <td>{row.distance} km</td>
-                                        <td>{row.averageSpeed} {this.state.currentActivity === "run" ? "min/km" : "km/h"}</td>
+                                        <td>{unit === "km" ? row.distance + " km" : row.distanceMile + " miles"}</td>
+                                        <td>{unit === "km" ? row.averageSpeed : row.averageSpeedMile} {this.state.currentActivity === "run" ? "min/" + singleUnit : speedUnit + "ph"}</td>
                                         <td>{row.movingTime} min</td>
                                         <td>{row.elevationGain} m</td>
                                     </tr>
@@ -107,7 +121,7 @@ class StravaTable extends Component {
                             })}
                         </tbody>
                     </table>
-                    <StravaChart activity={this.state.currentActivity} rows={rows} />
+                    <StravaChart activity={this.state.currentActivity} rows={rows} unit={this.state.unit} />
                 </div>
             );
         }
@@ -118,6 +132,9 @@ class StravaTable extends Component {
 
         return (
             <div>
+                <button className={this.state.unit === "km" ? "selectedButton" : "nonSelectedButton"} onClick={() => this.setUnit("km")}>Km</button>
+                <button className={this.state.unit === "miles" ? "selectedButton" : "nonSelectedButton"} onClick={() => this.setUnit("miles")}>Miles</button>
+
                 <table className="myTable">
                     <thead>
                         <tr>{this.getHeader(this.state.tableHead)}</tr>
