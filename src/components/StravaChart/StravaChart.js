@@ -1,5 +1,6 @@
 import React, {Component} from "react";
 import Chart from "react-google-charts";
+import _ from 'lodash';
 
 class StravaChart extends Component {
 
@@ -60,7 +61,9 @@ class StravaChart extends Component {
         const header = ["ID", "Date", whatSpeed, "5k", "Distance"];
         data.push(header);
 
-        rows.forEach((row) => {
+        const orderedRows = _.sortBy(rows, o => parseFloat(o.distance));
+
+        orderedRows.forEach((row) => {
             const averageSpeed = unit === "km" ? row.averageSpeed : row.averageSpeedMile;
             const distance = unit === "km" ? row.distance : row.distanceMile;
             let speed = parseFloat(averageSpeed);
