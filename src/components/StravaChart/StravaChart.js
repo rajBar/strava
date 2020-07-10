@@ -4,8 +4,9 @@ import _ from 'lodash';
 
 class StravaChart extends Component {
 
-    parseOptions(activity) {
-        const speed = activity === "run" ? "min/km" : "km/h"
+    parseOptions(activity, unit) {
+        const unitType = unit === "km" ? "k" : "m"
+        const speed = activity === "run" ? "min/" + unit : unitType + "ph";
         return {
             title: "Lifetime " + activity + "s",
             hAxis: {
@@ -82,7 +83,7 @@ class StravaChart extends Component {
         const orderedRows = [].concat(rows).reverse();
         const data = this.parseData(orderedRows, activity, unit);
 
-        const options = activity ? this.parseOptions(activity) : [];
+        const options = activity ? this.parseOptions(activity, unit) : [];
 
         return (
             <div className="App">
