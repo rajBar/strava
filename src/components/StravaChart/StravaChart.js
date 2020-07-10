@@ -56,10 +56,22 @@ class StravaChart extends Component {
         return fiveKSeg;
     }
 
+    getThreeM(distance) {
+        const newDistance = parseFloat(distance);
+
+        const ceilingFive = Math.ceil(newDistance / 3) * 3;
+        const floorFive = ceilingFive - 3;
+
+        const fiveKSeg = floorFive + "m - " + ceilingFive + "m";
+
+        return fiveKSeg;
+    }
+
     parseData(rows, activity, unit) {
         const data = [];
         const whatSpeed = activity === "run" ? "N/A" : "Speed (km/h)";
-        const header = ["ID", "Date", whatSpeed, "5k", "Distance"];
+        const unitRange = unit === "km" ? "5k" : "3m";
+        const header = ["ID", "Date", whatSpeed, unitRange, "Distance"];
         data.push(header);
 
         const orderedRows = _.sortBy(rows, o => parseFloat(o.distance));
@@ -67,11 +79,12 @@ class StravaChart extends Component {
         orderedRows.forEach((row) => {
             const averageSpeed = unit === "km" ? row.averageSpeed : row.averageSpeedMile;
             const distance = unit === "km" ? row.distance : row.distanceMile;
+            const unitRange = unit === "km" ? this.getFiveK(distance) : this.getThreeM(distance);
             let speed = parseFloat(averageSpeed);
             if (activity === "run") {
                 speed = this.formatSpeed(averageSpeed);
             }
-            const dataRow =[averageSpeed, this.getDate(row.date), speed, this.getFiveK(distance), parseFloat(distance)];
+            const dataRow =[averageSpeed, this.getDate(row.date), speed, unitRange, parseFloat(distance)];
             data.push(dataRow);
         });
 
