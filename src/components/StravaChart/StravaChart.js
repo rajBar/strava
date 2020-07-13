@@ -16,6 +16,8 @@ class StravaChart extends Component {
                 title: speed,
                 gridlines: {
                     units: {
+                        hours: {format: ['']},
+                        minutes: {format: ['mm:ss']},
                         seconds: {format: ['mm:ss']},
                     }
                 }
