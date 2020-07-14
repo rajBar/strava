@@ -50,8 +50,11 @@ class StravaChart extends Component {
     getFiveK(distance) {
         const newDistance = parseFloat(distance);
 
-        const ceilingFive = Math.ceil(newDistance / 5) * 5;
-        const floorFive = ceilingFive - 5;
+        // const ceilingFive = Math.ceil(newDistance / 5) * 5;
+        // const floorFive = ceilingFive - 5;
+
+        const ceilingFive = Math.ceil(newDistance / 2) * 2;
+        const floorFive = ceilingFive - 2;
 
         const fiveKSeg = floorFive + "k - " + ceilingFive + "k";
 
@@ -72,7 +75,7 @@ class StravaChart extends Component {
     parseData(rows, activity, unit) {
         const data = [];
         const whatSpeed = activity === "run" ? "N/A" : "Speed (km/h)";
-        const unitRange = unit === "km" ? "5k" : "3m";
+        const unitRange = unit === "km" ? "2k" : "3m";
         const header = ["ID", "Date", whatSpeed, unitRange, "Distance"];
         data.push(header);
 
