@@ -24,9 +24,12 @@
 }
 
 .myTable {
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 5px;
+    margin: 5px auto 20px;
+    border: 1px solid black;
+}
+
+.myTableTwo {
+    margin: 5px auto 40px;
     border: 1px solid black;
 }
 

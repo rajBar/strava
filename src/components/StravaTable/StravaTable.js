@@ -99,7 +99,9 @@ class StravaTable extends Component {
                     <button className={this.state.currentActivity === "run" ? "selectedButton" : "nonSelectedButton"} onClick={() => this.setActivity("run")}>Run</button>
                     <button className={this.state.currentActivity === "cycle" ? "selectedButton" : "nonSelectedButton"} onClick={() => this.setActivity("cycle")}>Cycle</button>
 
-                    <table className="myTable">
+                    <StravaChart activity={this.state.currentActivity} rows={rows} unit={this.state.unit} />
+
+                    <table className="myTableTwo">
                         <thead>
                             <tr>{this.getHeader(this.state.tableHeadSecond)}</tr>
                         </thead>
@@ -121,7 +123,6 @@ class StravaTable extends Component {
                             })}
                         </tbody>
                     </table>
-                    <StravaChart activity={this.state.currentActivity} rows={rows} unit={this.state.unit} />
                 </div>
             );
         }
