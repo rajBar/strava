@@ -30,7 +30,7 @@ class Home extends Component {
         }).then(res => res.json())
             .then(res => token = res.access_token);
 
-        const activitiesLink = "https://www.strava.com/api/v3/athlete/activities?access_token=" + token;
+        const activitiesLink = "https://www.strava.com/api/v3/athlete/activities?per_page=200&access_token=" + token;
         await fetch(activitiesLink)
             .then(res => res.json())
             .then(res => {
