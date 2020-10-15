@@ -64,24 +64,24 @@ class Home extends Component {
                     refresh: "1bd817b355142a3fb162f46d2ee0e221f20fe315",
                 }
             },
-            // {
-            //     name: "Ross",
-            //     athleteID: "53092595",
-            //     info: {
-            //         id: "49144",
-            //         secret: "fd67f97dc6d6d79faf65a179604ffc40337cf879",
-            //         refresh: "beae09e78a559017ce9b83230b5f014cdefff4f9",
-            //     }
-            // },
-            // {
-            //     name: "Cally",
-            //     athleteID: "59236853",
-            //     info: {
-            //         id: "49145",
-            //         secret: "a9cd2fef4bcdf252a21aa18fa833cff22fc5fd1a",
-            //         refresh: "e5f6d38f8d3df4a5ef99ac03fe9ad55f16fa2b3a",
-            //     }
-            // },
+            {
+                name: "Ross",
+                athleteID: "53092595",
+                info: {
+                    id: "49144",
+                    secret: "fd67f97dc6d6d79faf65a179604ffc40337cf879",
+                    refresh: "beae09e78a559017ce9b83230b5f014cdefff4f9",
+                }
+            },
+            {
+                name: "Cally",
+                athleteID: "59236853",
+                info: {
+                    id: "49145",
+                    secret: "a9cd2fef4bcdf252a21aa18fa833cff22fc5fd1a",
+                    refresh: "e5f6d38f8d3df4a5ef99ac03fe9ad55f16fa2b3a",
+                }
+            },
         ];
 
         this.setState({
@@ -172,7 +172,7 @@ class Home extends Component {
 
         return (
             <div>
-                <h2 className="myHeading">Strava Stats</h2>
+                <h2 className="myHeading"><a className="rajbar-link" href="https://raj.bar">raj.Bar</a> / strava</h2>
                 <StravaTable allRows={allRows} />
             </div>
         )
