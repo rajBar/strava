@@ -3,9 +3,16 @@ import Chart from "react-google-charts";
 import _ from 'lodash';
 
 class StravaChart extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            runSegments: 2.5,
+            cycleSegments: 5,
+        }
+    }
 
     parseOptions(activity, unit) {
-        const unitType = unit === "km" ? "k" : "m"
+        const unitType = unit === "km" ? "k" : "m";
         const speed = activity === "run" ? "min/" + unit : unitType + "ph";
         return {
             title: "Lifetime " + activity + "s",
@@ -50,7 +57,7 @@ class StravaChart extends Component {
     getSegK(distance, activity) {
         const newDistance = parseFloat(distance);
 
-        const segment = activity === "run" ? 2 : 5;
+        const segment = activity === "run" ? this.state.runSegments : this.state.cycleSegments;
 
         const ceilingFive = Math.ceil(newDistance / segment) * segment;
         const floorFive = ceilingFive - segment;
@@ -74,7 +81,7 @@ class StravaChart extends Component {
     parseData(rows, activity, unit) {
         const data = [];
         const whatSpeed = activity === "run" ? "N/A" : "Speed (km/h)";
-        const segment = activity === "run" ? "2k" : "5k";
+        const segment = activity === "run" ? this.state.runSegments + "k" : this.state.cycleSegments + "k";
         const unitRange = unit === "km" ? segment : "3m";
         const header = ["ID", "Date", whatSpeed, unitRange, "Distance"];
         data.push(header);
