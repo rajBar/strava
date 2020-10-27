@@ -37,18 +37,18 @@ class Home extends Component {
 
     setUsers() {
         const users = [
-            {
-                name: "raj",
-                athleteID: "59236473",
-            },
+            // {
+            //     name: "raj",
+            //     athleteID: "59236473",
+            // },
             // {
             //     name: "ross",
             //     athleteID: "53092595",
             // },
-            // {
-            //     name: "cally",
-            //     athleteID: "59236853",
-            // },
+            {
+                name: "cally",
+                athleteID: "59236853",
+            },
         ];
 
         this.setState({
