@@ -12,7 +12,7 @@ class Home extends Component {
     }
 
     async fetchData(name) {
-        const activitiesLink = "http://192.168.2.227:2010/strava/" + name;
+        const activitiesLink = "http://192.168.1.138:2010/strava/" + name;
         await fetch(activitiesLink)
             .then(res => res.json())
             .then(res => {
