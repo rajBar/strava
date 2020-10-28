@@ -12,7 +12,7 @@ class Home extends Component {
     }
 
     async fetchData(name) {
-        const activitiesLink = "http://192.168.1.138:2010/strava/" + name;
+        const activitiesLink = "http://80.229.5.238:2010/strava/" + name;
         await fetch(activitiesLink)
             .then(res => res.json())
             .then(res => {
@@ -37,16 +37,16 @@ class Home extends Component {
 
     setUsers() {
         const users = [
-            // {
-            //     name: "raj",
-            //     athleteID: "59236473",
-            // },
-            // {
-            //     name: "ross",
-            //     athleteID: "53092595",
-            // },
             {
-                name: "cally",
+                name: "Raj",
+                athleteID: "59236473",
+            },
+            {
+                name: "Ross",
+                athleteID: "53092595",
+            },
+            {
+                name: "Cally",
                 athleteID: "59236853",
             },
         ];
