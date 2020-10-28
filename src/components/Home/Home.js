@@ -11,26 +11,8 @@ class Home extends Component {
         }
     }
 
-    async fetchData(clientID, secret, refreshToken) {
-        const authLink = "https://www.strava.com/oauth/token";
-        let token = "";
-
-        await fetch(authLink,{
-            method: 'post',
-            headers: {
-                'Accept': 'application/json, text/plain, */*',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                client_id: clientID,
-                client_secret: secret,
-                refresh_token: refreshToken,
-                grant_type: "refresh_token",
-            })
-        }).then(res => res.json())
-            .then(res => token = res.access_token);
-
-        const activitiesLink = "https://www.strava.com/api/v3/athlete/activities?per_page=200&access_token=" + token;
+    async fetchData(name) {
+        const activitiesLink = "http://80.229.5.238:2010/strava/" + name;
         await fetch(activitiesLink)
             .then(res => res.json())
             .then(res => {
@@ -49,7 +31,7 @@ class Home extends Component {
         const users = this.state.users;
 
         users.forEach(user => {
-           this.fetchData(user.info.id, user.info.secret, user.info.refresh);
+           this.fetchData(user.name);
         });
     }
 
@@ -58,29 +40,14 @@ class Home extends Component {
             {
                 name: "Raj",
                 athleteID: "59236473",
-                info: {
-                    id: "48974",
-                    secret: "4175dc3bd00b8a4ce14886912b653faa6b041b2c",
-                    refresh: "1bd817b355142a3fb162f46d2ee0e221f20fe315",
-                }
             },
             {
                 name: "Ross",
                 athleteID: "53092595",
-                info: {
-                    id: "49144",
-                    secret: "fd67f97dc6d6d79faf65a179604ffc40337cf879",
-                    refresh: "beae09e78a559017ce9b83230b5f014cdefff4f9",
-                }
             },
             {
                 name: "Cally",
                 athleteID: "59236853",
-                info: {
-                    id: "49145",
-                    secret: "a9cd2fef4bcdf252a21aa18fa833cff22fc5fd1a",
-                    refresh: "e5f6d38f8d3df4a5ef99ac03fe9ad55f16fa2b3a",
-                }
             },
         ];
 
