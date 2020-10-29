@@ -8,11 +8,12 @@ class Home extends Component {
         this.state = {
             activities: [],
             users: [],
+            apiUrl: "bariah.com",
         }
     }
 
     async fetchData(name) {
-        const activitiesLink = "https://bariah.com:2010/strava/" + name;
+        const activitiesLink = "https://" + this.state.apiUrl + ":2010" + "/strava/" + name;
         await fetch(activitiesLink)
             .then(res => res.json())
             .then(res => {
@@ -25,8 +26,21 @@ class Home extends Component {
             });
     }
 
+    async selectApiUrl() {
+        const publicIp = require('public-ip');
+        const ipv4 = await publicIp.v4();
+
+        const url = ipv4 === "80.229.5.238" ? "80.229.5.238" : "bariah.com";
+
+        this.setState({
+            ...this.state,
+            apiUrl: url
+        });
+    }
+
     async reAuthFunc() {
         await this.setUsers();
+        await this.selectApiUrl();
 
         const users = this.state.users;
 
