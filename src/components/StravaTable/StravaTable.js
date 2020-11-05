@@ -109,7 +109,7 @@ class StravaTable extends Component {
                             {rows.map(row => {
                                 const unit = this.state.unit;
                                 const singleUnit = unit === "km" ? "km" : "mile";
-                                const speedUnit = unit === "km" ? "k" : "m"
+                                const speedUnit = unit === "km" ? "k" : "m";
                                 return (
                                     <tr>
                                         <td>{row.date}</td>
