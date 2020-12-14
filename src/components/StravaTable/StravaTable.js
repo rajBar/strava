@@ -162,26 +162,34 @@ class StravaTable extends Component {
             } else if (sort.field === "Distance") {
                 if (sort.direction) {
                     row.allRuns = _.orderBy(row.allRuns, 'distance', 'asc');
+                    row.allCycles = _.orderBy(row.allCycles, 'distance', 'asc');
                 } else {
                     row.allRuns = _.orderBy(row.allRuns, 'distance', 'desc');
+                    row.allCycles = _.orderBy(row.allCycles, 'distance', 'desc');
                 }
             } else if (sort.field === "Average Speed") {
                 if (sort.direction) {
                     row.allRuns = _.orderBy(row.allRuns, 'averageSpeed', 'asc');
+                    row.allCycles = _.orderBy(row.allCycles, 'averageSpeed', 'asc');
                 } else {
                     row.allRuns = _.orderBy(row.allRuns, 'averageSpeed', 'desc');
+                    row.allCycles = _.orderBy(row.allCycles, 'averageSpeed', 'desc');
                 }
             } else if (sort.field === "Activity Time") {
                 if (sort.direction) {
                     row.allRuns = _.orderBy(row.allRuns, 'movingTime', 'asc');
+                    row.allCycles = _.orderBy(row.allCycles, 'movingTime', 'asc');
                 } else {
                     row.allRuns = _.orderBy(row.allRuns, 'movingTime', 'desc');
+                    row.allCycles = _.orderBy(row.allCycles, 'movingTime', 'desc');
                 }
             } else if (sort.field === "Elevation Gain") {
                 if (sort.direction) {
                     row.allRuns = _.orderBy(row.allRuns, 'elevationGain', 'asc');
+                    row.allCycles = _.orderBy(row.allCycles, 'elevationGain', 'asc');
                 } else {
                     row.allRuns = _.orderBy(row.allRuns, 'elevationGain', 'desc');
+                    row.allCycles = _.orderBy(row.allCycles, 'elevationGain', 'desc');
                 }
             }
         });
