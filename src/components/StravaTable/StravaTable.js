@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import './StravaTable-style.css';
 import StravaChart from "../StravaChart/StravaChart";
+import _ from 'lodash';
 
 class StravaTable extends Component {
     constructor(props) {
@@ -23,14 +24,37 @@ class StravaTable extends Component {
             ],
             currentActivity: "run",
             user: "",
-            unit: "km"
-        }
+            unit: "km",
+            sort: {
+                field: "date",
+                direction: true
+            }
+        };
     }
 
-    getHeader(headers) {
+    getHeader(headers, sorter) {
         return headers.map((header, i) => {
-            return <th key={i} className="myTableHeaders">{header}</th>
+            if (sorter) {
+                return <th className="myTableHeaders" onClick={() => this.setSort(header)}>{header}</th>
+            } else {
+                return <th className="myTableHeaders">{header}</th>
+            }
         })
+    }
+
+    setSort(field) {
+        const currentSort = this.state.sort;
+        const newDirection = field === currentSort.field ? !currentSort.direction : true;
+
+        console.log(field);
+
+        this.setState({
+            ...this.state,
+            sort: {
+                field: field,
+                direction: newDirection
+            }
+        });
     }
 
     setUser(selectedUser) {
@@ -103,7 +127,7 @@ class StravaTable extends Component {
 
                     <table className="myTableTwo">
                         <thead>
-                            <tr>{this.getHeader(this.state.tableHeadSecond)}</tr>
+                            <tr>{this.getHeader(this.state.tableHeadSecond, "sorting function")}</tr>
                         </thead>
                         <tbody>
                             {rows.map(row => {
@@ -129,7 +153,38 @@ class StravaTable extends Component {
     }
 
     render() {
-        const { allRows } = this.props;
+        let { allRows, orderedRows } = this.props;
+        let sort = this.state.sort;
+
+        allRows.forEach(row => {
+            if (sort.field === "Date") {
+                allRows = [...orderedRows];
+            } else if (sort.field === "Distance") {
+                if (sort.direction) {
+                    row.allRuns = _.orderBy(row.allRuns, 'distance', 'asc');
+                } else {
+                    row.allRuns = _.orderBy(row.allRuns, 'distance', 'desc');
+                }
+            } else if (sort.field === "Average Speed") {
+                if (sort.direction) {
+                    row.allRuns = _.orderBy(row.allRuns, 'averageSpeed', 'asc');
+                } else {
+                    row.allRuns = _.orderBy(row.allRuns, 'averageSpeed', 'desc');
+                }
+            } else if (sort.field === "Activity Time") {
+                if (sort.direction) {
+                    row.allRuns = _.orderBy(row.allRuns, 'movingTime', 'asc');
+                } else {
+                    row.allRuns = _.orderBy(row.allRuns, 'movingTime', 'desc');
+                }
+            } else if (sort.field === "Elevation Gain") {
+                if (sort.direction) {
+                    row.allRuns = _.orderBy(row.allRuns, 'elevationGain', 'asc');
+                } else {
+                    row.allRuns = _.orderBy(row.allRuns, 'elevationGain', 'desc');
+                }
+            }
+        });
 
         return (
             <div>

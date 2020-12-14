@@ -137,10 +137,14 @@ class Home extends Component {
            return this.createUserObj(user.athleteID, user.name);
         });
 
+        const orderedRows = users.map(user => {
+            return this.createUserObj(user.athleteID, user.name);
+        });
+
         return (
             <div>
                 <h2 className="myHeading"><a className="rajbar-link" href="https://raj.bar">raj.Bar</a> / strava</h2>
-                <StravaTable allRows={allRows} />
+                <StravaTable allRows={allRows} orderedRows={orderedRows} />
             </div>
         )
     }
