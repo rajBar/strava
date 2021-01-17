@@ -8,6 +8,23 @@ class Home extends Component {
         this.state = {
             activities: [],
             users: [],
+            alerted: false,
+        }
+    }
+
+    async notifyPhone() {
+        const publicIp = require('public-ip');
+        const ipv4 = await publicIp.v4();
+
+        const url = 'https://raj.bariah.com:2010/location?ipAddress=' + ipv4 + "&device=" + navigator.platform + "&site=Strava";
+        if(!this.state.alerted) {
+            fetch(url, {
+                method: 'post'
+            });
+            this.setState({
+                ...this.state,
+                alerted: true,
+            });
         }
     }
 
@@ -132,6 +149,8 @@ class Home extends Component {
 
     render() {
         const users = this.state.users;
+
+        // this.notifyPhone();
 
         const allRows = users.map(user => {
            return this.createUserObj(user.athleteID, user.name);
