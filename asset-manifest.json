@@ -1,22 +1,22 @@
 {
   "files": {
-    "main.css": "/strava/static/css/main.fa2d478a.chunk.css",
-    "main.js": "/strava/static/js/main.cebf94bc.chunk.js",
-    "main.js.map": "/strava/static/js/main.cebf94bc.chunk.js.map",
+    "main.css": "/strava/static/css/main.2a222ba0.chunk.css",
+    "main.js": "/strava/static/js/main.acea2a78.chunk.js",
+    "main.js.map": "/strava/static/js/main.acea2a78.chunk.js.map",
     "runtime-main.js": "/strava/static/js/runtime-main.a7916270.js",
     "runtime-main.js.map": "/strava/static/js/runtime-main.a7916270.js.map",
-    "static/js/2.e4d06bf1.chunk.js": "/strava/static/js/2.e4d06bf1.chunk.js",
-    "static/js/2.e4d06bf1.chunk.js.map": "/strava/static/js/2.e4d06bf1.chunk.js.map",
+    "static/js/2.00d30304.chunk.js": "/strava/static/js/2.00d30304.chunk.js",
+    "static/js/2.00d30304.chunk.js.map": "/strava/static/js/2.00d30304.chunk.js.map",
     "index.html": "/strava/index.html",
-    "precache-manifest.2af172707cbd40c9e011574437bbe00d.js": "/strava/precache-manifest.2af172707cbd40c9e011574437bbe00d.js",
+    "precache-manifest.103ccb023c33236c3b1e9a225001415d.js": "/strava/precache-manifest.103ccb023c33236c3b1e9a225001415d.js",
     "service-worker.js": "/strava/service-worker.js",
-    "static/css/main.fa2d478a.chunk.css.map": "/strava/static/css/main.fa2d478a.chunk.css.map",
-    "static/js/2.e4d06bf1.chunk.js.LICENSE.txt": "/strava/static/js/2.e4d06bf1.chunk.js.LICENSE.txt"
+    "static/css/main.2a222ba0.chunk.css.map": "/strava/static/css/main.2a222ba0.chunk.css.map",
+    "static/js/2.00d30304.chunk.js.LICENSE.txt": "/strava/static/js/2.00d30304.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.a7916270.js",
-    "static/js/2.e4d06bf1.chunk.js",
-    "static/css/main.fa2d478a.chunk.css",
-    "static/js/main.cebf94bc.chunk.js"
+    "static/js/2.00d30304.chunk.js",
+    "static/css/main.2a222ba0.chunk.css",
+    "static/js/main.acea2a78.chunk.js"
   ]
 }
