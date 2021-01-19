@@ -1,0 +1,56 @@
+.selectedButton {
+    color: black;
+    background: white;
+    font-weight: bold;
+    border: 2px solid black;
+    margin-top: 10px;
+    margin-left: 5px;
+}
+
+.nonSelectedButton {
+    color: #666666;
+    background: white;
+    border: 2px solid #bbbbbb;
+    margin-top: 10px;
+    margin-left: 5px;
+}
+
+.nonSelectedButton:hover {
+    color: black;
+    background: white;
+    border: 2px solid #666666;
+    margin-top: 10px;
+    margin-left: 5px;
+}
+
+.myTable {
+    margin: 5px auto 20px;
+    border: 1px solid black;
+}
+
+.myTableTwo {
+    margin: 5px auto 40px;
+    border: 1px solid black;
+}
+
+.myTableHeaders {
+    padding: 5px 10px;
+    border-bottom: 1px solid black;
+}
+
+.myTableContents {
+    padding: 5px 0;
+    border-bottom: 1px solid black;
+}
+
+.selectableRow:hover {
+    background: #888888;
+}
+
+.selectedRow {
+    background: #bbbbbb;
+}
+
+.selectedRow:hover {
+    background: #888888;
+}

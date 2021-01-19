@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import StravaTable from "../StravaTable/StravaTable";
+import MonthTable from "../MonthTable/MonthTable";
 import './Home-style.css';
 
 class Home extends Component {
@@ -9,7 +10,16 @@ class Home extends Component {
             activities: [],
             users: [],
             alerted: false,
-        }
+            competition: false,
+        };
+
+        this.competitionSetter = this.competitionSetter.bind(this);
+    }
+
+    competitionSetter() {
+        const oldStatus = this.state.competition;
+
+        this.setState({competition: !oldStatus});
     }
 
     async notifyPhone() {
@@ -78,25 +88,36 @@ class Home extends Component {
         this.reAuthFunc();
     }
 
-    findAllSpecificActivity(activityType, athleteID) {
+    findAllSpecificActivity(activityType, athleteID, month) {
         const activity = [...this.state.activities];
 
-        const all = activity.filter(function (element) {
+        let all = activity.filter(function (element) {
             return (element.type === activityType) && (element.athlete.id == athleteID);
         });
 
-        return all;
+        const monthData = [];
+        if (month) {
+            const date = new Date();
+            all.forEach(a => {
+                const activityDate = new Date(a.start_date);
+                if (date.getFullYear() === activityDate.getFullYear() && date.getMonth() === activityDate.getMonth()) {
+                    monthData.push(a);
+                }
+            });
+        }
+
+        return month ? monthData : all;
     }
 
     getAllKm(accumulator, a) {
         return Math.round(accumulator + a.distance);
     }
 
-    createUserObj(athleteID, name) {
+    createUserObj(athleteID, name, month) {
         const mileConversion = 0.6214;
-        const userRun = this.findAllSpecificActivity("Run", athleteID);
+        const userRun = this.findAllSpecificActivity("Run", athleteID, month);
         const userTotalRan = userRun.length > 0 ? (userRun.reduce(this.getAllKm,0) / 1000) : 0;
-        const userBike = this.findAllSpecificActivity("Ride", athleteID);
+        const userBike = this.findAllSpecificActivity("Ride", athleteID, month);
         const userTotalBike = userBike.length > 0 ? (userBike.reduce(this.getAllKm,0) / 1000) : 0;
         const userObj = {
             name: name,
@@ -153,17 +174,32 @@ class Home extends Component {
         // this.notifyPhone();
 
         const allRows = users.map(user => {
-           return this.createUserObj(user.athleteID, user.name);
+           return this.createUserObj(user.athleteID, user.name, null);
         });
 
         const orderedRows = users.map(user => {
-            return this.createUserObj(user.athleteID, user.name);
+            return this.createUserObj(user.athleteID, user.name, null);
         });
+
+        const lastMonth = users.map (user => {
+            return this.createUserObj(user.athleteID, user.name, "this month");
+        });
+
+
+        const date = new Date();
+        const month = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        const thisMonth = month[date.getMonth()];
 
         return (
             <div>
-                <h2 className="myHeading"><a className="rajbar-link" href="https://raj.bar">raj.Bar</a> / strava</h2>
-                <StravaTable allRows={allRows} orderedRows={orderedRows} />
+                <h2 className="myHeading"><a className="rajbar-link" href="https://raj.bar">raj.Bar</a> <span onClick={() => this.competitionSetter()}>/ strava</span></h2>
+                {this.state.competition ?
+                    (<div>
+                        <h4>{thisMonth} Competition</h4>
+                        <MonthTable allRows={lastMonth} />
+                    </div>) :
+                    <StravaTable allRows={allRows} orderedRows={orderedRows} />
+                }
             </div>
         )
     }
