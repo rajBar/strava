@@ -146,7 +146,7 @@ class MonthTable extends Component {
                                 })}
                                 </tbody>
                             </table>
-                        </div>) : <h6 style={{paddingTop: '20px'}}>{this.state.user} is yet to {this.state.currentActivity}</h6>
+                        </div>) : <h6 style={{paddingTop: '20px'}}>{this.state.user} is yet to {this.state.currentActivity} in {this.props.thisMonth}</h6>
                     }
                 </div>
             );

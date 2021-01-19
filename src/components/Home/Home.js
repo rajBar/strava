@@ -196,7 +196,7 @@ class Home extends Component {
                 {this.state.competition ?
                     (<div>
                         <h4>{thisMonth} Competition</h4>
-                        <MonthTable allRows={lastMonth} />
+                        <MonthTable allRows={lastMonth} thisMonth={thisMonth} />
                     </div>) :
                     <StravaTable allRows={allRows} orderedRows={orderedRows} />
                 }
