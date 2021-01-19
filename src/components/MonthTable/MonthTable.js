@@ -22,10 +22,6 @@ class MonthTable extends Component {
                 'Activity Time',
                 'Elevation Gain',
             ],
-            competitionDistance: {
-                run: 30,
-                cycle: 100,
-            },
             currentActivity: "run",
             user: "",
             unit: "km",
@@ -57,17 +53,20 @@ class MonthTable extends Component {
         const cycleNo = row.bikeQuantity;
         const cycleDistance = row.bikeDistance;
         const cycleDistanceMile = row.bikeDistanceMile;
-        const percentage = row.totalPercent;
+        const percentage = row.totalPercentage;
         const unit = this.state.unit;
 
         return (
             <tr className={user === name ? "selectedRow" : "selectableRow"} onClick={() => this.setUser(name)}>
-                <td key={i} className="myTableContents">{name} {percentage == 100 ? "(completed)" : ""}</td>
+                {percentage >= 100 ?
+                    <td key={i} className="myTableContents-complete">{name} (completed)</td>
+                    : <td key={i} className="myTableContents">{name}</td>
+                }
                 <td key={i} className="myTableContents">{runNo}</td>
                 <td key={i} className="myTableContents">{unit === "km" ? runDistance + "km" : runDistanceMile + "miles"}</td>
                 <td key={i} className="myTableContents">{cycleNo}</td>
                 <td key={i} className="myTableContents">{unit === "km" ? cycleDistance + "km" : cycleDistanceMile + "miles"}</td>
-                <td key={i} className="myTableContents">{this.calculateTotalPercent(runDistance, cycleDistance)}%</td>
+                <td key={i} className="myTableContents">{percentage.toFixed(2)}%</td>
             </tr>
         )
     }
@@ -84,21 +83,6 @@ class MonthTable extends Component {
             ...this.state,
             unit: unit,
         })
-    }
-
-    calculateTotalPercent(runDistance, cycleDistance) {
-        const competitionRun = this.state.competitionDistance.run;
-        const competitionCycle = this.state.competitionDistance.cycle;
-
-        const runPercentageCapped = runDistance > competitionRun ? 100 : (runDistance / competitionRun) * 100;
-        const runPercentage = (runDistance / competitionRun) * 100;
-        const cyclePercentageCapped = cycleDistance > competitionCycle ? 100 : (cycleDistance / competitionCycle) * 100;
-        const cyclePercentage = (cycleDistance / competitionCycle) * 100;
-
-
-        const totalPercentage =  (runPercentageCapped + cyclePercentageCapped) / 2 === 100 ? (runPercentage + cyclePercentage) / 2 : (runPercentageCapped + cyclePercentageCapped) / 2;
-
-        return totalPercentage.toFixed(2);
     }
 
     detailedRows(rows) {
@@ -154,11 +138,11 @@ class MonthTable extends Component {
     }
 
     render() {
-        let { allRows } = this.props;
+        let { allRows, competitionDistance } = this.props;
 
         return (
             <div>
-                <h7>Run {this.state.competitionDistance.run} km  &  Cycle {this.state.competitionDistance.cycle} km</h7>
+                <h7>Run {competitionDistance.run} km  &  Cycle {competitionDistance.cycle} km</h7>
                 <br />
                 <button className={this.state.unit === "km" ? "selectedButton" : "nonSelectedButton"} onClick={() => this.setUnit("km")}>Km</button>
                 <button className={this.state.unit === "miles" ? "selectedButton" : "nonSelectedButton"} onClick={() => this.setUnit("miles")}>Miles</button>

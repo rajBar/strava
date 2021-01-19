@@ -43,6 +43,12 @@
     border-bottom: 1px solid black;
 }
 
+.myTableContents-complete {
+    padding: 5px 8px;
+    border-bottom: 1px solid black;
+    font-weight: bold;
+}
+
 .selectableRow:hover {
     background: #888888;
 }

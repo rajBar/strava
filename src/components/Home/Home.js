@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import _ from 'lodash';
 import StravaTable from "../StravaTable/StravaTable";
 import MonthTable from "../MonthTable/MonthTable";
 import './Home-style.css';
@@ -11,6 +12,10 @@ class Home extends Component {
             users: [],
             alerted: false,
             competition: false,
+            competitionDistance: {
+                run: 30,
+                cycle: 100,
+            },
         };
 
         this.competitionSetter = this.competitionSetter.bind(this);
@@ -168,6 +173,27 @@ class Home extends Component {
         return userObj;
     }
 
+    calculateTotalPercent(user) {
+        const competitionRun = this.state.competitionDistance.run;
+        const competitionCycle = this.state.competitionDistance.cycle;
+        const runDistance = user.runDistance;
+        const cycleDistance = user.bikeDistance;
+
+        const runPercentageCapped = runDistance > competitionRun ? 100 : (runDistance / competitionRun) * 100;
+        const runPercentage = (runDistance / competitionRun) * 100;
+        const cyclePercentageCapped = cycleDistance > competitionCycle ? 100 : (cycleDistance / competitionCycle) * 100;
+        const cyclePercentage = (cycleDistance / competitionCycle) * 100;
+
+        const totalPercentage =  (runPercentageCapped + cyclePercentageCapped) / 2 === 100 ? (runPercentage + cyclePercentage) / 2 : (runPercentageCapped + cyclePercentageCapped) / 2;
+
+        const newUser = {
+            ...user,
+            totalPercentage: totalPercentage
+        };
+
+        return newUser;
+    }
+
     render() {
         const users = this.state.users;
 
@@ -185,6 +211,11 @@ class Home extends Component {
             return this.createUserObj(user.athleteID, user.name, "this month");
         });
 
+        const lastMonthPercentage = lastMonth.map(user => {
+            return this.calculateTotalPercent(user);
+        });
+
+        const orderedLastMonth = _.orderBy(lastMonthPercentage, ['totalPercentage'], ['desc']);
 
         const date = new Date();
         const month = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -196,7 +227,7 @@ class Home extends Component {
                 {this.state.competition ?
                     (<div>
                         <h4>{thisMonth} Competition</h4>
-                        <MonthTable allRows={lastMonth} thisMonth={thisMonth} />
+                        <MonthTable allRows={orderedLastMonth} thisMonth={thisMonth} competitionDistance={this.state.competitionDistance}/>
                     </div>) :
                     <StravaTable allRows={allRows} orderedRows={orderedRows} />
                 }
