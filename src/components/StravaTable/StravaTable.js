@@ -123,30 +123,35 @@ class StravaTable extends Component {
                     <button className={this.state.currentActivity === "run" ? "selectedButton" : "nonSelectedButton"} onClick={() => this.setActivity("run")}>Run</button>
                     <button className={this.state.currentActivity === "cycle" ? "selectedButton" : "nonSelectedButton"} onClick={() => this.setActivity("cycle")}>Cycle</button>
 
-                    <StravaChart activity={this.state.currentActivity} rows={rows} unit={this.state.unit} />
 
-                    <table className="myTableTwo">
-                        <thead>
-                            <tr>{this.getHeader(this.state.tableHeadSecond, "sorting function")}</tr>
-                        </thead>
-                        <tbody>
-                            {rows.map(row => {
-                                const unit = this.state.unit;
-                                const singleUnit = unit === "km" ? "km" : "mile";
-                                const speedUnit = unit === "km" ? "k" : "m";
-                                return (
-                                    <tr>
-                                        <td>{row.date}</td>
-                                        <td>{row.activity}</td>
-                                        <td>{unit === "km" ? row.distance + " km" : row.distanceMile + " miles"}</td>
-                                        <td>{unit === "km" ? row.averageSpeed : row.averageSpeedMile} {this.state.currentActivity === "run" ? "min/" + singleUnit : speedUnit + "ph"}</td>
-                                        <td>{row.movingTime} min</td>
-                                        <td>{row.elevationGain} m</td>
-                                    </tr>
-                                )
-                            })}
-                        </tbody>
-                    </table>
+                    {rows.length > 0 ?
+                        (<div>
+                            <StravaChart activity={this.state.currentActivity} rows={rows} unit={this.state.unit} />
+
+                            <table className="myTableTwo">
+                                <thead>
+                                    <tr>{this.getHeader(this.state.tableHeadSecond, "sorting function")}</tr>
+                                </thead>
+                                <tbody>
+                                    {rows.map(row => {
+                                        const unit = this.state.unit;
+                                        const singleUnit = unit === "km" ? "km" : "mile";
+                                        const speedUnit = unit === "km" ? "k" : "m";
+                                        return (
+                                            <tr>
+                                                <td>{row.date}</td>
+                                                <td>{row.activity}</td>
+                                                <td>{unit === "km" ? row.distance + " km" : row.distanceMile + " miles"}</td>
+                                                <td>{unit === "km" ? row.averageSpeed : row.averageSpeedMile} {this.state.currentActivity === "run" ? "min/" + singleUnit : speedUnit + "ph"}</td>
+                                                <td>{row.movingTime} min</td>
+                                                <td>{row.elevationGain} m</td>
+                                            </tr>
+                                        )
+                                    })}
+                                </tbody>
+                            </table>
+                        </div>) : <h6 style={{paddingTop: '20px'}}>{this.state.user} is yet to {this.state.currentActivity}</h6>
+                    }
                 </div>
             );
         }
