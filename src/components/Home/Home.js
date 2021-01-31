@@ -81,6 +81,10 @@ class Home extends Component {
                 name: "Cally",
                 athleteID: "59236853",
             },
+            {
+                name: "Jeeves",
+                athleteID: "56268401",
+            }
         ];
 
         this.setState({
