@@ -43,8 +43,8 @@ class Home extends Component {
         }
     }
 
-    async fetchData(name) {
-        const activitiesLink = "https://raj.bariah.com:2010/strava/" + name;
+    async fetchData(athleteID) {
+        const activitiesLink = "https://raj.bariah.com:2010/strava/activity?athlete=" + athleteID;
         await fetch(activitiesLink)
             .then(res => res.json())
             .then(res => {
@@ -63,34 +63,20 @@ class Home extends Component {
         const users = this.state.users;
 
         users.forEach(user => {
-           this.fetchData(user.name);
+           this.fetchData(user.athleteID);
         });
     }
 
-    setUsers() {
-        const users = [
-            {
-                name: "Raj",
-                athleteID: "59236473",
-            },
-            {
-                name: "Ross",
-                athleteID: "53092595",
-            },
-            {
-                name: "Cally",
-                athleteID: "59236853",
-            },
-            {
-                name: "Jeeves",
-                athleteID: "56268401",
-            }
-        ];
-
-        this.setState({
-            ...this.state,
-            users: users
-        });
+    async setUsers() {
+        const userLink = "https://raj.bariah.com:2010/strava/users";
+        await fetch(userLink)
+            .then(res => res.json())
+            .then(res => {
+                this.setState({
+                    ...this.state,
+                    users: res
+                })
+            })
     }
 
     componentDidMount() {
