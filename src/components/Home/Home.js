@@ -1,5 +1,7 @@
 import React, {Component} from 'react';
+import { connect } from 'react-redux';
 import _ from 'lodash';
+import * as actions from '../../store/actions';
 import StravaTable from "../StravaTable/StravaTable";
 import MonthTable from "../MonthTable/MonthTable";
 import './Home-style.css';
@@ -9,6 +11,7 @@ class Home extends Component {
         super(props);
         this.state = {
             activities: [],
+            sortedActivities: [],
             users: [],
             alerted: false,
             competition: false,
@@ -55,14 +58,17 @@ class Home extends Component {
                     activities: newActivities
                 })
             });
+        console.log('set activities');
     }
 
-    async reAuthFunc() {
+    async getAllActivities() {
         await this.setUsers();
 
         const users = this.state.users;
 
-        users.forEach(user => {
+        console.log("before foreach");
+
+        await users.forEach(user => {
            this.fetchData(user.name);
         });
     }
@@ -89,8 +95,27 @@ class Home extends Component {
         });
     }
 
-    componentDidMount() {
-        this.reAuthFunc();
+    async componentDidMount() {
+        const {setActivities} = this.props;
+        await this.getAllActivities();
+        const users = this.state.users;
+        const allRows = await users.map(user => {
+            console.log('HERE');
+            return this.createUserObj(user.athleteID, user.name, null);
+        });
+        console.log('===============');
+        console.log('===============');
+        console.log(this.state.activities);
+        console.log(allRows);
+        this.setState({
+            ...this.state,
+            sortedActivities: allRows,
+        })
+        console.log(this.state.activities);
+        console.log('===============');
+        console.log('===============');
+
+        setActivities(allRows);
     }
 
     findAllSpecificActivity(activityType, athleteID, month) {
@@ -199,13 +224,9 @@ class Home extends Component {
 
         // this.notifyPhone();
 
-        const allRows = users.map(user => {
-           return this.createUserObj(user.athleteID, user.name, null);
-        });
+        const allRows = this.state.sortedActivities || null;
 
-        const orderedRows = users.map(user => {
-            return this.createUserObj(user.athleteID, user.name, null);
-        });
+        const orderedRows = this.state.sortedActivities || null;
 
         const lastMonth = users.map (user => {
             return this.createUserObj(user.athleteID, user.name, "this month");
@@ -236,4 +257,14 @@ class Home extends Component {
     }
 }
 
-export default Home;
+const mapStateToProps = state => ({
+});
+
+const mapDispatchToProps = dispatch => ({
+    setActivities: (data) => dispatch(actions.setActivities(data)),
+});
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps,
+)(Home);

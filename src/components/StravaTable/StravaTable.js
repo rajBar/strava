@@ -2,8 +2,14 @@ import React, {Component} from 'react';
 import './StravaTable-style.css';
 import StravaChart from "../StravaChart/StravaChart";
 import _ from 'lodash';
+import PropTypes from "prop-types";
+import {connect} from "react-redux";
 
 class StravaTable extends Component {
+    static propTypes = {
+        activities: PropTypes.arrayOf(PropTypes.object)
+    };
+
     constructor(props) {
         super(props);
         this.state = {
@@ -201,6 +207,8 @@ class StravaTable extends Component {
 
         return (
             <div>
+                <button onClick={() => alert(JSON.stringify(this.props.activities))}>Hi</button>
+                <br />
                 <button className={this.state.unit === "km" ? "selectedButton" : "nonSelectedButton"} onClick={() => this.setUnit("km")}>Km</button>
                 <button className={this.state.unit === "miles" ? "selectedButton" : "nonSelectedButton"} onClick={() => this.setUnit("miles")}>Miles</button>
 
@@ -221,4 +229,14 @@ class StravaTable extends Component {
     }
 }
 
-export default StravaTable;
+const mapStateToProps = state => ({
+    activities: state.activities,
+});
+
+const mapDispatchToProps = dispatch => ({
+});
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps,
+)(StravaTable);
