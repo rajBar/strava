@@ -166,11 +166,11 @@ class StravaTable extends Component {
                 allRows = [...orderedRows];
             } else if (sort.field === "Distance") {
                 if (sort.direction) {
-                    row.allRuns = _.orderBy(row.allRuns, 'distance', 'asc');
-                    row.allCycles = _.orderBy(row.allCycles, 'distance', 'asc');
+                    row.allRuns = _.orderBy(row.allRuns, function (o) { return Number(o.distance); }, 'asc');
+                    row.allCycles = _.orderBy(row.allCycles, function (o) { return Number(o.distance); }, 'asc');
                 } else {
-                    row.allRuns = _.orderBy(row.allRuns, 'distance', 'desc');
-                    row.allCycles = _.orderBy(row.allCycles, 'distance', 'desc');
+                    row.allRuns = _.orderBy(row.allRuns, function (o) { return Number(o.distance); }, 'desc');
+                    row.allCycles = _.orderBy(row.allCycles, function (o) { return Number(o.distance); }, 'desc');
                 }
             } else if (sort.field === "Average Speed") {
                 if (sort.direction) {
