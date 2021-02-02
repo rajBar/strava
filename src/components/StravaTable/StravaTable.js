@@ -230,7 +230,7 @@ class StravaTable extends Component {
 }
 
 const mapStateToProps = state => ({
-    activities: state.activities,
+    activities: state.activityReducer.activities,
 });
 
 const mapDispatchToProps = dispatch => ({
