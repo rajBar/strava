@@ -165,6 +165,9 @@ class StravaTable extends Component {
 
     render() {
         let { allRows, orderedRows } = this.props;
+        // const { activities } = this.props;
+        // const orderedRows = [...activities];
+        // let allRows = [...activities];
         let sort = this.state.sort;
 
         allRows.forEach(row => {
@@ -207,7 +210,8 @@ class StravaTable extends Component {
 
         return (
             <div>
-                <button onClick={() => alert(JSON.stringify(this.props.activities))}>Hi</button>
+                <button onClick={() => alert(JSON.stringify(this.props.activities))}>Redux</button>
+                <button onClick={() => alert(JSON.stringify(this.props.allRows))}>Props</button>
                 <br />
                 <button className={this.state.unit === "km" ? "selectedButton" : "nonSelectedButton"} onClick={() => this.setUnit("km")}>Km</button>
                 <button className={this.state.unit === "miles" ? "selectedButton" : "nonSelectedButton"} onClick={() => this.setUnit("miles")}>Miles</button>

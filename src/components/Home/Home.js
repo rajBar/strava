@@ -46,8 +46,9 @@ class Home extends Component {
         }
     }
 
-    async fetchData(name) {
-        const activitiesLink = "https://raj.bariah.com:2010/strava/" + name;
+    async fetchData(athleteID) {
+        const {setActivities} = this.props;
+        const activitiesLink = "https://raj.bariah.com:2010/strava/activity?athlete=" + athleteID;
         await fetch(activitiesLink)
             .then(res => res.json())
             .then(res => {
@@ -58,7 +59,16 @@ class Home extends Component {
                     activities: newActivities
                 })
             });
-        console.log('set activities');
+
+        const users = this.state.users;
+        const allRows = await users.map(user => {
+            return this.createUserObj(user.athleteID, user.name, null);
+        });
+        this.setState({
+            ...this.state,
+            sortedActivities: allRows,
+        })
+        setActivities(allRows);
     }
 
     async getAllActivities() {
@@ -69,53 +79,42 @@ class Home extends Component {
         console.log("before foreach");
 
         await users.forEach(user => {
-           this.fetchData(user.name);
+           this.fetchData(user.athleteID);
         });
     }
 
-    setUsers() {
-        const users = [
-            {
-                name: "Raj",
-                athleteID: "59236473",
-            },
-            {
-                name: "Ross",
-                athleteID: "53092595",
-            },
-            {
-                name: "Cally",
-                athleteID: "59236853",
-            },
-        ];
-
-        this.setState({
-            ...this.state,
-            users: users
-        });
+    async setUsers() {
+        const userLink = "https://raj.bariah.com:2010/strava/users";
+        await fetch(userLink)
+            .then(res => res.json())
+            .then(res => {
+                this.setState({
+                    ...this.state,
+                    users: res
+                })
+            });
     }
 
     async componentDidMount() {
-        const {setActivities} = this.props;
-        await this.getAllActivities();
-        const users = this.state.users;
-        const allRows = await users.map(user => {
-            console.log('HERE');
-            return this.createUserObj(user.athleteID, user.name, null);
-        });
-        console.log('===============');
-        console.log('===============');
-        console.log(this.state.activities);
-        console.log(allRows);
-        this.setState({
-            ...this.state,
-            sortedActivities: allRows,
-        })
-        console.log(this.state.activities);
-        console.log('===============');
-        console.log('===============');
+        // const {setActivities} = this.props;
+        await this.setUsers();
+        // const users = this.state.users;
+        const allActivities = await this.getAllActivities();
 
-        setActivities(allRows);
+        console.log(allActivities)
+        console.log(this.state.activities);
+
+        // const allRows = await users.map(user => {
+        //     console.log('HERE');
+        //     return this.createUserObj(user.athleteID, user.name, null);
+        // });
+
+        // this.setState({
+        //     ...this.state,
+        //     sortedActivities: allRows,
+        // })
+
+        // setActivities(allRows);
     }
 
     findAllSpecificActivity(activityType, athleteID, month) {
