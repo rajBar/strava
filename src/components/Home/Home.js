@@ -14,7 +14,7 @@ class Home extends Component {
             competition: false,
             competitionDistance: {
                 run: 30,
-                cycle: 100,
+                cycle: 60,
             },
         };
 
