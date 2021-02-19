@@ -95,7 +95,8 @@ class Home extends Component {
             const date = new Date();
             all.forEach(a => {
                 const activityDate = new Date(a.start_date);
-                if (date.getFullYear() === activityDate.getFullYear() && date.getMonth() === activityDate.getMonth()) {
+                // if (date.getFullYear() === activityDate.getFullYear() && date.getMonth() === activityDate.getMonth()) {
+                if (date.getFullYear() === activityDate.getFullYear()) {
                     monthData.push(a);
                 }
             });
@@ -164,8 +165,10 @@ class Home extends Component {
     }
 
     calculateTotalPercent(user) {
-        const competitionRun = this.state.competitionDistance.run;
-        const competitionCycle = this.state.competitionDistance.cycle;
+        const date = new Date();
+        const monthIndex = date.getMonth() + 1;
+        const competitionRun = this.state.competitionDistance.run * monthIndex;
+        const competitionCycle = this.state.competitionDistance.cycle * monthIndex;
         const runDistance = user.runDistance;
         const cycleDistance = user.bikeDistance;
 
@@ -208,7 +211,7 @@ class Home extends Component {
         const orderedLastMonth = _.orderBy(lastMonthPercentage, ['totalPercentage'], ['desc']);
 
         const date = new Date();
-        const month = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        const month = ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"];
         const thisMonth = month[date.getMonth()];
 
         return (
@@ -216,7 +219,7 @@ class Home extends Component {
                 <h2 className="myHeading"><a className="rajbar-link" href="https://raj.bar">raj.Bar</a> <span onClick={() => this.competitionSetter()}>/ strava</span></h2>
                 {this.state.competition ?
                     (<div>
-                        <h4>{thisMonth} Competition</h4>
+                        <h4>Jan - {thisMonth} Competition</h4>
                         <MonthTable allRows={orderedLastMonth} thisMonth={thisMonth} competitionDistance={this.state.competitionDistance}/>
                     </div>) :
                     <StravaTable allRows={allRows} orderedRows={orderedRows} />

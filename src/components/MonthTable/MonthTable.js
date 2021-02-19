@@ -139,10 +139,12 @@ class MonthTable extends Component {
 
     render() {
         let { allRows, competitionDistance } = this.props;
+        const date = new Date();
+        const monthIndex = date.getMonth() + 1;
 
         return (
             <div>
-                <h7>Run {competitionDistance.run} km  &  Cycle {competitionDistance.cycle} km</h7>
+                <h7>Run {competitionDistance.run * monthIndex} km  &  Cycle {competitionDistance.cycle * monthIndex} km</h7>
                 <br />
                 <button className={this.state.unit === "km" ? "selectedButton" : "nonSelectedButton"} onClick={() => this.setUnit("km")}>Km</button>
                 <button className={this.state.unit === "miles" ? "selectedButton" : "nonSelectedButton"} onClick={() => this.setUnit("miles")}>Miles</button>
