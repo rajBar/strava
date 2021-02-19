@@ -144,8 +144,8 @@ class MonthTable extends Component {
 
         return (
             <div>
-                <h7>Run {competitionDistance.run * monthIndex} km  &  Cycle {competitionDistance.cycle * monthIndex} km</h7>
-                <br />
+                <h6>Run {competitionDistance.run * monthIndex} km  &  Cycle {competitionDistance.cycle * monthIndex} km</h6>
+                <p style={{fontSize: "11px", padding: 0}}>({competitionDistance.run} km & {competitionDistance.cycle} km a month)</p>
                 <button className={this.state.unit === "km" ? "selectedButton" : "nonSelectedButton"} onClick={() => this.setUnit("km")}>Km</button>
                 <button className={this.state.unit === "miles" ? "selectedButton" : "nonSelectedButton"} onClick={() => this.setUnit("miles")}>Miles</button>
 
