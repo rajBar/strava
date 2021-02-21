@@ -60,3 +60,8 @@
 .selectedRow:hover {
     background: #888888;
 }
+
+.hidden-link {
+    text-decoration: none;
+    color: black;
+}

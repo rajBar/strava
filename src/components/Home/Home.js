@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import _ from 'lodash';
+import { BrowserRouter as Router, Link, Route } from "react-router-dom";
 import StravaTable from "../StravaTable/StravaTable";
 import MonthTable from "../MonthTable/MonthTable";
 import './Home-style.css';
@@ -214,16 +215,21 @@ class Home extends Component {
         const month = ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"];
         const thisMonth = month[date.getMonth()];
 
+        const userNames = [];
+        this.state.users.forEach(user => userNames.push(user.name));
+
         return (
             <div>
-                <h2 className="myHeading"><a className="rajbar-link" href="https://raj.bar">raj.Bar</a> <span onClick={() => this.competitionSetter()}>/ strava</span></h2>
-                {this.state.competition ?
-                    (<div>
-                        <h4>Jan - {thisMonth} Competition</h4>
+                <Router>
+                    <h2 className="myHeading"><a className="rajbar-link" href="https://raj.bar">raj.Bar</a> <Link className="rajbar-link" to={'/strava'}>/</Link> <Link className="rajbar-link" to={'/strava-competition'}>strava</Link></h2>
+                    <Route path={'/strava'} render={() => (
+                        <StravaTable allRows={allRows} orderedRows={orderedRows} userNames={userNames} />
+                    )}/>
+
+                    <Route exact={true} path={'/strava-competition'} render={() => (
                         <MonthTable allRows={orderedLastMonth} thisMonth={thisMonth} competitionDistance={this.state.competitionDistance}/>
-                    </div>) :
-                    <StravaTable allRows={allRows} orderedRows={orderedRows} />
-                }
+                    )} />
+                </Router>
             </div>
         )
     }

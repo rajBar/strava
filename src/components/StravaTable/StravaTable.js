@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import './StravaTable-style.css';
 import StravaChart from "../StravaChart/StravaChart";
 import _ from 'lodash';
+import {Link} from "react-router-dom";
 
 class StravaTable extends Component {
     constructor(props) {
@@ -57,6 +58,17 @@ class StravaTable extends Component {
         });
     }
 
+    singleSetUser(user) {
+        const currentUser = this.state.user;
+
+        if (user !== currentUser) {
+            this.setState({
+                ...this.state,
+                user: user,
+            });
+        }
+    }
+
     setUser(selectedUser) {
         const currentAthlete = this.state.user;
         const athlete = currentAthlete === selectedUser ? "" : selectedUser;
@@ -76,12 +88,11 @@ class StravaTable extends Component {
         const cycleNo = row.bikeQuantity;
         const cycleDistance = row.bikeDistance;
         const cycleDistanceMile = row.bikeDistanceMile;
-        const percentage = row.totalPercent;
         const unit = this.state.unit;
 
         return (
             <tr className={user === name ? "selectedRow" : "selectableRow"} onClick={() => this.setUser(name)}>
-                <td key={i} className="myTableContents">{name} {percentage == 100 ? "(completed)" : ""}</td>
+                <td key={i} className="myTableContents"><Link className="hidden-link" to={`/strava/${name}`}>{name}</Link></td>
                 <td key={i} className="myTableContents">{runNo}</td>
                 <td key={i} className="myTableContents">{unit === "km" ? runDistance + "km" : runDistanceMile + "miles"}</td>
                 <td key={i} className="myTableContents">{cycleNo}</td>
@@ -106,6 +117,7 @@ class StravaTable extends Component {
 
     detailedRows(rows) {
         const user = this.state.user;
+        const userNames = this.props.userNames;
 
         let userRows;
         for (let i=0; i < rows.length; i++) {
@@ -114,7 +126,7 @@ class StravaTable extends Component {
             }
         }
 
-        if (user === "") {
+        if (!userNames.includes(user)) {
             return <br />;
         } else {
             const rows = this.state.currentActivity === "run" ? userRows.allRuns : userRows.allCycles;
@@ -160,6 +172,14 @@ class StravaTable extends Component {
     render() {
         let { allRows, orderedRows } = this.props;
         let sort = this.state.sort;
+
+        const currentURL = window.location.href;
+        const urlArr = currentURL.split('/');
+        const name = urlArr[urlArr.length -1];
+        const userNames = this.props.userNames;
+        if (userNames.includes(name)) {
+            this.singleSetUser(name);
+        }
 
         allRows.forEach(row => {
             if (sort.field === "Date") {
