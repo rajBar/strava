@@ -29,7 +29,7 @@ class StravaTable extends Component {
             sort: {
                 field: "date",
                 direction: true
-            }
+            },
         };
     }
 
@@ -70,6 +70,14 @@ class StravaTable extends Component {
     }
 
     setUser(selectedUser) {
+        const currentURL = window.location.href;
+        const urlArr = currentURL.split('/');
+        const name = urlArr[urlArr.length - 1];
+        const userNames = this.props.userNames;
+        if (userNames.includes(name) && (name !== selectedUser)) {
+            window.location = window.location.href.replace(name, '');
+        }
+
         const currentAthlete = this.state.user;
         const athlete = currentAthlete === selectedUser ? "" : selectedUser;
 
@@ -92,7 +100,7 @@ class StravaTable extends Component {
 
         return (
             <tr className={user === name ? "selectedRow" : "selectableRow"} onClick={() => this.setUser(name)}>
-                <td key={i} className="myTableContents"><Link className="hidden-link" to={`/strava/${name}`}>{name}</Link></td>
+                <td key={i} className="myTableContents"><Link className="hidden-link" to={`/home/${name}`}>{name}</Link></td>
                 <td key={i} className="myTableContents">{runNo}</td>
                 <td key={i} className="myTableContents">{unit === "km" ? runDistance + "km" : runDistanceMile + "miles"}</td>
                 <td key={i} className="myTableContents">{cycleNo}</td>
@@ -175,7 +183,7 @@ class StravaTable extends Component {
 
         const currentURL = window.location.href;
         const urlArr = currentURL.split('/');
-        const name = urlArr[urlArr.length -1];
+        const name = urlArr[urlArr.length - 1];
         const userNames = this.props.userNames;
         if (userNames.includes(name)) {
             this.singleSetUser(name);

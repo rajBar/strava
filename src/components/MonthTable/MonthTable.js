@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import './MonthTable-style.css';
 import StravaChart from "../StravaChart/StravaChart";
+import {Link} from "react-router-dom";
 
 class MonthTable extends Component {
     constructor(props) {
@@ -34,7 +35,26 @@ class MonthTable extends Component {
         });
     }
 
+    singleSetUser(user) {
+        const currentUser = this.state.user;
+
+        if (user !== currentUser) {
+            this.setState({
+                ...this.state,
+                user: user,
+            });
+        }
+    }
+
     setUser(selectedUser) {
+        const currentURL = window.location.href;
+        const urlArr = currentURL.split('/');
+        const name = urlArr[urlArr.length - 1];
+        const userNames = this.props.userNames;
+        if (userNames.includes(name) && (name !== selectedUser)) {
+            window.location = window.location.href.replace(name, '');
+        }
+
         const currentAthlete = this.state.user;
         const athlete = currentAthlete === selectedUser ? "" : selectedUser;
 
@@ -60,7 +80,7 @@ class MonthTable extends Component {
             <tr className={user === name ? "selectedRow" : "selectableRow"} onClick={() => this.setUser(name)}>
                 {percentage >= 100 ?
                     <td key={i} className="myTableContents-complete">{name} (completed)</td>
-                    : <td key={i} className="myTableContents">{name}</td>
+                    : <td key={i} className="myTableContents"><Link className="hidden-link" to={`/strava-competition/${name}`}>{name}</Link></td>
                 }
                 <td key={i} className="myTableContents">{runNo}</td>
                 <td key={i} className="myTableContents">{unit === "km" ? runDistance + "km" : runDistanceMile + "miles"}</td>
@@ -141,6 +161,14 @@ class MonthTable extends Component {
         let { allRows, competitionDistance, thisMonth } = this.props;
         const date = new Date();
         const monthIndex = date.getMonth() + 1;
+
+        const currentURL = window.location.href;
+        const urlArr = currentURL.split('/');
+        const name = urlArr[urlArr.length - 1];
+        const userNames = this.props.userNames;
+        if (userNames.includes(name)) {
+            this.singleSetUser(name);
+        }
 
         return (
             <div>

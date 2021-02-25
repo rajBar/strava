@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import _ from 'lodash';
-import { BrowserRouter as Router, Link, Route } from "react-router-dom";
+import { BrowserRouter as Router, Link, Route, HashRouter, Redirect } from "react-router-dom";
 import StravaTable from "../StravaTable/StravaTable";
 import MonthTable from "../MonthTable/MonthTable";
 import './Home-style.css';
@@ -220,16 +220,19 @@ class Home extends Component {
 
         return (
             <div>
-                <Router>
-                    <h2 className="myHeading"><a className="rajbar-link" href="https://raj.bar">raj.Bar</a> <Link className="rajbar-link" to={'/strava'}>/</Link> <Link className="rajbar-link" to={'/strava-competition'}>strava</Link></h2>
-                    <Route path={'/strava'} render={() => (
+                <HashRouter basename={process.env.PUBLIC_URL}>
+                    <h2 className="myHeading"><a className="rajbar-link" href="https://raj.bar">raj.Bar</a> <Link className="rajbar-link" to={'/home'}>/</Link> <Link className="rajbar-link" to={'/strava-competition'}>strava</Link></h2>
+                    <Route exact path={"/"}>
+                        <Redirect to={"/home"} />
+                    </Route>
+                    <Route path={'/home'} render={() => (
                         <StravaTable allRows={allRows} orderedRows={orderedRows} userNames={userNames} />
                     )}/>
 
-                    <Route exact={true} path={'/strava-competition'} render={() => (
-                        <MonthTable allRows={orderedLastMonth} thisMonth={thisMonth} competitionDistance={this.state.competitionDistance}/>
+                    <Route path={'/strava-competition'} render={() => (
+                        <MonthTable allRows={orderedLastMonth} thisMonth={thisMonth} competitionDistance={this.state.competitionDistance} userNames={userNames} />
                     )} />
-                </Router>
+                </HashRouter>
             </div>
         )
     }
