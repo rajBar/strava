@@ -158,8 +158,7 @@ class MonthTable extends Component {
     }
 
     render() {
-        let { allRows, competitionDistance, thisMonth } = this.props;
-        const date = new Date();
+        let { allRows, competitionDistance, thisMonth, date } = this.props;
         const monthIndex = date.getMonth() + 1;
 
         const currentURL = window.location.href;

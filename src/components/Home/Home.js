@@ -17,6 +17,7 @@ class Home extends Component {
                 run: 30,
                 cycle: 60,
             },
+            date: new Date(),
         };
 
         this.competitionSetter = this.competitionSetter.bind(this);
@@ -93,7 +94,7 @@ class Home extends Component {
 
         const monthData = [];
         if (month) {
-            const date = new Date();
+            const date = this.state.date;
             all.forEach(a => {
                 const activityDate = new Date(a.start_date);
                 // if (date.getFullYear() === activityDate.getFullYear() && date.getMonth() === activityDate.getMonth()) {
@@ -166,7 +167,7 @@ class Home extends Component {
     }
 
     calculateTotalPercent(user) {
-        const date = new Date();
+        const date = this.state.date;
         const monthIndex = date.getMonth() + 1;
         const competitionRun = this.state.competitionDistance.run * monthIndex;
         const competitionCycle = this.state.competitionDistance.cycle * monthIndex;
@@ -211,7 +212,7 @@ class Home extends Component {
 
         const orderedLastMonth = _.orderBy(lastMonthPercentage, ['totalPercentage'], ['desc']);
 
-        const date = new Date();
+        const date = this.state.date;
         const month = ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"];
         const thisMonth = month[date.getMonth()];
 
@@ -230,7 +231,7 @@ class Home extends Component {
                     )}/>
 
                     <Route path={'/strava-competition'} render={() => (
-                        <MonthTable allRows={orderedLastMonth} thisMonth={thisMonth} competitionDistance={this.state.competitionDistance} userNames={userNames} />
+                        <MonthTable allRows={orderedLastMonth} thisMonth={thisMonth} competitionDistance={this.state.competitionDistance} userNames={userNames} date={this.state.date} />
                     )} />
                 </HashRouter>
             </div>
