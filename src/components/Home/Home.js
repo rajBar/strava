@@ -89,7 +89,7 @@ class Home extends Component {
         const activity = [...this.state.activities];
 
         let all = activity.filter(function (element) {
-            return (element.type === activityType) && (element.athlete.id == athleteID);
+            return (element.type === activityType) && (element.athlete.id.toString() === athleteID);
         });
 
         const monthData = [];
