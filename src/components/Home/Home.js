@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import _ from 'lodash';
-import { BrowserRouter as Router, Link, Route, HashRouter, Redirect } from "react-router-dom";
+import { HashRouter as Router, Link, Route, Redirect } from "react-router-dom";
 import StravaTable from "../StravaTable/StravaTable";
 import MonthTable from "../MonthTable/MonthTable";
 import './Home-style.css';
@@ -192,7 +192,7 @@ class Home extends Component {
     render() {
         const users = this.state.users;
 
-        // this.notifyPhone();
+        this.notifyPhone();
 
         const allRows = users.map(user => {
            return this.createUserObj(user.athleteID, user.name, null);
@@ -221,7 +221,7 @@ class Home extends Component {
 
         return (
             <div>
-                <HashRouter basename={process.env.PUBLIC_URL}>
+                <Router basename={process.env.PUBLIC_URL}>
                     <h2 className="myHeading"><a className="rajbar-link" href="https://raj.bar">raj.Bar</a> <Link className="rajbar-link" to={'/home'}>/</Link> <Link className="rajbar-link" to={'/strava-competition'}>strava</Link></h2>
                     <Route exact path={"/"}>
                         <Redirect to={"/home"} />
@@ -233,7 +233,7 @@ class Home extends Component {
                     <Route path={'/strava-competition'} render={() => (
                         <MonthTable allRows={orderedLastMonth} thisMonth={thisMonth} competitionDistance={this.state.competitionDistance} userNames={userNames} date={this.state.date} />
                     )} />
-                </HashRouter>
+                </Router>
             </div>
         )
     }
