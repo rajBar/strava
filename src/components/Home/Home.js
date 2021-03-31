@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import _ from 'lodash';
+import { BrowserRouter as Router, Link, Route, HashRouter, Redirect } from "react-router-dom";
 import StravaTable from "../StravaTable/StravaTable";
 import MonthTable from "../MonthTable/MonthTable";
 import './Home-style.css';
@@ -16,6 +17,7 @@ class Home extends Component {
                 run: 30,
                 cycle: 60,
             },
+            date: new Date(),
         };
 
         this.competitionSetter = this.competitionSetter.bind(this);
@@ -87,12 +89,12 @@ class Home extends Component {
         const activity = [...this.state.activities];
 
         let all = activity.filter(function (element) {
-            return (element.type === activityType) && (element.athlete.id == athleteID);
+            return (element.type === activityType) && (element.athlete.id.toString() === athleteID);
         });
 
         const monthData = [];
         if (month) {
-            const date = new Date();
+            const date = this.state.date;
             all.forEach(a => {
                 const activityDate = new Date(a.start_date);
                 // if (date.getFullYear() === activityDate.getFullYear() && date.getMonth() === activityDate.getMonth()) {
@@ -165,7 +167,7 @@ class Home extends Component {
     }
 
     calculateTotalPercent(user) {
-        const date = new Date();
+        const date = this.state.date;
         const monthIndex = date.getMonth() + 1;
         const competitionRun = this.state.competitionDistance.run * monthIndex;
         const competitionCycle = this.state.competitionDistance.cycle * monthIndex;
@@ -210,20 +212,28 @@ class Home extends Component {
 
         const orderedLastMonth = _.orderBy(lastMonthPercentage, ['totalPercentage'], ['desc']);
 
-        const date = new Date();
+        const date = this.state.date;
         const month = ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"];
         const thisMonth = month[date.getMonth()];
 
+        const userNames = [];
+        this.state.users.forEach(user => userNames.push(user.name));
+
         return (
             <div>
-                <h2 className="myHeading"><a className="rajbar-link" href="https://raj.bar">raj.Bar</a> <span onClick={() => this.competitionSetter()}>/ strava</span></h2>
-                {this.state.competition ?
-                    (<div>
-                        <h4>Jan - {thisMonth} Competition</h4>
-                        <MonthTable allRows={orderedLastMonth} thisMonth={thisMonth} competitionDistance={this.state.competitionDistance}/>
-                    </div>) :
-                    <StravaTable allRows={allRows} orderedRows={orderedRows} />
-                }
+                <HashRouter basename={process.env.PUBLIC_URL}>
+                    <h2 className="myHeading"><a className="rajbar-link" href="https://raj.bar">raj.Bar</a> <Link className="rajbar-link" to={'/home'}>/</Link> <Link className="rajbar-link" to={'/strava-competition'}>strava</Link></h2>
+                    <Route exact path={"/"}>
+                        <Redirect to={"/home"} />
+                    </Route>
+                    <Route path={'/home'} render={() => (
+                        <StravaTable allRows={allRows} orderedRows={orderedRows} userNames={userNames} />
+                    )}/>
+
+                    <Route path={'/strava-competition'} render={() => (
+                        <MonthTable allRows={orderedLastMonth} thisMonth={thisMonth} competitionDistance={this.state.competitionDistance} userNames={userNames} date={this.state.date} />
+                    )} />
+                </HashRouter>
             </div>
         )
     }
