@@ -1,8 +1,10 @@
 import React, {Component} from 'react';
+import { connect } from 'react-redux';
 import _ from 'lodash';
 import { HashRouter as Router, Link, Route, Redirect } from "react-router-dom";
 import StravaTable from "../StravaTable/StravaTable";
 import MonthTable from "../MonthTable/MonthTable";
+import * as actions from '../../store/actions';
 import './Home-style.css';
 
 class Home extends Component {
@@ -192,7 +194,7 @@ class Home extends Component {
     render() {
         const users = this.state.users;
 
-        this.notifyPhone();
+        // this.notifyPhone();
 
         const allRows = users.map(user => {
            return this.createUserObj(user.athleteID, user.name, null);
@@ -239,4 +241,12 @@ class Home extends Component {
     }
 }
 
-export default Home;
+const mapStateToProps = state => ({
+    users: state.users.users,
+});
+
+const mapDispatchToProps = dispatch => ({
+    fetchUsers: () => dispatch(actions.fetchUsers()),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home);
