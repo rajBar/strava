@@ -14,21 +14,12 @@ class Home extends Component {
             activities: [],
             users: [],
             alerted: false,
-            competition: false,
             competitionDistance: {
                 run: 30,
                 cycle: 60,
             },
             date: new Date(),
         };
-
-        this.competitionSetter = this.competitionSetter.bind(this);
-    }
-
-    competitionSetter() {
-        const oldStatus = this.state.competition;
-
-        this.setState({competition: !oldStatus});
     }
 
     async notifyPhone() {
@@ -47,48 +38,15 @@ class Home extends Component {
         }
     }
 
-    async fetchData(athleteID) {
-        const activitiesLink = "https://raj.bariah.com:2010/strava/activity?athlete=" + athleteID;
-        await fetch(activitiesLink)
-            .then(res => res.json())
-            .then(res => {
-                const activities = [...this.state.activities];
-                const newActivities = activities.concat(res);
-                this.setState({
-                    ...this.state,
-                    activities: newActivities
-                })
-            });
-    }
-
-    async reAuthFunc() {
-        await this.setUsers();
-
-        const users = this.state.users;
-
-        users.forEach(user => {
-           this.fetchData(user.athleteID);
-        });
-    }
-
-    async setUsers() {
-        const userLink = "https://raj.bariah.com:2010/strava/users";
-        await fetch(userLink)
-            .then(res => res.json())
-            .then(res => {
-                this.setState({
-                    ...this.state,
-                    users: res
-                })
-            })
-    }
-
     componentDidMount() {
-        this.reAuthFunc();
+        const { fetchUsers } = this.props;
+        fetchUsers();
     }
 
     findAllSpecificActivity(activityType, athleteID, month) {
-        const activity = [...this.state.activities];
+        // const activity = [...this.state.activities];
+        const { activities } = this.props;
+        const activity = [...activities];
 
         let all = activity.filter(function (element) {
             return (element.type === activityType) && (element.athlete.id.toString() === athleteID);
@@ -192,7 +150,7 @@ class Home extends Component {
     }
 
     render() {
-        const users = this.state.users;
+        const users = this.props.users;
 
         // this.notifyPhone();
 
@@ -242,7 +200,9 @@ class Home extends Component {
 }
 
 const mapStateToProps = state => ({
-    users: state.users.users,
+    users: state.usersAndActivities.users,
+    activities: state.usersAndActivities.activities,
+
 });
 
 const mapDispatchToProps = dispatch => ({
