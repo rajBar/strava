@@ -39,8 +39,9 @@ class Home extends Component {
     }
 
     componentDidMount() {
-        const { fetchUsersAndActivities } = this.props;
-        fetchUsersAndActivities();
+        const { fetchUsers, fetchActivities } = this.props;
+        fetchUsers();
+        fetchActivities();
     }
 
     findAllSpecificActivity(activityType, athleteID, month) {
@@ -176,7 +177,7 @@ class Home extends Component {
         const thisMonth = month[date.getMonth()];
 
         const userNames = [];
-        this.state.users.forEach(user => userNames.push(user.name));
+        this.props.users.forEach(user => userNames.push(user.name));
 
         return (
             <div>
@@ -205,7 +206,8 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-    fetchUsersAndActivities: () => dispatch(actions.fetchUsersAndActivities()),
+    fetchUsers: () => dispatch(actions.fetchUsers()),
+    fetchActivities: () => dispatch(actions.fetchActivities()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);

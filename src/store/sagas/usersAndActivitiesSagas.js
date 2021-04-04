@@ -7,32 +7,28 @@ const getUsers = async () => {
         .then(res => res.json());
 }
 
-const getActivities = async (athleteID) => {
-    const activitiesLink = "https://raj.bariah.com:2010/strava/activity?athlete=" + athleteID;
-
-    const activities = [];
-    await fetch(activitiesLink)
-        .then(res => res.json())
-        .then(res => {
-            activities.push.apply(activities, res);
-        });
-
-    return activities;
-}
-
-export function* fetchUsersAndActivitiesSaga() {
+export function* fetchUsersSaga() {
     try {
         const users = yield call(getUsers)
-
         yield put(actions.fetchUsersSuccess(users));
 
-        const activities = [];
-        for (let i = 0; i < users.length; i++) {
-            const activity = yield call(getActivities, users[i].athleteID) // this is where the inefficiency lies
-            activities.push.apply(activities, activity);
-        }
-        yield put(actions.fetchActivitiesSuccess(activities));
     } catch (error) {
         yield put(actions.fetchUsersFailure(error));
+    }
+}
+
+const getActivities = async () => {
+    const activitiesLink = "https://raj.bariah.com:2010/strava/activities";
+
+    return await fetch(activitiesLink)
+        .then(res => res.json());
+}
+
+export function* fetchActivitiesSaga() {
+    try {
+        const activities = yield call(getActivities);
+        yield put(actions.fetchActivitiesSuccess(activities));
+    } catch (error) {
+        yield put(actions.fetchActivitiesFailure(error));
     }
 }

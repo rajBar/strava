@@ -1,7 +1,7 @@
 import * as actionTypes from '../actionTypes/usersAndActivities';
 
-export const fetchUsersAndActivities = () => ({
-    type: actionTypes.FETCH_USERS_AND_ACTIVITIES,
+export const fetchUsers = () => ({
+    type: actionTypes.FETCH_USERS,
 });
 
 export const fetchUsersSuccess = users => ({
@@ -14,6 +14,9 @@ export const fetchUsersFailure = error => ({
     payload: { error },
 });
 
+export const fetchActivities = () => ({
+    type: actionTypes.FETCH_ACTIVITIES,
+});
 
 export const fetchActivitiesSuccess = activities => ({
     type: actionTypes.FETCH_ACTIVITIES_SUCCESS,

@@ -3,7 +3,10 @@ import * as actionTypes from '../actionTypes/usersAndActivities';
 const initialState = {
     users: [],
     activities: [],
-    error: null,
+    errors: {
+        usersError: null,
+        activitiesError: null,
+    },
 };
 
 const fetchUsersSuccess = (state, action) => ({
@@ -13,7 +16,10 @@ const fetchUsersSuccess = (state, action) => ({
 
 const fetchUsersFailure = (state, action) => ({
     ...state,
-    error: action.payload.error,
+    errors: {
+        ...state.errors,
+        usersError: action.payload.error,
+    },
 });
 
 const fetchActivitiesSuccess = (state, action) => ({
@@ -23,7 +29,10 @@ const fetchActivitiesSuccess = (state, action) => ({
 
 const fetchActivitiesFailure = (state, action) => ({
     ...state,
-    error: action.payload.error,
+    errors: {
+        ...state.errors,
+        activitiesError: action.payload.error,
+    },
 });
 
 export default (state = initialState, action) => {
