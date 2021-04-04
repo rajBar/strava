@@ -39,12 +39,11 @@ class Home extends Component {
     }
 
     componentDidMount() {
-        const { fetchUsers } = this.props;
-        fetchUsers();
+        const { fetchUsersAndActivities } = this.props;
+        fetchUsersAndActivities();
     }
 
     findAllSpecificActivity(activityType, athleteID, month) {
-        // const activity = [...this.state.activities];
         const { activities } = this.props;
         const activity = [...activities];
 
@@ -206,7 +205,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-    fetchUsers: () => dispatch(actions.fetchUsers()),
+    fetchUsersAndActivities: () => dispatch(actions.fetchUsersAndActivities()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);

@@ -1,7 +1,7 @@
 import * as actionTypes from '../actionTypes/usersAndActivities';
 
-export const fetchUsers = () => ({
-    type: actionTypes.FETCH_USERS,
+export const fetchUsersAndActivities = () => ({
+    type: actionTypes.FETCH_USERS_AND_ACTIVITIES,
 });
 
 export const fetchUsersSuccess = users => ({
