@@ -1,9 +1,10 @@
 import React, {Component} from 'react';
-import './MonthTable-style.css';
-import StravaChart from "../StravaChart/StravaChart";
+import './StravaTable-style.css';
+import StravaChart from "../../containers/StravaChart";
+import _ from 'lodash';
 import {Link} from "react-router-dom";
 
-class MonthTable extends Component {
+class StravaTable extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -13,7 +14,6 @@ class MonthTable extends Component {
                 'Run Distance',
                 'No. Cycles',
                 'Cycle Distance',
-                'Total Complete',
             ],
             tableHeadSecond: [
                 'Date',
@@ -26,12 +26,35 @@ class MonthTable extends Component {
             currentActivity: "run",
             user: "",
             unit: "km",
+            sort: {
+                field: "date",
+                direction: true
+            },
         };
     }
 
-    getHeader(headers) {
+    getHeader(headers, sorter) {
         return headers.map((header, i) => {
-            return <th className="myTableHeaders">{header}</th>
+            if (sorter) {
+                return <th className="myTableHeaders" onClick={() => this.setSort(header)}>{header}</th>
+            } else {
+                return <th className="myTableHeaders">{header}</th>
+            }
+        })
+    }
+
+    setSort(field) {
+        const currentSort = this.state.sort;
+        const newDirection = field === currentSort.field ? !currentSort.direction : true;
+
+        console.log(field);
+
+        this.setState({
+            ...this.state,
+            sort: {
+                field: field,
+                direction: newDirection
+            }
         });
     }
 
@@ -73,20 +96,15 @@ class MonthTable extends Component {
         const cycleNo = row.bikeQuantity;
         const cycleDistance = row.bikeDistance;
         const cycleDistanceMile = row.bikeDistanceMile;
-        const percentage = row.totalPercentage;
         const unit = this.state.unit;
 
         return (
             <tr className={user === name ? "selectedRow" : "selectableRow"} onClick={() => this.setUser(name)}>
-                {percentage >= 100 ?
-                    <td key={i} className="myTableContents-complete">{name} (completed)</td>
-                    : <td key={i} className="myTableContents"><Link className="hidden-link" to={`/strava-competition/${name}`}>{name}</Link></td>
-                }
+                <td key={i} className="myTableContents"><Link className="hidden-link" to={`/home/${name}`}>{name}</Link></td>
                 <td key={i} className="myTableContents">{runNo}</td>
                 <td key={i} className="myTableContents">{unit === "km" ? runDistance + "km" : runDistanceMile + "miles"}</td>
                 <td key={i} className="myTableContents">{cycleNo}</td>
                 <td key={i} className="myTableContents">{unit === "km" ? cycleDistance + "km" : cycleDistanceMile + "miles"}</td>
-                <td key={i} className="myTableContents">{percentage.toFixed(2)}%</td>
             </tr>
         )
     }
@@ -107,6 +125,7 @@ class MonthTable extends Component {
 
     detailedRows(rows) {
         const user = this.state.user;
+        const userNames = this.props.userNames;
 
         let userRows;
         for (let i=0; i < rows.length; i++) {
@@ -115,7 +134,7 @@ class MonthTable extends Component {
             }
         }
 
-        if (user === "") {
+        if (!userNames.includes(user)) {
             return <br />;
         } else {
             const rows = this.state.currentActivity === "run" ? userRows.allRuns : userRows.allCycles;
@@ -124,33 +143,34 @@ class MonthTable extends Component {
                     <button className={this.state.currentActivity === "run" ? "selectedButton" : "nonSelectedButton"} onClick={() => this.setActivity("run")}>Run</button>
                     <button className={this.state.currentActivity === "cycle" ? "selectedButton" : "nonSelectedButton"} onClick={() => this.setActivity("cycle")}>Cycle</button>
 
+
                     {rows.length > 0 ?
                         (<div>
-                            <StravaChart activity={this.state.currentActivity} rows={rows} unit={this.state.unit}/>
+                            <StravaChart activity={this.state.currentActivity} rows={rows} unit={this.state.unit} />
 
                             <table className="myTableTwo">
                                 <thead>
-                                <tr>{this.getHeader(this.state.tableHeadSecond)}</tr>
+                                    <tr>{this.getHeader(this.state.tableHeadSecond, "sorting function")}</tr>
                                 </thead>
                                 <tbody>
-                                {rows.map(row => {
-                                    const unit = this.state.unit;
-                                    const singleUnit = unit === "km" ? "km" : "mile";
-                                    const speedUnit = unit === "km" ? "k" : "m";
-                                    return (
-                                        <tr>
-                                            <td>{row.date}</td>
-                                            <td>{row.activity}</td>
-                                            <td>{unit === "km" ? row.distance + " km" : row.distanceMile + " miles"}</td>
-                                            <td>{unit === "km" ? row.averageSpeed : row.averageSpeedMile} {this.state.currentActivity === "run" ? "min/" + singleUnit : speedUnit + "ph"}</td>
-                                            <td>{row.movingTime} min</td>
-                                            <td>{row.elevationGain} m</td>
-                                        </tr>
-                                    )
-                                })}
+                                    {rows.map(row => {
+                                        const unit = this.state.unit;
+                                        const singleUnit = unit === "km" ? "km" : "mile";
+                                        const speedUnit = unit === "km" ? "k" : "m";
+                                        return (
+                                            <tr>
+                                                <td>{row.date}</td>
+                                                <td>{row.activity}</td>
+                                                <td>{unit === "km" ? row.distance + " km" : row.distanceMile + " miles"}</td>
+                                                <td>{unit === "km" ? row.averageSpeed : row.averageSpeedMile} {this.state.currentActivity === "run" ? "min/" + singleUnit : speedUnit + "ph"}</td>
+                                                <td>{row.movingTime} min</td>
+                                                <td>{row.elevationGain} m</td>
+                                            </tr>
+                                        )
+                                    })}
                                 </tbody>
                             </table>
-                        </div>) : <h6 style={{paddingTop: '20px'}}>{this.state.user} is yet to {this.state.currentActivity} in {this.props.thisMonth}</h6>
+                        </div>) : <h6 style={{paddingTop: '20px'}}>{this.state.user} is yet to {this.state.currentActivity}</h6>
                     }
                 </div>
             );
@@ -158,8 +178,8 @@ class MonthTable extends Component {
     }
 
     render() {
-        let { allRows, competitionDistance, thisMonth, date } = this.props;
-        const monthIndex = date.getMonth() + 1;
+        let { allRows, orderedRows } = this.props;
+        let sort = this.state.sort;
 
         const currentURL = window.location.href;
         const urlArr = currentURL.split('/');
@@ -169,11 +189,46 @@ class MonthTable extends Component {
             this.singleSetUser(name);
         }
 
+        allRows.forEach(row => {
+            if (sort.field === "Date") {
+                allRows = [...orderedRows];
+            } else if (sort.field === "Distance") {
+                if (sort.direction) {
+                    row.allRuns = _.orderBy(row.allRuns, function (o) { return Number(o.distance); }, 'asc');
+                    row.allCycles = _.orderBy(row.allCycles, function (o) { return Number(o.distance); }, 'asc');
+                } else {
+                    row.allRuns = _.orderBy(row.allRuns, function (o) { return Number(o.distance); }, 'desc');
+                    row.allCycles = _.orderBy(row.allCycles, function (o) { return Number(o.distance); }, 'desc');
+                }
+            } else if (sort.field === "Average Speed") {
+                if (sort.direction) {
+                    row.allRuns = _.orderBy(row.allRuns, 'averageSpeed', 'asc');
+                    row.allCycles = _.orderBy(row.allCycles, 'averageSpeed', 'asc');
+                } else {
+                    row.allRuns = _.orderBy(row.allRuns, 'averageSpeed', 'desc');
+                    row.allCycles = _.orderBy(row.allCycles, 'averageSpeed', 'desc');
+                }
+            } else if (sort.field === "Activity Time") {
+                if (sort.direction) {
+                    row.allRuns = _.orderBy(row.allRuns, 'movingTime', 'asc');
+                    row.allCycles = _.orderBy(row.allCycles, 'movingTime', 'asc');
+                } else {
+                    row.allRuns = _.orderBy(row.allRuns, 'movingTime', 'desc');
+                    row.allCycles = _.orderBy(row.allCycles, 'movingTime', 'desc');
+                }
+            } else if (sort.field === "Elevation Gain") {
+                if (sort.direction) {
+                    row.allRuns = _.orderBy(row.allRuns, 'elevationGain', 'asc');
+                    row.allCycles = _.orderBy(row.allCycles, 'elevationGain', 'asc');
+                } else {
+                    row.allRuns = _.orderBy(row.allRuns, 'elevationGain', 'desc');
+                    row.allCycles = _.orderBy(row.allCycles, 'elevationGain', 'desc');
+                }
+            }
+        });
+
         return (
             <div>
-                <h4>Jan - {thisMonth} Competition</h4>
-                <h6>Run {competitionDistance.run * monthIndex} km  &  Cycle {competitionDistance.cycle * monthIndex} km</h6>
-                <p style={{fontSize: "11px", padding: 0}}>({competitionDistance.run} km & {competitionDistance.cycle} km a month)</p>
                 <button className={this.state.unit === "km" ? "selectedButton" : "nonSelectedButton"} onClick={() => this.setUnit("km")}>Km</button>
                 <button className={this.state.unit === "miles" ? "selectedButton" : "nonSelectedButton"} onClick={() => this.setUnit("miles")}>Miles</button>
 
@@ -194,4 +249,4 @@ class MonthTable extends Component {
     }
 }
 
-export default MonthTable;
+export default StravaTable;

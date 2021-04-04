@@ -1,10 +1,8 @@
 import React, {Component} from 'react';
-import { connect } from 'react-redux';
 import _ from 'lodash';
 import { HashRouter as Router, Link, Route, Redirect } from "react-router-dom";
-import StravaTable from "../StravaTable/StravaTable";
-import MonthTable from "../MonthTable/MonthTable";
-import * as actions from '../../store/actions';
+import StravaTable from "../../containers/StravaTable";
+import MonthTable from "../../containers/MonthTable";
 import './Home-style.css';
 
 class Home extends Component {
@@ -199,15 +197,4 @@ class Home extends Component {
     }
 }
 
-const mapStateToProps = state => ({
-    users: state.usersAndActivities.users,
-    activities: state.usersAndActivities.activities,
-
-});
-
-const mapDispatchToProps = dispatch => ({
-    fetchUsers: () => dispatch(actions.fetchUsers()),
-    fetchActivities: () => dispatch(actions.fetchActivities()),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(Home);
+export default Home;
