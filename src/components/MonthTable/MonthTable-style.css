@@ -38,6 +38,11 @@
     border-bottom: 1px solid black;
 }
 
+.myTableHeadersMobile {
+    padding: 5px 3px;
+    border-bottom: 1px solid black;
+}
+
 .myTableContents {
     padding: 5px 0;
     border-bottom: 1px solid black;

@@ -34,7 +34,7 @@ class StravaTable extends Component {
     }
 
     getHeader(headers, sorter) {
-        return headers.map((header, i) => {
+        return headers.map((header) => {
             if (sorter) {
                 return <th className="myTableHeaders" onClick={() => this.setSort(header)}>{header}</th>
             } else {

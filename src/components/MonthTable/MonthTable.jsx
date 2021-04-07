@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
+import {Link} from "react-router-dom";
+import {isMobile} from 'react-device-detect';
 import './MonthTable-style.css';
 import StravaChart from "../../containers/StravaChart";
-import {Link} from "react-router-dom";
 import {COMPETITIONDISTANCE, DATE, THISMONTH} from "../../utils/consts";
 
 class MonthTable extends Component {
@@ -31,8 +32,8 @@ class MonthTable extends Component {
     }
 
     getHeader(headers) {
-        return headers.map((header, i) => {
-            return <th className="myTableHeaders">{header}</th>
+        return headers.map((header) => {
+            return <th className={isMobile ? "myTableHeadersMobile" : "myTableHeaders"}>{header}</th>
         });
     }
 
@@ -69,11 +70,11 @@ class MonthTable extends Component {
         const user = this.state.user;
         const name = row.name;
         const runNo = row.runQuantity;
-        const runDistance = row.runDistance;
-        const runDistanceMile = row.runDistanceMile;
+        const runDistance = isMobile ? row.runDistance.toFixed(1) : row.runDistance;
+        const runDistanceMile = isMobile ? parseFloat(row.runDistanceMile).toFixed(1) : row.runDistanceMile;
         const cycleNo = row.bikeQuantity;
-        const cycleDistance = row.bikeDistance;
-        const cycleDistanceMile = row.bikeDistanceMile;
+        const cycleDistance = isMobile ? row.bikeDistance.toFixed(1) : row.bikeDistance;
+        const cycleDistanceMile = isMobile ? parseFloat(row.bikeDistanceMile).toFixed(1) : row.bikeDistanceMile;
         const percentage = row.totalPercentage;
         const unit = this.state.unit;
 
