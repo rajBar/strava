@@ -47,8 +47,6 @@ class StravaTable extends Component {
         const currentSort = this.state.sort;
         const newDirection = field === currentSort.field ? !currentSort.direction : true;
 
-        console.log(field);
-
         this.setState({
             ...this.state,
             sort: {
