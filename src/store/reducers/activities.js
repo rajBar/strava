@@ -3,6 +3,7 @@ import * as actionTypes from '../actionTypes/activities';
 const initialState = {
     activities: [],
     currentActivityType: 'run',
+    activityUnit: 'km',
     error: null,
 };
 
@@ -21,6 +22,11 @@ const setCurrentActivityType = (state, action) => ({
     currentActivityType: action.payload.activityType,
 });
 
+const setActivityUnit = (state, action) => ({
+    ...state,
+    activityUnit: action.payload.activityUnit,
+})
+
 export default (state = initialState, action) => {
     switch(action.type) {
         case actionTypes.FETCH_ACTIVITIES_SUCCESS:
@@ -29,6 +35,8 @@ export default (state = initialState, action) => {
             return fetchActivitiesFailure(state, action);
         case actionTypes.SET_CURRENT_ACTIVITY_TYPE:
             return setCurrentActivityType(state, action);
+        case actionTypes.SET_ACTIVITY_UNIT:
+            return setActivityUnit(state, action);
         default:
             return state;
     }

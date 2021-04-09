@@ -23,7 +23,6 @@ class StravaTable extends Component {
                 'Activity Time',
                 'Elevation Gain',
             ],
-            unit: "km",
             sort: {
                 field: "date",
                 direction: true
@@ -78,7 +77,7 @@ class StravaTable extends Component {
     }
 
     getRowsData(row, i) {
-        const { currentUser } = this.props;
+        const { currentUser, activityUnit } = this.props;
         const name = row.name;
         const runNo = row.runQuantity;
         const runDistance = row.runDistance;
@@ -86,35 +85,20 @@ class StravaTable extends Component {
         const cycleNo = row.bikeQuantity;
         const cycleDistance = row.bikeDistance;
         const cycleDistanceMile = row.bikeDistanceMile;
-        const unit = this.state.unit;
 
         return (
             <tr className={currentUser === name ? "selectedRow" : "selectableRow"} onClick={() => this.setUser(name)}>
                 <td key={i} className="myTableContents"><Link className="hidden-link" to={`/home/${name}`}>{name}</Link></td>
                 <td key={i} className="myTableContents">{runNo}</td>
-                <td key={i} className="myTableContents">{unit === "km" ? runDistance + "km" : runDistanceMile + "miles"}</td>
+                <td key={i} className="myTableContents">{activityUnit === "km" ? runDistance + "km" : runDistanceMile + "miles"}</td>
                 <td key={i} className="myTableContents">{cycleNo}</td>
-                <td key={i} className="myTableContents">{unit === "km" ? cycleDistance + "km" : cycleDistanceMile + "miles"}</td>
+                <td key={i} className="myTableContents">{activityUnit === "km" ? cycleDistance + "km" : cycleDistanceMile + "miles"}</td>
             </tr>
         )
     }
 
-    setActivity(activity){
-        this.setState({
-            ...this.state,
-            currentActivity: activity,
-        })
-    }
-
-    setUnit(unit){
-        this.setState({
-            ...this.state,
-            unit: unit,
-        })
-    }
-
     detailedRows(rows) {
-        const { currentUser, currentActivityType, setCurrentActivityType } = this.props;
+        const { currentUser, currentActivityType, setCurrentActivityType, activityUnit } = this.props;
         const userNames = this.props.userNames;
 
         let userRows;
@@ -136,7 +120,7 @@ class StravaTable extends Component {
 
                     {rows.length > 0 ?
                         (<div>
-                            <StravaChart activity={currentActivityType} rows={rows} unit={this.state.unit} />
+                            <StravaChart activity={currentActivityType} rows={rows} unit={activityUnit} />
 
                             <table className="myTableTwo">
                                 <thead>
@@ -144,15 +128,14 @@ class StravaTable extends Component {
                                 </thead>
                                 <tbody>
                                     {rows.map(row => {
-                                        const unit = this.state.unit;
-                                        const singleUnit = unit === "km" ? "km" : "mile";
-                                        const speedUnit = unit === "km" ? "k" : "m";
+                                        const singleUnit = activityUnit === "km" ? "km" : "mile";
+                                        const speedUnit = activityUnit === "km" ? "k" : "m";
                                         return (
                                             <tr>
                                                 <td>{row.date}</td>
                                                 <td>{row.activity}</td>
-                                                <td>{unit === "km" ? row.distance + " km" : row.distanceMile + " miles"}</td>
-                                                <td>{unit === "km" ? row.averageSpeed : row.averageSpeedMile} {currentActivityType === "run" ? "min/" + singleUnit : speedUnit + "ph"}</td>
+                                                <td>{activityUnit === "km" ? row.distance + " km" : row.distanceMile + " miles"}</td>
+                                                <td>{activityUnit === "km" ? row.averageSpeed : row.averageSpeedMile} {currentActivityType === "run" ? "min/" + singleUnit : speedUnit + "ph"}</td>
                                                 <td>{row.movingTime} min</td>
                                                 <td>{row.elevationGain} m</td>
                                             </tr>
@@ -168,7 +151,7 @@ class StravaTable extends Component {
     }
 
     render() {
-        let { allRows, orderedRows } = this.props;
+        let { allRows, orderedRows, activityUnit, setActivityUnit } = this.props;
         let sort = this.state.sort;
 
         const currentURL = window.location.href;
@@ -219,8 +202,8 @@ class StravaTable extends Component {
 
         return (
             <div>
-                <button className={this.state.unit === "km" ? "selectedButton" : "nonSelectedButton"} onClick={() => this.setUnit("km")}>Km</button>
-                <button className={this.state.unit === "miles" ? "selectedButton" : "nonSelectedButton"} onClick={() => this.setUnit("miles")}>Miles</button>
+                <button className={activityUnit === "km" ? "selectedButton" : "nonSelectedButton"} onClick={() => setActivityUnit("km")}>Km</button>
+                <button className={activityUnit === "miles" ? "selectedButton" : "nonSelectedButton"} onClick={() => setActivityUnit("miles")}>Miles</button>
 
                 <table className="myTable">
                     <thead>

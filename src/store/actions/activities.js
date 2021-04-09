@@ -18,3 +18,8 @@ export const setCurrentActivityType = activityType => ({
     type: actionTypes.SET_CURRENT_ACTIVITY_TYPE,
     payload: { activityType },
 });
+
+export const setActivityUnit = activityUnit => ({
+    type: actionTypes.SET_ACTIVITY_UNIT,
+    payload: { activityUnit },
+})

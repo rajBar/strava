@@ -5,6 +5,8 @@ const selectActivities = state => state.activities.activities;
 
 export const selectCurrentActivityType = state => state.activities.currentActivityType;
 
+export const selectActivityUnit = state => state.activities.activityUnit;
+
 const getAllKm = (accumulator, a) => {
     return Math.round(accumulator + a.distance);
 }
