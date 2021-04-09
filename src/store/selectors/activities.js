@@ -3,6 +3,8 @@ import {selectUsers} from "./users";
 
 const selectActivities = state => state.activities.activities;
 
+export const selectCurrentActivityType = state => state.activities.currentActivityType;
+
 const getAllKm = (accumulator, a) => {
     return Math.round(accumulator + a.distance);
 }

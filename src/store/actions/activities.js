@@ -13,3 +13,8 @@ export const fetchActivitiesFailure = error => ({
     type: actionTypes.FETCH_ACTIVITIES_FAILURE,
     payload: { error },
 });
+
+export const setCurrentActivityType = activityType => ({
+    type: actionTypes.SET_CURRENT_ACTIVITY_TYPE,
+    payload: { activityType },
+});
