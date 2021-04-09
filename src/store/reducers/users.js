@@ -2,6 +2,7 @@ import * as actionTypes from '../actionTypes/users';
 
 const initialState = {
     users: [],
+    currentUser: "",
     error: null,
 };
 
@@ -15,6 +16,11 @@ const fetchUsersFailure = (state, action) => ({
     error: action.payload.error,
 });
 
+const setCurrentUser = (state, action) => ({
+    ...state,
+    currentUser: action.payload.user,
+});
+
 
 export default (state = initialState, action) => {
     switch(action.type) {
@@ -22,6 +28,8 @@ export default (state = initialState, action) => {
             return fetchUsersSuccess(state, action);
         case actionTypes.FETCH_USERS_FAILURE:
             return fetchUsersFailure(state, action);
+        case actionTypes.SET_CURRENT_USER:
+            return setCurrentUser(state, action);
         default:
             return state;
     }

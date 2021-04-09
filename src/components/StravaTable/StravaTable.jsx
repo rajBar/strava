@@ -24,7 +24,6 @@ class StravaTable extends Component {
                 'Elevation Gain',
             ],
             currentActivity: "run",
-            user: "",
             unit: "km",
             sort: {
                 field: "date",
@@ -57,17 +56,15 @@ class StravaTable extends Component {
     }
 
     singleSetUser(user) {
-        const currentUser = this.state.user;
+        const { currentUser, setCurrentUser } = this.props;
 
         if (user !== currentUser) {
-            this.setState({
-                ...this.state,
-                user: user,
-            });
+            setCurrentUser(user);
         }
     }
 
     setUser(selectedUser) {
+        const { currentUser, setCurrentUser } = this.props;
         const currentURL = window.location.href;
         const urlArr = currentURL.split('/');
         const name = urlArr[urlArr.length - 1];
@@ -76,17 +73,13 @@ class StravaTable extends Component {
             window.location = window.location.href.replace(name, '');
         }
 
-        const currentAthlete = this.state.user;
-        const athlete = currentAthlete === selectedUser ? "" : selectedUser;
+        const athlete = currentUser === selectedUser ? "" : selectedUser;
 
-        this.setState({
-            ...this.state,
-            user: athlete,
-        });
+        setCurrentUser(athlete);
     }
 
     getRowsData(row, i) {
-        const user = this.state.user;
+        const { currentUser } = this.props;
         const name = row.name;
         const runNo = row.runQuantity;
         const runDistance = row.runDistance;
@@ -97,7 +90,7 @@ class StravaTable extends Component {
         const unit = this.state.unit;
 
         return (
-            <tr className={user === name ? "selectedRow" : "selectableRow"} onClick={() => this.setUser(name)}>
+            <tr className={currentUser === name ? "selectedRow" : "selectableRow"} onClick={() => this.setUser(name)}>
                 <td key={i} className="myTableContents"><Link className="hidden-link" to={`/home/${name}`}>{name}</Link></td>
                 <td key={i} className="myTableContents">{runNo}</td>
                 <td key={i} className="myTableContents">{unit === "km" ? runDistance + "km" : runDistanceMile + "miles"}</td>
@@ -122,17 +115,17 @@ class StravaTable extends Component {
     }
 
     detailedRows(rows) {
-        const user = this.state.user;
+        const { currentUser } = this.props;
         const userNames = this.props.userNames;
 
         let userRows;
         for (let i=0; i < rows.length; i++) {
-            if (rows[i].name == user) {
+            if (rows[i].name == currentUser) {
                 userRows = rows[i];
             }
         }
 
-        if (!userNames.includes(user)) {
+        if (!userNames.includes(currentUser)) {
             return <br />;
         } else {
             const rows = this.state.currentActivity === "run" ? userRows.allRuns : userRows.allCycles;
@@ -168,7 +161,7 @@ class StravaTable extends Component {
                                     })}
                                 </tbody>
                             </table>
-                        </div>) : <h6 style={{paddingTop: '20px'}}>{this.state.user} is yet to {this.state.currentActivity}</h6>
+                        </div>) : <h6 style={{paddingTop: '20px'}}>{currentUser} is yet to {this.state.currentActivity}</h6>
                     }
                 </div>
             );

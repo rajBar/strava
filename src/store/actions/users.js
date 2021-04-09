@@ -13,3 +13,8 @@ export const fetchUsersFailure = error => ({
     type: actionTypes.FETCH_USERS_FAILURE,
     payload: { error },
 });
+
+export const setCurrentUser = user => ({
+        type: actionTypes.SET_CURRENT_USER,
+        payload: { user },
+});
