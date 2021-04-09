@@ -1,1 +1,2 @@
-export * from './usersAndActivities';
+export * from './users';
+export * from './activities';

@@ -1,10 +1,7 @@
 import _ from "lodash";
+import {selectUsers} from "./users";
 
-export const selectUserNames = state => state.usersAndActivities.users.map(user => user.name);
-
-const selectUsers = state => state.usersAndActivities.users;
-const selectActivities = state => state.usersAndActivities.activities;
-
+const selectActivities = state => state.activities.activities;
 
 const getAllKm = (accumulator, a) => {
     return Math.round(accumulator + a.distance);

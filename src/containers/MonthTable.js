@@ -1,6 +1,7 @@
 import { connect } from 'react-redux';
 import MonthTable from "../components/MonthTable/MonthTable";
-import { selectUserNames, selectFormattedActivitiesForCurrentYear } from "../store/selectors/usersAndActivities";
+import { selectUserNames } from "../store/selectors/users";
+import { selectFormattedActivitiesForCurrentYear } from "../store/selectors/activities";
 
 const mapStateToProps = state => ({
     allRows: selectFormattedActivitiesForCurrentYear(state),
