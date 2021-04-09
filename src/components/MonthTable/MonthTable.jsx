@@ -3,7 +3,7 @@ import {Link} from "react-router-dom";
 import {isMobile} from 'react-device-detect';
 import './MonthTable-style.css';
 import StravaChart from "../../containers/StravaChart";
-import {COMPETITIONDISTANCE, DATE, THISMONTH} from "../../utils/consts";
+import {COMPETITION_DISTANCE, DATE, THIS_MONTH} from "../../utils/consts";
 
 class MonthTable extends Component {
     constructor(props) {
@@ -173,9 +173,9 @@ class MonthTable extends Component {
 
         return (
             <div>
-                <h4>Jan - {THISMONTH} Competition</h4>
-                <h6>Run {COMPETITIONDISTANCE.run * monthIndex} km  &  Cycle {COMPETITIONDISTANCE.cycle * monthIndex} km</h6>
-                <p style={{fontSize: "11px", padding: 0}}>({COMPETITIONDISTANCE.run} km & {COMPETITIONDISTANCE.cycle} km a month)</p>
+                <h4>Jan - {THIS_MONTH} Competition</h4>
+                <h6>Run {COMPETITION_DISTANCE.run * monthIndex} km  &  Cycle {COMPETITION_DISTANCE.cycle * monthIndex} km</h6>
+                <p style={{fontSize: "11px", padding: 0}}>({COMPETITION_DISTANCE.run} km & {COMPETITION_DISTANCE.cycle} km a month)</p>
                 <button className={this.state.unit === "km" ? "selectedButton" : "nonSelectedButton"} onClick={() => this.setUnit("km")}>Km</button>
                 <button className={this.state.unit === "miles" ? "selectedButton" : "nonSelectedButton"} onClick={() => this.setUnit("miles")}>Miles</button>
 
