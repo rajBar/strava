@@ -38,9 +38,7 @@ class StravaChart extends Component {
         const minute = parseInt(speedSplit[0]);
         const second = parseInt(speedSplit[1]);
 
-        const rowDate = new Date(2000, 0, 1, 1, minute, second, 0);
-
-        return rowDate;
+        return new Date(2000, 0, 1, 1, minute, second, 0);
     }
 
     getDate(date) {
@@ -49,9 +47,7 @@ class StravaChart extends Component {
         const month = parseInt(dateSplit[1]) - 1;
         const year = parseInt(dateSplit[2]) + 2000;
 
-        const newDate = new Date(year, month, day);
-
-        return newDate;
+        return new Date(year, month, day);
     }
 
     getSegK(distance, activity) {
@@ -62,20 +58,16 @@ class StravaChart extends Component {
         const ceilingFive = Math.ceil(newDistance / segment) * segment;
         const floorFive = ceilingFive - segment;
 
-        const fiveKSeg = floorFive + "k - " + ceilingFive + "k";
-
-        return fiveKSeg;
+        return floorFive + "k - " + ceilingFive + "k";
     }
 
     getThreeM(distance) {
         const newDistance = parseFloat(distance);
 
-        const ceilingFive = Math.ceil(newDistance / 3) * 3;
-        const floorFive = ceilingFive - 3;
+        const ceilingThree = Math.ceil(newDistance / 3) * 3;
+        const floorThree = ceilingThree - 3;
 
-        const fiveKSeg = floorFive + "m - " + ceilingFive + "m";
-
-        return fiveKSeg;
+        return floorThree + "m - " + ceilingThree + "m";
     }
 
     parseData(rows, activity, unit) {
@@ -105,7 +97,6 @@ class StravaChart extends Component {
 
     render() {
         const {currentActivityType, rows, activityUnit} = this.props;
-        // const orderedRows = [].concat(rows).reverse();
         const data = this.parseData(rows, currentActivityType, activityUnit);
 
         const options = currentActivityType ? this.parseOptions(currentActivityType, activityUnit) : [];
