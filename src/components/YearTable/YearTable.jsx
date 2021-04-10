@@ -1,11 +1,11 @@
 import React, {Component} from 'react';
 import {Link} from "react-router-dom";
 import {isMobile} from 'react-device-detect';
-import './MonthTable-style.css';
+import './YearTable-style.css';
 import StravaChart from "../../containers/StravaChart";
 import {COMPETITION_DISTANCE, DATE, THIS_MONTH} from "../../utils/consts";
 
-class MonthTable extends Component {
+class YearTable extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -161,4 +161,4 @@ class MonthTable extends Component {
     }
 }
 
-export default MonthTable;
+export default YearTable;

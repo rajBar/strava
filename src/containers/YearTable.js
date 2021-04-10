@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import MonthTable from "../components/MonthTable/MonthTable";
+import YearTable from "../components/YearTable/YearTable";
 import {selectCurrentUser, selectUserNames} from "../store/selectors/users";
 import {
     selectActivityUnit,
@@ -24,4 +24,4 @@ const mapDispatchToProps = dispatch => ({
     setActivityUnit: activityUnit => dispatch(actions.setActivityUnit(activityUnit)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(MonthTable);
+export default connect(mapStateToProps, mapDispatchToProps)(YearTable);

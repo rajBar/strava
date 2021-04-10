@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { HashRouter as Router, Link, Route, Redirect } from "react-router-dom";
 import StravaTable from "../../containers/StravaTable";
-import MonthTable from "../../containers/MonthTable";
+import YearTable from "../../containers/YearTable";
 import './Home-style.css';
 import {DATE} from "../../utils/consts";
 
@@ -50,7 +50,7 @@ class Home extends Component {
                     )}/>
 
                     <Route path={'/strava-competition'} render={() => (
-                        <MonthTable />
+                        <YearTable />
                     )} />
                 </Router>
             </div>
