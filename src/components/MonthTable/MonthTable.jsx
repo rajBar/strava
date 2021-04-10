@@ -95,7 +95,7 @@ class MonthTable extends Component {
 
                     {activityRows.length > 0 ?
                         (<div>
-                            <StravaChart rows={activityRows} />
+                            <StravaChart currentYear={true} />
 
                             <table className="myTableTwo">
                                 <thead>

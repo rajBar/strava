@@ -1,6 +1,7 @@
 import _ from "lodash";
 import {selectCurrentUser, selectUsers} from "./users";
 import {COMPETITION_DISTANCE} from "../../utils/consts";
+import activities from "../reducers/activities";
 
 const selectActivities = state => state.activities.activities;
 
@@ -127,6 +128,13 @@ export const selectFormattedUserActivity = state => {
     return _.find(formattedActivities, userActivity => userActivity.name === currentUser);
 }
 
+export const selectFormattedUserSpecificActivity = state => {
+    const userActivity = selectFormattedUserActivity(state);
+    const currentActivityType = selectCurrentActivityType(state);
+
+    return currentActivityType === "run" ? userActivity.allRuns : userActivity.allCycles;
+}
+
 export const selectFormattedActivitiesForCurrentYear = state => {
     const activities = selectActivities(state);
     const users = selectUsers(state);
@@ -148,3 +156,93 @@ export const selectFormattedUserActivityForCurrentYear = state => {
 
     return _.find(formattedActivities, userActivity => userActivity.name === currentUser);
 };
+
+export const selectFormattedUserSpecificActivityCurrentYear = state => {
+    const userActivity = selectFormattedUserActivityForCurrentYear(state);
+    const currentActivityType = selectCurrentActivityType(state);
+
+    return currentActivityType === "run" ? userActivity.allRuns : userActivity.allCycles;
+}
+
+
+const formatSpeed = (speed) => {
+    const speedSplit = speed.toString().split(".");
+    const minute = parseInt(speedSplit[0]);
+    const second = parseInt(speedSplit[1]);
+
+    return new Date(2000, 0, 1, 1, minute, second, 0);
+}
+
+const getDate = (date) => {
+    const dateSplit = date.split("/");
+    const day = parseInt(dateSplit[0]);
+    const month = parseInt(dateSplit[1]) - 1;
+    const year = parseInt(dateSplit[2]) + 2000;
+
+    return new Date(year, month, day);
+}
+
+const getSegK = (distance, activity) => {
+    const newDistance = parseFloat(distance);
+
+    const segment = activity === "run" ? 2.5 : 5;
+
+    const ceilingFive = Math.ceil(newDistance / segment) * segment;
+    const floorFive = ceilingFive - segment;
+
+    return floorFive + "k - " + ceilingFive + "k";
+}
+
+const getThreeM = (distance) => {
+    const newDistance = parseFloat(distance);
+
+    const ceilingThree = Math.ceil(newDistance / 3) * 3;
+    const floorThree = ceilingThree - 3;
+
+    return floorThree + "m - " + ceilingThree + "m";
+}
+
+const parseData = (rows, activity, unit) => {
+    const data = [];
+    const whatSpeed = activity === "run" ? "N/A" : "Speed (km/h)";
+    const segment = activity === "run" ? "2.5k" : "5k";
+    const unitRange = unit === "km" ? segment : "3m";
+    const header = ["ID", "Date", whatSpeed, unitRange, "Distance"];
+    data.push(header);
+
+    const orderedRows = _.sortBy(rows, o => parseFloat(o.distance));
+
+    orderedRows.forEach((row) => {
+        const averageSpeed = unit === "km" ? row.averageSpeed : row.averageSpeedMile;
+        const distance = unit === "km" ? row.distance : row.distanceMile;
+        const unitRange = unit === "km" ? getSegK(distance, activity) : getThreeM(distance);
+        let speed = parseFloat(averageSpeed);
+        if (activity === "run") {
+            speed = formatSpeed(averageSpeed);
+        }
+        const dataRow =[averageSpeed, getDate(row.date), speed, unitRange, parseFloat(distance)];
+        data.push(dataRow);
+    });
+
+    return data;
+}
+
+export const selectChartData = state => {
+    const currentUserActivity = selectFormattedUserSpecificActivity(state);
+    const currentUnit = selectActivityUnit(state);
+    const currentActivity = selectCurrentActivityType(state);
+
+    const chartData = parseData(currentUserActivity, currentActivity, currentUnit);
+
+    return chartData;
+}
+
+export const selectChartDataCurrentYear = state => {
+    const currentUserActivity = selectFormattedUserSpecificActivityCurrentYear(state);
+    const currentUnit = selectActivityUnit(state);
+    const currentActivity = selectCurrentActivityType(state);
+
+    const chartData = parseData(currentUserActivity, currentActivity, currentUnit);
+
+    return chartData;
+}

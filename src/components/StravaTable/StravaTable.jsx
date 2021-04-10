@@ -108,7 +108,7 @@ class StravaTable extends Component {
 
                     {rows.length > 0 ?
                         (<div>
-                            <StravaChart rows={rows} />
+                            <StravaChart />
 
                             <table className="myTableTwo">
                                 <thead>
