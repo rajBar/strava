@@ -132,7 +132,7 @@ export const selectFormattedUserSpecificActivity = state => {
     const userActivity = selectFormattedUserActivity(state);
     const currentActivityType = selectCurrentActivityType(state);
 
-    return currentActivityType === "run" ? userActivity.allRuns : userActivity.allCycles;
+    return currentActivityType === "run" ? userActivity?.allRuns : userActivity?.allCycles;
 }
 
 export const selectFormattedActivitiesForCurrentYear = state => {
@@ -161,7 +161,7 @@ export const selectFormattedUserSpecificActivityCurrentYear = state => {
     const userActivity = selectFormattedUserActivityForCurrentYear(state);
     const currentActivityType = selectCurrentActivityType(state);
 
-    return currentActivityType === "run" ? userActivity.allRuns : userActivity.allCycles;
+    return currentActivityType === "run" ? userActivity?.allRuns : userActivity?.allCycles;
 }
 
 

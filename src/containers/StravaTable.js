@@ -1,12 +1,17 @@
 import { connect } from 'react-redux';
 import StravaTable from "../components/StravaTable/StravaTable";
 import {selectCurrentUser, selectUserNames} from "../store/selectors/users";
-import {selectActivityUnit, selectCurrentActivityType, selectFormattedActivities, selectFormattedUserActivity} from "../store/selectors/activities";
+import {
+    selectActivityUnit,
+    selectCurrentActivityType,
+    selectFormattedActivities,
+    selectFormattedUserSpecificActivity
+} from "../store/selectors/activities";
 import * as actions from '../store/actions';
 
 const mapStateToProps = state => ({
     allRows: selectFormattedActivities(state),
-    formattedUserActivity: selectFormattedUserActivity(state),
+    currentUserCurrentActivityData: selectFormattedUserSpecificActivity(state),
     userNames: selectUserNames(state),
     currentUser: selectCurrentUser(state),
     currentActivityType: selectCurrentActivityType(state),

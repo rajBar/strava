@@ -99,14 +99,13 @@ class StravaTable extends Component {
         if (!userNames.includes(currentUser)) {
             return <br />;
         } else {
-            const rows = currentActivityType === "run" ? userRows.allRuns : userRows.allCycles;
             return (
                 <div>
                     <button className={currentActivityType === "run" ? "selectedButton" : "nonSelectedButton"} onClick={() => setCurrentActivityType("run")}>Run</button>
                     <button className={currentActivityType === "cycle" ? "selectedButton" : "nonSelectedButton"} onClick={() => setCurrentActivityType("cycle")}>Cycle</button>
 
 
-                    {rows.length > 0 ?
+                    {userRows.length > 0 ?
                         (<div>
                             <StravaChart />
 
@@ -115,7 +114,7 @@ class StravaTable extends Component {
                                     <tr>{this.getHeader(this.state.tableHeadSecond, "sorting function")}</tr>
                                 </thead>
                                 <tbody>
-                                    {rows.map(row => {
+                                    {userRows.map(row => {
                                         const singleUnit = activityUnit === "km" ? "km" : "mile";
                                         const speedUnit = activityUnit === "km" ? "k" : "m";
                                         return (
@@ -139,44 +138,36 @@ class StravaTable extends Component {
     }
 
     getSortedCurrentUserRows() {
-        const { formattedUserActivity } = this.props
-        let userActivity = {...formattedUserActivity};
+        const { currentUserCurrentActivityData } = this.props
+        let userActivity = currentUserCurrentActivityData ? [...currentUserCurrentActivityData] : [];
         const { sort } = this.state;
 
 
         if (sort.field === "Date") {
-            userActivity = {...formattedUserActivity};
+            userActivity = [...currentUserCurrentActivityData];
         } else if (sort.field === "Distance") {
             if (sort.direction) {
-                userActivity.allRuns = _.orderBy(userActivity.allRuns, function (o) { return Number(o.distance); }, 'asc');
-                userActivity.allCycles = _.orderBy(userActivity.allCycles, function (o) { return Number(o.distance); }, 'asc');
+                userActivity = _.orderBy(userActivity, function (o) { return Number(o.distance); }, 'asc');
             } else {
-                userActivity.allRuns = _.orderBy(userActivity.allRuns, function (o) { return Number(o.distance); }, 'desc');
-                userActivity.allCycles = _.orderBy(userActivity.allCycles, function (o) { return Number(o.distance); }, 'desc');
+                userActivity = _.orderBy(userActivity, function (o) { return Number(o.distance); }, 'desc');
             }
         } else if (sort.field === "Average Speed") {
             if (sort.direction) {
-                userActivity.allRuns = _.orderBy(userActivity.allRuns, o => { return Number(o.averageSpeed) }, 'asc');
-                userActivity.allCycles = _.orderBy(userActivity.allCycles, o => { return Number(o.averageSpeed) }, 'asc');
+                userActivity = _.orderBy(userActivity, o => { return Number(o.averageSpeed) }, 'asc');
             } else {
-                userActivity.allRuns = _.orderBy(userActivity.allRuns, o => { return Number(o.averageSpeed) }, 'desc');
-                userActivity.allCycles = _.orderBy(userActivity.allCycles, o => { return Number(o.averageSpeed) }, 'desc');
+                userActivity = _.orderBy(userActivity, o => { return Number(o.averageSpeed) }, 'desc');
             }
         } else if (sort.field === "Activity Time") {
             if (sort.direction) {
-                userActivity.allRuns = _.orderBy(userActivity.allRuns, 'movingTime', 'asc');
-                userActivity.allCycles = _.orderBy(userActivity.allCycles, 'movingTime', 'asc');
+                userActivity = _.orderBy(userActivity, 'movingTime', 'asc');
             } else {
-                userActivity.allRuns = _.orderBy(userActivity.allRuns, 'movingTime', 'desc');
-                userActivity.allCycles = _.orderBy(userActivity.allCycles, 'movingTime', 'desc');
+                userActivity = _.orderBy(userActivity, 'movingTime', 'desc');
             }
         } else if (sort.field === "Elevation Gain") {
             if (sort.direction) {
-                userActivity.allRuns = _.orderBy(userActivity.allRuns, 'elevationGain', 'asc');
-                userActivity.allCycles = _.orderBy(userActivity.allCycles, 'elevationGain', 'asc');
+                userActivity = _.orderBy(userActivity, 'elevationGain', 'asc');
             } else {
-                userActivity.allRuns = _.orderBy(userActivity.allRuns, 'elevationGain', 'desc');
-                userActivity.allCycles = _.orderBy(userActivity.allCycles, 'elevationGain', 'desc');
+                userActivity = _.orderBy(userActivity, 'elevationGain', 'desc');
             }
         }
 

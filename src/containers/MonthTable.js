@@ -5,13 +5,13 @@ import {
     selectActivityUnit,
     selectCurrentActivityType,
     selectFormattedActivitiesForCurrentYear,
-    selectFormattedUserActivityForCurrentYear
+    selectFormattedUserSpecificActivityCurrentYear,
 } from "../store/selectors/activities";
 import * as actions from "../store/actions";
 
 const mapStateToProps = state => ({
     allRows: selectFormattedActivitiesForCurrentYear(state),
-    formattedUserActivityForCurrentYear: selectFormattedUserActivityForCurrentYear(state),
+    formattedUserSpecificActivityForCurrentYear: selectFormattedUserSpecificActivityCurrentYear(state),
     userNames: selectUserNames(state),
     currentUser: selectCurrentUser(state),
     currentActivityType: selectCurrentActivityType(state),

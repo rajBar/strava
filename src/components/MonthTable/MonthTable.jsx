@@ -82,18 +82,17 @@ class MonthTable extends Component {
     }
 
     detailedRows() {
-        const { currentUser, currentActivityType, setCurrentActivityType, activityUnit, formattedUserActivityForCurrentYear } = this.props;
+        const { currentUser, currentActivityType, setCurrentActivityType, activityUnit, formattedUserSpecificActivityForCurrentYear } = this.props;
 
         if (currentUser === "") {
             return <br />;
         } else {
-            const activityRows = currentActivityType === "run" ? formattedUserActivityForCurrentYear.allRuns : formattedUserActivityForCurrentYear.allCycles;
             return (
                 <div>
                     <button className={currentActivityType === "run" ? "selectedButton" : "nonSelectedButton"} onClick={() => setCurrentActivityType("run")}>Run</button>
                     <button className={currentActivityType === "cycle" ? "selectedButton" : "nonSelectedButton"} onClick={() => setCurrentActivityType("cycle")}>Cycle</button>
 
-                    {activityRows.length > 0 ?
+                    {formattedUserSpecificActivityForCurrentYear.length > 0 ?
                         (<div>
                             <StravaChart currentYear={true} />
 
@@ -102,7 +101,7 @@ class MonthTable extends Component {
                                 <tr>{this.getHeader(this.state.tableHeadSecond)}</tr>
                                 </thead>
                                 <tbody>
-                                {activityRows.map(row => {
+                                {formattedUserSpecificActivityForCurrentYear.map(row => {
                                     const singleUnit = activityUnit === "km" ? "km" : "mile";
                                     const speedUnit = activityUnit === "km" ? "k" : "m";
                                     return (
@@ -118,7 +117,7 @@ class MonthTable extends Component {
                                 })}
                                 </tbody>
                             </table>
-                        </div>) : <h6 style={{paddingTop: '20px'}}>{currentUser} is yet to {currentActivityType} in {this.props.thisMonth}</h6>
+                        </div>) : <h6 style={{paddingTop: '20px'}}>{currentUser} is yet to {currentActivityType} this year</h6>
                     }
                 </div>
             );
