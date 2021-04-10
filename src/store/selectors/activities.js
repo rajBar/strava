@@ -1,5 +1,6 @@
 import _ from "lodash";
-import {selectUsers} from "./users";
+import {selectCurrentUser, selectUsers} from "./users";
+import {COMPETITION_DISTANCE} from "../../utils/consts";
 
 const selectActivities = state => state.activities.activities;
 
@@ -90,10 +91,8 @@ const createUserObj = (athleteID, name, month, activities) => {
 const calculateTotalPercent = (user) => {
     const date = new Date();
     const monthIndex = date.getMonth() + 1;
-    // const competitionRun = this.state.competitionDistance.run * monthIndex;
-    const competitionRun = 30 * monthIndex;
-    // const competitionCycle = this.state.competitionDistance.cycle * monthIndex;
-    const competitionCycle = 60 * monthIndex;
+    const competitionRun = COMPETITION_DISTANCE.run * monthIndex;
+    const competitionCycle = COMPETITION_DISTANCE.cycle * monthIndex;
     const runDistance = user.runDistance;
     const cycleDistance = user.bikeDistance;
 
@@ -116,12 +115,17 @@ export const selectFormattedActivities = state => {
     const activities = selectActivities(state);
     const users = selectUsers(state);
 
-    const formattedActivities = users.map(user => {
+    return users.map(user => {
         return createUserObj(user.athleteID, user.name, null, activities)
     });
-
-    return formattedActivities;
 };
+
+export const selectFormattedUserActivity = state => {
+    const formattedActivities = selectFormattedActivities(state);
+    const currentUser = selectCurrentUser(state);
+
+    return _.find(formattedActivities, userActivity => userActivity.name === currentUser);
+}
 
 export const selectFormattedActivitiesForCurrentYear = state => {
     const activities = selectActivities(state);
@@ -135,8 +139,12 @@ export const selectFormattedActivitiesForCurrentYear = state => {
         return calculateTotalPercent(user);
     })
 
-    const orderedActivities = _.orderBy(formattedActivitiesPercentage, ['totalPercentage'], ['desc']);
+    return _.orderBy(formattedActivitiesPercentage, ['totalPercentage'], ['desc']);
+};
 
+export const selectFormattedUserActivityForCurrentYear = state => {
+    const formattedActivities = selectFormattedActivitiesForCurrentYear(state);
+    const currentUser = selectCurrentUser(state);
 
-    return orderedActivities;
+    return _.find(formattedActivities, userActivity => userActivity.name === currentUser);
 };

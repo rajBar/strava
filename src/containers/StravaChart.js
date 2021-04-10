@@ -1,7 +1,11 @@
 import { connect } from 'react-redux';
 import StravaChart from "../components/StravaChart/StravaChart";
+import {selectActivityUnit, selectCurrentActivityType} from "../store/selectors/activities";
 
-const mapStateToProps = state => ({});
+const mapStateToProps = state => ({
+    currentActivityType: selectCurrentActivityType(state),
+    activityUnit: selectActivityUnit(state),
+});
 
 const mapDispatchToProps = dispatch => ({});
 

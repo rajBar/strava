@@ -25,7 +25,6 @@ class MonthTable extends Component {
                 'Activity Time',
                 'Elevation Gain',
             ],
-            unit: "km",
         };
     }
 
@@ -84,35 +83,28 @@ class MonthTable extends Component {
         )
     }
 
-    detailedRows(rows) {
-        const { currentUser, currentActivityType, setCurrentActivityType, activityUnit } = this.props;
-
-        let userRows;
-        for (let i=0; i < rows.length; i++) {
-            if (rows[i].name == currentUser) {
-                userRows = rows[i];
-            }
-        }
+    detailedRows() {
+        const { currentUser, currentActivityType, setCurrentActivityType, activityUnit, formattedUserActivityForCurrentYear } = this.props;
 
         if (currentUser === "") {
             return <br />;
         } else {
-            const rows = currentActivityType === "run" ? userRows.allRuns : userRows.allCycles;
+            const activityRows = currentActivityType === "run" ? formattedUserActivityForCurrentYear.allRuns : formattedUserActivityForCurrentYear.allCycles;
             return (
                 <div>
                     <button className={currentActivityType === "run" ? "selectedButton" : "nonSelectedButton"} onClick={() => setCurrentActivityType("run")}>Run</button>
                     <button className={currentActivityType === "cycle" ? "selectedButton" : "nonSelectedButton"} onClick={() => setCurrentActivityType("cycle")}>Cycle</button>
 
-                    {rows.length > 0 ?
+                    {activityRows.length > 0 ?
                         (<div>
-                            <StravaChart activity={currentActivityType} rows={rows} unit={activityUnit}/>
+                            <StravaChart rows={activityRows} />
 
                             <table className="myTableTwo">
                                 <thead>
                                 <tr>{this.getHeader(this.state.tableHeadSecond)}</tr>
                                 </thead>
                                 <tbody>
-                                {rows.map(row => {
+                                {activityRows.map(row => {
                                     const singleUnit = activityUnit === "km" ? "km" : "mile";
                                     const speedUnit = activityUnit === "km" ? "k" : "m";
                                     return (
@@ -166,7 +158,7 @@ class MonthTable extends Component {
                     </tbody>
                 </table>
 
-                {this.detailedRows(allRows)}
+                {this.detailedRows()}
             </div>
         )
     }

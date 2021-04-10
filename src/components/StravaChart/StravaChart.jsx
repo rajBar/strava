@@ -104,11 +104,11 @@ class StravaChart extends Component {
     }
 
     render() {
-        const {activity, rows, unit} = this.props;
-        const orderedRows = [].concat(rows).reverse();
-        const data = this.parseData(orderedRows, activity, unit);
+        const {currentActivityType, rows, activityUnit} = this.props;
+        // const orderedRows = [].concat(rows).reverse();
+        const data = this.parseData(rows, currentActivityType, activityUnit);
 
-        const options = activity ? this.parseOptions(activity, unit) : [];
+        const options = currentActivityType ? this.parseOptions(currentActivityType, activityUnit) : [];
 
         return (
             <div className="App">
