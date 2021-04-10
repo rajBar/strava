@@ -6,7 +6,6 @@ import * as actions from '../store/actions';
 
 const mapStateToProps = state => ({
     allRows: selectFormattedActivities(state),
-    orderedRows: selectFormattedActivities(state),
     formattedUserActivity: selectFormattedUserActivity(state),
     userNames: selectUserNames(state),
     currentUser: selectCurrentUser(state),

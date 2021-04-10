@@ -60,10 +60,8 @@ class MonthTable extends Component {
     getRowsData(row, i) {
         const { currentUser, activityUnit } = this.props;
         const name = row.name;
-        const runNo = row.runQuantity;
         const runDistance = isMobile ? row.runDistance.toFixed(1) : row.runDistance;
         const runDistanceMile = isMobile ? parseFloat(row.runDistanceMile).toFixed(1) : row.runDistanceMile;
-        const cycleNo = row.bikeQuantity;
         const cycleDistance = isMobile ? row.bikeDistance.toFixed(1) : row.bikeDistance;
         const cycleDistanceMile = isMobile ? parseFloat(row.bikeDistanceMile).toFixed(1) : row.bikeDistanceMile;
         const percentage = row.totalPercentage;
@@ -74,9 +72,9 @@ class MonthTable extends Component {
                     <td key={i} className="myTableContents-complete">{name} (completed)</td>
                     : <td key={i} className="myTableContents"><Link className="hidden-link" to={`/strava-competition/${name}`}>{name}</Link></td>
                 }
-                <td key={i} className="myTableContents">{runNo}</td>
+                <td key={i} className="myTableContents">{row.runQuantity}</td>
                 <td key={i} className="myTableContents">{activityUnit === "km" ? runDistance + "km" : runDistanceMile + "miles"}</td>
-                <td key={i} className="myTableContents">{cycleNo}</td>
+                <td key={i} className="myTableContents">{row.bikeQuantity}</td>
                 <td key={i} className="myTableContents">{activityUnit === "km" ? cycleDistance + "km" : cycleDistanceMile + "miles"}</td>
                 <td key={i} className="myTableContents">{percentage.toFixed(2)}%</td>
             </tr>

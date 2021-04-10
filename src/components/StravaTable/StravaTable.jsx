@@ -79,34 +79,22 @@ class StravaTable extends Component {
     getRowsData(row, i) {
         const { currentUser, activityUnit } = this.props;
         const name = row.name;
-        const runNo = row.runQuantity;
-        const runDistance = row.runDistance;
-        const runDistanceMile = row.runDistanceMile;
-        const cycleNo = row.bikeQuantity;
-        const cycleDistance = row.bikeDistance;
-        const cycleDistanceMile = row.bikeDistanceMile;
 
         return (
             <tr className={currentUser === name ? "selectedRow" : "selectableRow"} onClick={() => this.setUser(name)}>
                 <td key={i} className="myTableContents"><Link className="hidden-link" to={`/home/${name}`}>{name}</Link></td>
-                <td key={i} className="myTableContents">{runNo}</td>
-                <td key={i} className="myTableContents">{activityUnit === "km" ? runDistance + "km" : runDistanceMile + "miles"}</td>
-                <td key={i} className="myTableContents">{cycleNo}</td>
-                <td key={i} className="myTableContents">{activityUnit === "km" ? cycleDistance + "km" : cycleDistanceMile + "miles"}</td>
+                <td key={i} className="myTableContents">{row.runQuantity}</td>
+                <td key={i} className="myTableContents">{activityUnit === "km" ? row.runDistance + "km" : row.runDistanceMile + "miles"}</td>
+                <td key={i} className="myTableContents">{row.bikeQuantity}</td>
+                <td key={i} className="myTableContents">{activityUnit === "km" ? row.bikeDistance + "km" : row.bikeDistanceMile + "miles"}</td>
             </tr>
         )
     }
 
-    detailedRows(rows) {
-        const { currentUser, currentActivityType, setCurrentActivityType, activityUnit } = this.props;
-        const userNames = this.props.userNames;
+    detailedRows() {
+        const { currentUser, currentActivityType, setCurrentActivityType, activityUnit, userNames } = this.props;
 
-        let userRows;
-        for (let i=0; i < rows.length; i++) {
-            if (rows[i].name == currentUser) {
-                userRows = rows[i];
-            }
-        }
+        const userRows = this.getSortedCurrentUserRows();
 
         if (!userNames.includes(currentUser)) {
             return <br />;
@@ -150,9 +138,53 @@ class StravaTable extends Component {
         }
     }
 
+    getSortedCurrentUserRows() {
+        const { formattedUserActivity } = this.props
+        let userActivity = {...formattedUserActivity};
+        const { sort } = this.state;
+
+
+        if (sort.field === "Date") {
+            userActivity = {...formattedUserActivity};
+        } else if (sort.field === "Distance") {
+            if (sort.direction) {
+                userActivity.allRuns = _.orderBy(userActivity.allRuns, function (o) { return Number(o.distance); }, 'asc');
+                userActivity.allCycles = _.orderBy(userActivity.allCycles, function (o) { return Number(o.distance); }, 'asc');
+            } else {
+                userActivity.allRuns = _.orderBy(userActivity.allRuns, function (o) { return Number(o.distance); }, 'desc');
+                userActivity.allCycles = _.orderBy(userActivity.allCycles, function (o) { return Number(o.distance); }, 'desc');
+            }
+        } else if (sort.field === "Average Speed") {
+            if (sort.direction) {
+                userActivity.allRuns = _.orderBy(userActivity.allRuns, o => { return Number(o.averageSpeed) }, 'asc');
+                userActivity.allCycles = _.orderBy(userActivity.allCycles, o => { return Number(o.averageSpeed) }, 'asc');
+            } else {
+                userActivity.allRuns = _.orderBy(userActivity.allRuns, o => { return Number(o.averageSpeed) }, 'desc');
+                userActivity.allCycles = _.orderBy(userActivity.allCycles, o => { return Number(o.averageSpeed) }, 'desc');
+            }
+        } else if (sort.field === "Activity Time") {
+            if (sort.direction) {
+                userActivity.allRuns = _.orderBy(userActivity.allRuns, 'movingTime', 'asc');
+                userActivity.allCycles = _.orderBy(userActivity.allCycles, 'movingTime', 'asc');
+            } else {
+                userActivity.allRuns = _.orderBy(userActivity.allRuns, 'movingTime', 'desc');
+                userActivity.allCycles = _.orderBy(userActivity.allCycles, 'movingTime', 'desc');
+            }
+        } else if (sort.field === "Elevation Gain") {
+            if (sort.direction) {
+                userActivity.allRuns = _.orderBy(userActivity.allRuns, 'elevationGain', 'asc');
+                userActivity.allCycles = _.orderBy(userActivity.allCycles, 'elevationGain', 'asc');
+            } else {
+                userActivity.allRuns = _.orderBy(userActivity.allRuns, 'elevationGain', 'desc');
+                userActivity.allCycles = _.orderBy(userActivity.allCycles, 'elevationGain', 'desc');
+            }
+        }
+
+        return userActivity;
+    }
+
     render() {
-        let { allRows, orderedRows, activityUnit, setActivityUnit } = this.props;
-        let sort = this.state.sort;
+        const { allRows, activityUnit, setActivityUnit } = this.props;
 
         const currentURL = window.location.href;
         const urlArr = currentURL.split('/');
@@ -161,44 +193,6 @@ class StravaTable extends Component {
         if (userNames.includes(name)) {
             this.singleSetUser(name);
         }
-
-        allRows.forEach(row => {
-            if (sort.field === "Date") {
-                allRows = [...orderedRows];
-            } else if (sort.field === "Distance") {
-                if (sort.direction) {
-                    row.allRuns = _.orderBy(row.allRuns, function (o) { return Number(o.distance); }, 'asc');
-                    row.allCycles = _.orderBy(row.allCycles, function (o) { return Number(o.distance); }, 'asc');
-                } else {
-                    row.allRuns = _.orderBy(row.allRuns, function (o) { return Number(o.distance); }, 'desc');
-                    row.allCycles = _.orderBy(row.allCycles, function (o) { return Number(o.distance); }, 'desc');
-                }
-            } else if (sort.field === "Average Speed") {
-                if (sort.direction) {
-                    row.allRuns = _.orderBy(row.allRuns, 'averageSpeed', 'asc');
-                    row.allCycles = _.orderBy(row.allCycles, 'averageSpeed', 'asc');
-                } else {
-                    row.allRuns = _.orderBy(row.allRuns, 'averageSpeed', 'desc');
-                    row.allCycles = _.orderBy(row.allCycles, 'averageSpeed', 'desc');
-                }
-            } else if (sort.field === "Activity Time") {
-                if (sort.direction) {
-                    row.allRuns = _.orderBy(row.allRuns, 'movingTime', 'asc');
-                    row.allCycles = _.orderBy(row.allCycles, 'movingTime', 'asc');
-                } else {
-                    row.allRuns = _.orderBy(row.allRuns, 'movingTime', 'desc');
-                    row.allCycles = _.orderBy(row.allCycles, 'movingTime', 'desc');
-                }
-            } else if (sort.field === "Elevation Gain") {
-                if (sort.direction) {
-                    row.allRuns = _.orderBy(row.allRuns, 'elevationGain', 'asc');
-                    row.allCycles = _.orderBy(row.allCycles, 'elevationGain', 'asc');
-                } else {
-                    row.allRuns = _.orderBy(row.allRuns, 'elevationGain', 'desc');
-                    row.allCycles = _.orderBy(row.allCycles, 'elevationGain', 'desc');
-                }
-            }
-        });
 
         return (
             <div>
@@ -216,7 +210,7 @@ class StravaTable extends Component {
                     </tbody>
                 </table>
 
-                {this.detailedRows(allRows)}
+                {this.detailedRows()}
             </div>
         )
     }
