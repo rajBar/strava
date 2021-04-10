@@ -35,10 +35,10 @@ class StravaChart extends Component {
 
     formatSpeed(speed) {
         const speedSplit = speed.toString().split(".");
-        const minute = speedSplit[0];
-        const second = speedSplit[1];
+        const minute = parseInt(speedSplit[0]);
+        const second = parseInt(speedSplit[1]);
 
-        const rowDate = new Date(2000, 0, 1, 1, parseInt(minute), parseInt(second), 0);
+        const rowDate = new Date(2000, 0, 1, 1, minute, second, 0);
 
         return rowDate;
     }
