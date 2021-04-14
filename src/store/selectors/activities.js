@@ -1,93 +1,26 @@
 import _ from "lodash";
-import {selectCurrentUser, selectUsers} from "./users";
+import {selectCurrentUser} from "./users";
 import {COMPETITION_DISTANCE} from "../../utils/consts";
-import activities from "../reducers/activities";
 
-const selectActivities = state => state.activities.activities;
+export const selectActivities = state => state.activities.activities;
 
 export const selectCurrentActivityType = state => state.activities.currentActivityType;
 
 export const selectActivityUnit = state => state.activities.activityUnit;
 
-const getAllKm = (accumulator, a) => {
-    return Math.round(accumulator + a.distance);
+export const selectUserActivity = state => {
+    const formattedActivities = selectActivities(state);
+    const currentUser = selectCurrentUser(state);
+
+    return _.find(formattedActivities, userActivity => userActivity.name === currentUser);
 }
 
-const findAllSpecificActivity = (activityType, athleteID, month, activities) => {
-    const activity = [...activities];
+export const selectUserSpecificActivity = state => {
+    const userActivity = selectUserActivity(state);
+    const currentActivityType = selectCurrentActivityType(state);
 
-    const all = activity.filter(function (element) {
-        return (element.type === activityType) && (element.athlete.id.toString() === athleteID);
-    });
-
-    const monthData = [];
-    if (month) {
-        const date = new Date();
-        all.forEach(a => {
-            const activityDate = new Date(a.start_date);
-            if (date.getFullYear() === activityDate.getFullYear()) {
-                monthData.push(a);
-            }
-        });
-    }
-
-    return month ? monthData : all;
+    return currentActivityType === "run" ? userActivity?.allRuns : userActivity?.allCycles;
 }
-
-const createUserObj = (athleteID, name, month, activities) => {
-    const mileConversion = 0.6214;
-    const userRun = findAllSpecificActivity("Run", athleteID, month, activities);
-    const userTotalRan = userRun.length > 0 ? (userRun.reduce(getAllKm,0) / 1000) : 0;
-    const userBike = findAllSpecificActivity("Ride", athleteID, month, activities);
-    const userTotalBike = userBike.length > 0 ? (userBike.reduce(getAllKm,0) / 1000) : 0;
-    const userObj = {
-        name: name,
-        runQuantity: userRun.length,
-        runDistance: userTotalRan,
-        runDistanceMile: (userTotalRan * mileConversion).toFixed(2),
-        bikeQuantity: userBike.length,
-        bikeDistance: userTotalBike,
-        bikeDistanceMile: (userTotalBike * mileConversion).toFixed(2),
-        allRuns: userRun.map((r, i) => {
-            const dist = r.distance / 1000;
-            const time = r.moving_time / 60;
-            const distance = (r.distance / 1000).toFixed(2)
-            const distanceMile = (dist * mileConversion).toFixed(2)
-            const movingTime = (r.moving_time / 60).toFixed(0);
-            const averageSpeed = dist / (time/60);
-            const oneKM = (1 / averageSpeed) * 60;
-            const floor = Math.floor(oneKM);
-            const decimal = (oneKM - floor) * 0.60;
-            const km = (floor + decimal).toFixed(2);
-            const averageSpeedMiles = (dist * mileConversion) / (time/60);
-            const oneMile = (1 / averageSpeedMiles) * 60;
-            const floorMile = Math.floor(oneMile);
-            const decimalMile = (oneMile - floorMile) * 0.60;
-            const mile = (floorMile + decimalMile).toFixed(2);
-            const day = r.start_date.substr(8,2);
-            const month = r.start_date.substr(5,2);
-            const year = r.start_date.substr(2, 2)
-            const date = day + "/" + month + "/" + year;
-            const elevationGain = r.total_elevation_gain;
-            return {date: date, activity: "Run", distance: distance, distanceMile: distanceMile, movingTime: movingTime, averageSpeed: km, averageSpeedMile: mile, elevationGain: elevationGain};
-        }),
-        allCycles: userBike.map((r, i) => {
-            const distance = (r.distance / 1000).toFixed(2)
-            const distanceMile = (distance * mileConversion).toFixed(2)
-            const movingTime = (r.moving_time / 60).toFixed(0);
-            const averageSpeed = (distance / (movingTime/60)).toFixed(1);
-            const averageSpeedMile = (averageSpeed * mileConversion).toFixed(1);
-            const day = r.start_date.substr(8,2);
-            const month = r.start_date.substr(5,2);
-            const year = r.start_date.substr(2, 2)
-            const date = day + "/" + month + "/" + year;
-            const elevationGain = r.total_elevation_gain;
-            return {date: date, activity: "Cycle", distance: distance, distanceMile: distanceMile, movingTime: movingTime, averageSpeed: averageSpeed, averageSpeedMile: averageSpeedMile, elevationGain: elevationGain};
-        }),
-    };
-
-    return userObj;
-};
 
 const calculateTotalPercent = (user) => {
     const date = new Date();
@@ -104,54 +37,58 @@ const calculateTotalPercent = (user) => {
 
     const totalPercentage =  (runPercentageCapped + cyclePercentageCapped) / 2 === 100 ? (runPercentage + cyclePercentage) / 2 : (runPercentageCapped + cyclePercentageCapped) / 2;
 
-    const newUser = {
+    return {
         ...user,
         totalPercentage: totalPercentage
     };
-
-    return newUser;
 };
 
-export const selectFormattedActivities = state => {
-    const activities = selectActivities(state);
-    const users = selectUsers(state);
+const isThisYear = (date) => {
+    const currentDate = new Date();
+    const activityDate = new Date(date);
 
-    return users.map(user => {
-        return createUserObj(user.athleteID, user.name, null, activities)
-    });
-};
-
-export const selectFormattedUserActivity = state => {
-    const formattedActivities = selectFormattedActivities(state);
-    const currentUser = selectCurrentUser(state);
-
-    return _.find(formattedActivities, userActivity => userActivity.name === currentUser);
-}
-
-export const selectFormattedUserSpecificActivity = state => {
-    const userActivity = selectFormattedUserActivity(state);
-    const currentActivityType = selectCurrentActivityType(state);
-
-    return currentActivityType === "run" ? userActivity?.allRuns : userActivity?.allCycles;
+    return currentDate.getFullYear() === activityDate.getFullYear();
 }
 
 export const selectFormattedActivitiesForCurrentYear = state => {
     const activities = selectActivities(state);
-    const users = selectUsers(state);
-
-    const formattedActivities = users.map(user => {
-        return createUserObj(user.athleteID, user.name, 'yes', activities)
+    const mileConversion = 0.6214;
+    const activitiesCurrentYear = [];
+    activities.forEach(userActivities => {
+        const cycles = _.filter(userActivities.allCycles, cycle => { return isThisYear(cycle.startDate) })
+        const runs = _.filter(userActivities.allRuns, run => { return isThisYear(run.startDate) });
+        const runDistance = runs.reduce((a, b) => a + (parseFloat(b['distance']) || 0), 0);
+        const cycleDistance = cycles.reduce((a, b) => a + (parseFloat(b['distance']) || 0), 0);
+        const newUser = {
+            ...userActivities,
+            allRuns: runs,
+            runDistance: runDistance.toFixed(2),
+            runDistanceMile: (runDistance * mileConversion).toFixed(2),
+            runQuantity: runs.length,
+            allCycles: cycles,
+            bikeDistance: cycleDistance.toFixed(2),
+            bikeDistanceMile: (cycleDistance * mileConversion).toFixed(2),
+            bikeQuantity: cycles.length
+        }
+        activitiesCurrentYear.push(newUser);
     });
 
-    const formattedActivitiesPercentage = formattedActivities.map(user => {
+    return activitiesCurrentYear;
+}
+
+
+export const selectFormattedActivitiesForCurrentYearWithPercentage = state => {
+    const activities = selectFormattedActivitiesForCurrentYear(state);
+
+    const activitiesPercentage = activities.map(user => {
         return calculateTotalPercent(user);
     })
 
-    return _.orderBy(formattedActivitiesPercentage, ['totalPercentage'], ['desc']);
+    return _.orderBy(activitiesPercentage, ['totalPercentage'], ['desc']);
 };
 
 export const selectFormattedUserActivityForCurrentYear = state => {
-    const formattedActivities = selectFormattedActivitiesForCurrentYear(state);
+    const formattedActivities = selectFormattedActivitiesForCurrentYearWithPercentage(state);
     const currentUser = selectCurrentUser(state);
 
     return _.find(formattedActivities, userActivity => userActivity.name === currentUser);
@@ -228,13 +165,11 @@ const parseData = (rows, activity, unit) => {
 }
 
 export const selectChartData = state => {
-    const currentUserActivity = selectFormattedUserSpecificActivity(state);
+    const currentUserActivity = selectUserSpecificActivity(state);
     const currentUnit = selectActivityUnit(state);
     const currentActivity = selectCurrentActivityType(state);
 
-    const chartData = parseData(currentUserActivity, currentActivity, currentUnit);
-
-    return chartData;
+    return parseData(currentUserActivity, currentActivity, currentUnit);
 }
 
 export const selectChartDataCurrentYear = state => {
@@ -242,7 +177,5 @@ export const selectChartDataCurrentYear = state => {
     const currentUnit = selectActivityUnit(state);
     const currentActivity = selectCurrentActivityType(state);
 
-    const chartData = parseData(currentUserActivity, currentActivity, currentUnit);
-
-    return chartData;
+    return parseData(currentUserActivity, currentActivity, currentUnit);
 }

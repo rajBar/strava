@@ -6,7 +6,6 @@ const mapStateToProps = () => ({});
 
 const mapDispatchToProps = dispatch => ({
     fetchUsers: () => dispatch(actions.fetchUsers()),
-    fetchActivities: () => dispatch(actions.fetchActivities()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);

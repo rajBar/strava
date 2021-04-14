@@ -4,13 +4,13 @@ import {selectCurrentUser, selectUserNames} from "../store/selectors/users";
 import {
     selectActivityUnit,
     selectCurrentActivityType,
-    selectFormattedActivitiesForCurrentYear,
+    selectFormattedActivitiesForCurrentYearWithPercentage,
     selectFormattedUserSpecificActivityCurrentYear,
 } from "../store/selectors/activities";
 import * as actions from "../store/actions";
 
 const mapStateToProps = state => ({
-    allRows: selectFormattedActivitiesForCurrentYear(state),
+    allRows: selectFormattedActivitiesForCurrentYearWithPercentage(state),
     formattedUserSpecificActivityForCurrentYear: selectFormattedUserSpecificActivityCurrentYear(state),
     userNames: selectUserNames(state),
     currentUser: selectCurrentUser(state),

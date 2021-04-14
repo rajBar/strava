@@ -30,9 +30,8 @@ class Home extends Component {
     }
 
     componentDidMount() {
-        const { fetchUsers, fetchActivities } = this.props;
+        const { fetchUsers } = this.props;
         fetchUsers();
-        fetchActivities();
     }
 
     render() {

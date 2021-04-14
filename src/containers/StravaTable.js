@@ -4,14 +4,14 @@ import {selectCurrentUser, selectUserNames} from "../store/selectors/users";
 import {
     selectActivityUnit,
     selectCurrentActivityType,
-    selectFormattedActivities,
-    selectFormattedUserSpecificActivity
+    selectActivities,
+    selectUserSpecificActivity
 } from "../store/selectors/activities";
 import * as actions from '../store/actions';
 
 const mapStateToProps = state => ({
-    allRows: selectFormattedActivities(state),
-    currentUserCurrentActivityData: selectFormattedUserSpecificActivity(state),
+    allRows: selectActivities(state),
+    currentUserCurrentActivityData: selectUserSpecificActivity(state),
     userNames: selectUserNames(state),
     currentUser: selectCurrentUser(state),
     currentActivityType: selectCurrentActivityType(state),

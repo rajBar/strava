@@ -1,9 +1,5 @@
 import * as actionTypes from "../actionTypes/activities";
 
-export const fetchActivities = () => ({
-    type: actionTypes.FETCH_ACTIVITIES,
-});
-
 export const fetchActivitiesSuccess = activities => ({
     type: actionTypes.FETCH_ACTIVITIES_SUCCESS,
     payload: { activities },
