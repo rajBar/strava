@@ -1,4 +1,5 @@
 import _ from "lodash";
+import {createSelector} from 'reselect';
 import {selectCurrentUser} from "./users";
 import {COMPETITION_DISTANCE} from "../../utils/consts";
 
@@ -8,19 +9,17 @@ export const selectCurrentActivityType = state => state.activities.currentActivi
 
 export const selectActivityUnit = state => state.activities.activityUnit;
 
-export const selectUserActivity = state => {
-    const formattedActivities = selectActivities(state);
-    const currentUser = selectCurrentUser(state);
+export const selectUserActivity = createSelector(
+    selectActivities,
+    selectCurrentUser,
+    (formattedActivities, currentUser) => _.find(formattedActivities, userActivity => userActivity.name === currentUser)
+);
 
-    return _.find(formattedActivities, userActivity => userActivity.name === currentUser);
-}
-
-export const selectUserSpecificActivity = state => {
-    const userActivity = selectUserActivity(state);
-    const currentActivityType = selectCurrentActivityType(state);
-
-    return currentActivityType === "run" ? userActivity?.allRuns : userActivity?.allCycles;
-}
+export const selectUserSpecificActivity = createSelector(
+    selectUserActivity,
+    selectCurrentActivityType,
+    (userActivity, currentActivityType) => currentActivityType === "run" ? userActivity?.allRuns : userActivity?.allCycles
+);
 
 const calculateTotalPercent = (user) => {
     const date = new Date();
@@ -50,57 +49,56 @@ const isThisYear = (date) => {
     return currentDate.getFullYear() === activityDate.getFullYear();
 }
 
-export const selectFormattedActivitiesForCurrentYear = state => {
-    const activities = selectActivities(state);
-    const mileConversion = 0.6214;
-    const activitiesCurrentYear = [];
-    activities.forEach(userActivities => {
-        const cycles = _.filter(userActivities.allCycles, cycle => { return isThisYear(cycle.startDate) })
-        const runs = _.filter(userActivities.allRuns, run => { return isThisYear(run.startDate) });
-        const runDistance = runs.reduce((a, b) => a + (parseFloat(b['distance']) || 0), 0);
-        const cycleDistance = cycles.reduce((a, b) => a + (parseFloat(b['distance']) || 0), 0);
-        const newUser = {
-            ...userActivities,
-            allRuns: runs,
-            runDistance: runDistance.toFixed(2),
-            runDistanceMile: (runDistance * mileConversion).toFixed(2),
-            runQuantity: runs.length,
-            allCycles: cycles,
-            bikeDistance: cycleDistance.toFixed(2),
-            bikeDistanceMile: (cycleDistance * mileConversion).toFixed(2),
-            bikeQuantity: cycles.length
-        }
-        activitiesCurrentYear.push(newUser);
-    });
+export const selectFormattedActivitiesForCurrentYear = createSelector(
+    selectActivities,
+    activities => {
+        const mileConversion = 0.6214;
+        const activitiesCurrentYear = [];
+        activities.forEach(userActivities => {
+            const cycles = _.filter(userActivities.allCycles, cycle => { return isThisYear(cycle.startDate) })
+            const runs = _.filter(userActivities.allRuns, run => { return isThisYear(run.startDate) });
+            const runDistance = runs.reduce((a, b) => a + (parseFloat(b['distance']) || 0), 0);
+            const cycleDistance = cycles.reduce((a, b) => a + (parseFloat(b['distance']) || 0), 0);
+            const newUser = {
+                ...userActivities,
+                allRuns: runs,
+                runDistance: runDistance.toFixed(2),
+                runDistanceMile: (runDistance * mileConversion).toFixed(2),
+                runQuantity: runs.length,
+                allCycles: cycles,
+                bikeDistance: cycleDistance.toFixed(2),
+                bikeDistanceMile: (cycleDistance * mileConversion).toFixed(2),
+                bikeQuantity: cycles.length
+            }
+            activitiesCurrentYear.push(newUser);
+        });
 
-    return activitiesCurrentYear;
-}
+        return activitiesCurrentYear;
+    }
+);
 
+export const selectFormattedActivitiesForCurrentYearWithPercentage = createSelector(
+    selectFormattedActivitiesForCurrentYear,
+    activities => {
+        const activitiesPercentage = activities.map(user => {
+            return calculateTotalPercent(user);
+        })
 
-export const selectFormattedActivitiesForCurrentYearWithPercentage = state => {
-    const activities = selectFormattedActivitiesForCurrentYear(state);
+        return _.orderBy(activitiesPercentage, ['totalPercentage'], ['desc']);
+    }
+);
 
-    const activitiesPercentage = activities.map(user => {
-        return calculateTotalPercent(user);
-    })
+export const selectFormattedUserActivityForCurrentYear = createSelector(
+    selectFormattedActivitiesForCurrentYearWithPercentage,
+    selectCurrentUser,
+    (formattedActivities, currentUser) => _.find(formattedActivities, userActivity => userActivity.name === currentUser)
+);
 
-    return _.orderBy(activitiesPercentage, ['totalPercentage'], ['desc']);
-};
-
-export const selectFormattedUserActivityForCurrentYear = state => {
-    const formattedActivities = selectFormattedActivitiesForCurrentYearWithPercentage(state);
-    const currentUser = selectCurrentUser(state);
-
-    return _.find(formattedActivities, userActivity => userActivity.name === currentUser);
-};
-
-export const selectFormattedUserSpecificActivityCurrentYear = state => {
-    const userActivity = selectFormattedUserActivityForCurrentYear(state);
-    const currentActivityType = selectCurrentActivityType(state);
-
-    return currentActivityType === "run" ? userActivity?.allRuns : userActivity?.allCycles;
-}
-
+export const selectFormattedUserSpecificActivityCurrentYear = createSelector(
+    selectFormattedUserActivityForCurrentYear,
+    selectCurrentActivityType,
+    (userActivity, currentActivityType) => currentActivityType === "run" ? userActivity?.allRuns : userActivity?.allCycles
+);
 
 const formatSpeed = (speed) => {
     const speedSplit = speed.toString().split(".");
@@ -164,18 +162,16 @@ const parseData = (rows, activity, unit) => {
     return data;
 }
 
-export const selectChartData = state => {
-    const currentUserActivity = selectUserSpecificActivity(state);
-    const currentUnit = selectActivityUnit(state);
-    const currentActivity = selectCurrentActivityType(state);
+export const selectChartData = createSelector(
+    selectUserSpecificActivity,
+    selectActivityUnit,
+    selectCurrentActivityType,
+    (currentUserActivity, currentUnit, currentActivity) => parseData(currentUserActivity, currentActivity, currentUnit)
+);
 
-    return parseData(currentUserActivity, currentActivity, currentUnit);
-}
-
-export const selectChartDataCurrentYear = state => {
-    const currentUserActivity = selectFormattedUserSpecificActivityCurrentYear(state);
-    const currentUnit = selectActivityUnit(state);
-    const currentActivity = selectCurrentActivityType(state);
-
-    return parseData(currentUserActivity, currentActivity, currentUnit);
-}
+export const selectChartDataCurrentYear = createSelector(
+    selectFormattedUserSpecificActivityCurrentYear,
+    selectActivityUnit,
+    selectCurrentActivityType,
+    (currentUserActivity, currentUnit, currentActivity) => parseData(currentUserActivity, currentActivity, currentUnit)
+);
