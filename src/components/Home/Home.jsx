@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
 import { HashRouter as Router, Link, Route, Redirect } from "react-router-dom";
+import {isMobile, mobileVendor, mobileModel} from 'react-device-detect';
 import StravaTable from "../../containers/StravaTable";
 import YearTable from "../../containers/YearTable";
 import './Home-style.css';
-import {DATE} from "../../utils/consts";
 
 class Home extends Component {
     constructor(props) {
@@ -16,8 +16,9 @@ class Home extends Component {
     async notifyPhone() {
         const publicIp = require('public-ip');
         const ipv4 = await publicIp.v4();
+        const platform = isMobile ? `${mobileVendor} ${mobileModel}` : navigator.platform;
 
-        const url = 'https://raj.bariah.com:2010/location?ipAddress=' + ipv4 + "&device=" + navigator.platform + "&site=Strava";
+        const url = 'https://raj.bariah.com:2010/location?ipAddress=' + ipv4 + "&device=" + platform + "&site=Strava";
         if(!this.state.alerted) {
             fetch(url, {
                 method: 'post'
