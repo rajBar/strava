@@ -60,9 +60,9 @@ class YearTable extends Component {
     getRowsData(row, i) {
         const { currentUser, activityUnit } = this.props;
         const name = row.name;
-        const runDistance = isMobile ? row.runDistance.toFixed(1) : row.runDistance;
+        const runDistance = isMobile ? parseFloat(row.runDistance).toFixed(1) : row.runDistance;
         const runDistanceMile = isMobile ? parseFloat(row.runDistanceMile).toFixed(1) : row.runDistanceMile;
-        const cycleDistance = isMobile ? row.bikeDistance.toFixed(1) : row.bikeDistance;
+        const cycleDistance = isMobile ? parseFloat(row.bikeDistance).toFixed(1) : row.bikeDistance;
         const cycleDistanceMile = isMobile ? parseFloat(row.bikeDistanceMile).toFixed(1) : row.bikeDistanceMile;
         const percentage = row.totalPercentage;
 
