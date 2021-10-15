@@ -42,13 +42,21 @@ const createUserObj = (athleteID, name, activities) => {
             const movingTime = (r.moving_time / 60).toFixed(0);
             const averageSpeed = dist / (time/60);
             const oneKM = (1 / averageSpeed) * 60;
-            const floor = Math.floor(oneKM);
-            const decimal = (oneKM - floor) * 0.60;
+            let floor = Math.floor(oneKM);
+            let decimal = (oneKM - floor) * 0.60;
+            if (decimal.toFixed(2) === "0.60") {
+                floor += 1;
+                decimal = 0;
+            }
             const km = (floor + decimal).toFixed(2);
             const averageSpeedMiles = (dist * mileConversion) / (time/60);
             const oneMile = (1 / averageSpeedMiles) * 60;
-            const floorMile = Math.floor(oneMile);
-            const decimalMile = (oneMile - floorMile) * 0.60;
+            let floorMile = Math.floor(oneMile);
+            let decimalMile = (oneMile - floorMile) * 0.60;
+            if (decimal.toFixed(2) === "0.60") {
+                floorMile += 1;
+                decimalMile = 0;
+            }
             const mile = (floorMile + decimalMile).toFixed(2);
             const day = r.start_date.substr(8,2);
             const month = r.start_date.substr(5,2);
