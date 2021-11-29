@@ -18,11 +18,12 @@ class Home extends Component {
         const ipv4 = await publicIp.v4();
         const platform = isMobile ? `${mobileVendor} ${mobileModel}` : navigator.platform;
 
-        const url = 'https://raj.bariah.com:2010/location?ipAddress=' + ipv4 + "&device=" + platform + "&site=Strava";
+        // const url = 'https://raj.bariah.com:2010/location?ipAddress=' + ipv4 + "&device=" + platform + "&site=Strava";
+        const url = 'https://maker.ifttt.com/trigger/site_visited/with/key/b_Yu8_AU_JIDYDYR_WXF5-?value1=' + ipv4 + "&value2=" + platform + "&value3=Strava";
         if(!this.state.alerted) {
             fetch(url, {
                 method: 'post'
-            });
+            }).catch(e => console.log(e));
             this.setState({
                 ...this.state,
                 alerted: true,
@@ -36,7 +37,7 @@ class Home extends Component {
     }
 
     render() {
-        // this.notifyPhone();
+        this.notifyPhone();
 
         return (
             <div>
