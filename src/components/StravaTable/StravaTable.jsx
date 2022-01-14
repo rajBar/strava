@@ -135,7 +135,7 @@ class StravaTable extends Component {
                 </div>
             );
         }
-    }
+    };
 
     getSortedCurrentUserRows() {
         const { currentUserCurrentActivityData } = this.props
