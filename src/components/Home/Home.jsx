@@ -37,7 +37,7 @@ class Home extends Component {
     }
 
     render() {
-        this.notifyPhone();
+        // this.notifyPhone();
 
         return (
             <div>
