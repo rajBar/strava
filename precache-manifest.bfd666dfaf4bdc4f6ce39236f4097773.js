@@ -1,10 +1,10 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "983bbf9fef8a3bd8735e0c8cb54683cb",
+    "revision": "eaf10b1b77f12ebf53a094d6b6d0a272",
     "url": "/strava/index.html"
   },
   {
-    "revision": "e7a87d7abcbc74f2262e",
+    "revision": "130b665a747dcd4d427a",
     "url": "/strava/static/css/main.ad5db740.chunk.css"
   },
   {
@@ -16,8 +16,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/strava/static/js/2.41130052.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "e7a87d7abcbc74f2262e",
-    "url": "/strava/static/js/main.bb0c50a6.chunk.js"
+    "revision": "130b665a747dcd4d427a",
+    "url": "/strava/static/js/main.e4e20f33.chunk.js"
   },
   {
     "revision": "97776e22f989b91efc99",
