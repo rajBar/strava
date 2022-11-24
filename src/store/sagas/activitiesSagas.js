@@ -3,7 +3,7 @@ import * as actions from '../actions';
 
 const getActivities = async () => {
     // const activitiesLink = "https://raj.bariah.com:2010/strava/activities";
-    const activitiesLink = "https://rajbar.hopto.org:2010/strava/activities";
+    const activitiesLink = "https://rajbar.hopto.org/strava/activities";
 
     return await fetch(activitiesLink)
         .then(res => res.json());

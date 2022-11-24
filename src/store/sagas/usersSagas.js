@@ -4,7 +4,7 @@ import {fetchActivitiesSaga} from "./activitiesSagas";
 
 const getUsers = async () => {
     // const userLink = "https://raj.bariah.com:2010/strava/users";
-    const userLink = "https://rajbar.hopto.org:2010/strava/users";
+    const userLink = "https://rajbar.hopto.org/strava/users";
     return await fetch(userLink)
         .then(res => res.json());
 }
