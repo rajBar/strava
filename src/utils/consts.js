@@ -1,6 +1,7 @@
 export const COMPETITION_DISTANCE = {
     run: 30,
     cycle: 60,
+    swim: 5,
 };
 
 export const DATE = new Date();

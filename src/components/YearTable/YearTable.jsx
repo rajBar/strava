@@ -15,6 +15,8 @@ class YearTable extends Component {
                 'Run Distance',
                 'No. Cycles',
                 'Cycle Distance',
+                'No. Swims',
+                'Swim Distance',
                 'Total Complete',
             ],
             tableHeadSecond: [
@@ -24,6 +26,13 @@ class YearTable extends Component {
                 'Average Speed',
                 'Activity Time',
                 'Elevation Gain',
+            ],
+            tableHeadSwim: [
+                'Date',
+                'Activity',
+                'Distance',
+                'Average Speed',
+                'Activity Time',
             ],
         };
     }
@@ -64,6 +73,8 @@ class YearTable extends Component {
         const runDistanceMile = isMobile ? parseFloat(row.runDistanceMile).toFixed(1) : row.runDistanceMile;
         const cycleDistance = isMobile ? parseFloat(row.bikeDistance).toFixed(1) : row.bikeDistance;
         const cycleDistanceMile = isMobile ? parseFloat(row.bikeDistanceMile).toFixed(1) : row.bikeDistanceMile;
+        const swimDistance = isMobile ? parseFloat(row.swimDistance).toFixed(1) : row.swimDistance;
+        const swimDistanceMile = isMobile ? parseFloat(row.swimDistanceMile).toFixed(1) : row.swimDistanceMile;
         const percentage = row.totalPercentage;
 
         return (
@@ -76,6 +87,8 @@ class YearTable extends Component {
                 <td key={i} className="myTableContents">{activityUnit === "km" ? runDistance + "km" : runDistanceMile + "miles"}</td>
                 <td key={i} className="myTableContents">{row.bikeQuantity}</td>
                 <td key={i} className="myTableContents">{activityUnit === "km" ? cycleDistance + "km" : cycleDistanceMile + "miles"}</td>
+                <td key={i} className="myTableContents">{row.swimQuantity}</td>
+                <td key={i} className="myTableContents">{activityUnit === "km" ? row.swimDistance + "km" : row.swimDistanceMile + "miles"}</td>
                 <td key={i} className="myTableContents">{percentage.toFixed(2)}%</td>
             </tr>
         )
@@ -91,6 +104,7 @@ class YearTable extends Component {
                 <div>
                     <button className={currentActivityType === "run" ? "selectedButton" : "nonSelectedButton"} onClick={() => setCurrentActivityType("run")}>Run</button>
                     <button className={currentActivityType === "cycle" ? "selectedButton" : "nonSelectedButton"} onClick={() => setCurrentActivityType("cycle")}>Cycle</button>
+                    <button className={currentActivityType === "swim" ? "selectedButton" : "nonSelectedButton"} onClick={() => setCurrentActivityType("swim")}>Swim</button>
 
                     {formattedUserSpecificActivityForCurrentYear.length > 0 ?
                         (<div>
@@ -104,12 +118,24 @@ class YearTable extends Component {
                                 {formattedUserSpecificActivityForCurrentYear.map(row => {
                                     const singleUnit = activityUnit === "km" ? "km" : "mile";
                                     const speedUnit = activityUnit === "km" ? "k" : "m";
+                                    const swimSpeedUnit = activityUnit === "km" ? "100m" : "100y";
                                     return (
                                         <tr>
                                             <td>{row.date}</td>
                                             <td>{row.activity}</td>
-                                            <td>{activityUnit === "km" ? row.distance + " km" : row.distanceMile + " miles"}</td>
-                                            <td>{activityUnit === "km" ? row.averageSpeed : row.averageSpeedMile} {currentActivityType === "run" ? "min/" + singleUnit : speedUnit + "ph"}</td>
+                                            <td>{activityUnit === "km" ?
+                                                    row.distance + (currentActivityType === "swim" ? "m" : " km") :
+                                                    row.distanceMile + " miles"}
+                                            </td>
+                                            <td>{activityUnit === "km" ? row.averageSpeed : row.averageSpeedMile}
+                                                {
+                                                    currentActivityType === "cycle" ?
+                                                        speedUnit + "ph" :
+                                                        "min/" + (currentActivityType === "run" ?
+                                                            singleUnit :
+                                                            swimSpeedUnit)
+                                                }
+                                            </td>
                                             <td>{row.movingTime} min</td>
                                             <td>{row.elevationGain} m</td>
                                         </tr>
@@ -139,7 +165,11 @@ class YearTable extends Component {
         return (
             <div>
                 <h4>Jan - {THIS_MONTH} Competition</h4>
-                <h6>Run {COMPETITION_DISTANCE.run * monthIndex} km  &  Cycle {COMPETITION_DISTANCE.cycle * monthIndex} km</h6>
+                <h6>
+                    Run {COMPETITION_DISTANCE.run * monthIndex} km,
+                    Cycle {COMPETITION_DISTANCE.cycle * monthIndex} km &
+                    Swim {COMPETITION_DISTANCE.swim * monthIndex} km
+                </h6>
                 <p style={{fontSize: "11px", padding: 0}}>({COMPETITION_DISTANCE.run} km & {COMPETITION_DISTANCE.cycle} km a month)</p>
                 <button className={activityUnit === "km" ? "selectedButton" : "nonSelectedButton"} onClick={() => setActivityUnit("km")}>Km</button>
                 <button className={activityUnit === "miles" ? "selectedButton" : "nonSelectedButton"} onClick={() => setActivityUnit("miles")}>Miles</button>
