@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import { HashRouter as Router, Link, Route, Redirect } from "react-router-dom";
 import {isMobile, mobileVendor, mobileModel} from 'react-device-detect';
+import {publicIpv4} from 'public-ip';
 import StravaTable from "../../containers/StravaTable";
 import YearTable from "../../containers/YearTable";
 import './Home-style.css';
@@ -14,8 +15,7 @@ class Home extends Component {
     }
 
     async notifyPhone() {
-        const publicIp = require('public-ip');
-        const ipv4 = await publicIp.v4();
+        const ipv4 = await publicIpv4();
         const platform = isMobile ? `${mobileVendor} ${mobileModel}` : navigator.platform;
 
         // const url = 'https://raj.bariah.com:2010/location?ipAddress=' + ipv4 + "&device=" + platform + "&site=Strava";
