@@ -164,13 +164,15 @@ class YearTable extends Component {
 
         return (
             <div>
-                <h4>Jan - {THIS_MONTH} Competition</h4>
+                <h4>Jan - {THIS_MONTH} Triathlon</h4>
                 <h6>
                     Run {COMPETITION_DISTANCE.run * monthIndex} km,
                     Cycle {COMPETITION_DISTANCE.cycle * monthIndex} km &
                     Swim {COMPETITION_DISTANCE.swim * monthIndex} km
                 </h6>
-                <p style={{fontSize: "11px", padding: 0}}>({COMPETITION_DISTANCE.run} km & {COMPETITION_DISTANCE.cycle} km a month)</p>
+                <p style={{fontSize: "11px", padding: 0}}>
+                    ({COMPETITION_DISTANCE.run} km, {COMPETITION_DISTANCE.cycle} km & {COMPETITION_DISTANCE.swim} km a month)
+                </p>
                 <button className={activityUnit === "km" ? "selectedButton" : "nonSelectedButton"} onClick={() => setActivityUnit("km")}>Km</button>
                 <button className={activityUnit === "miles" ? "selectedButton" : "nonSelectedButton"} onClick={() => setActivityUnit("miles")}>Miles</button>
 
