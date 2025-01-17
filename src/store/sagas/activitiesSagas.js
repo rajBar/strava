@@ -1,6 +1,6 @@
 import {call, put} from 'redux-saga/effects';
 import * as actions from '../actions';
-import {activities} from "../tmp-data/activities.js";
+// import {activities} from "../tmp-data/activities.js";
 
 const getActivities = async () => {
     // const activitiesLink = "https://raj.bariah.com:2010/strava/activities";

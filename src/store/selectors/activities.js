@@ -71,8 +71,10 @@ export const selectFormattedActivitiesForCurrentYear = createSelector(
         activities.forEach(userActivities => {
             const cycles = _.filter(userActivities.allCycles, cycle => { return isThisYear(cycle.startDate) })
             const runs = _.filter(userActivities.allRuns, run => { return isThisYear(run.startDate) });
+            const swims = _.filter(userActivities.allSwims, swim => { return isThisYear(swim.startDate) });
             const runDistance = runs.reduce((a, b) => a + (parseFloat(b['distance']) || 0), 0);
             const cycleDistance = cycles.reduce((a, b) => a + (parseFloat(b['distance']) || 0), 0);
+            const swimDistance = swims.reduce((a, b) => a + (parseFloat(b['distance']) || 0), 0);
             const newUser = {
                 ...userActivities,
                 allRuns: runs,
@@ -82,7 +84,11 @@ export const selectFormattedActivitiesForCurrentYear = createSelector(
                 allCycles: cycles,
                 bikeDistance: cycleDistance.toFixed(2),
                 bikeDistanceMile: (cycleDistance * mileConversion).toFixed(2),
-                bikeQuantity: cycles.length
+                bikeQuantity: cycles.length,
+                allSwims: swims,
+                swimDistance: (swimDistance/1000).toFixed(2),
+                swimDistanceMile: ((swimDistance * mileConversion)/1000).toFixed(2),
+                swimQuantity: swims.length
             }
             activitiesCurrentYear.push(newUser);
         });

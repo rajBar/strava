@@ -88,7 +88,7 @@ class YearTable extends Component {
                 <td key={i} className="myTableContents">{row.bikeQuantity}</td>
                 <td key={i} className="myTableContents">{activityUnit === "km" ? cycleDistance + "km" : cycleDistanceMile + "miles"}</td>
                 <td key={i} className="myTableContents">{row.swimQuantity}</td>
-                <td key={i} className="myTableContents">{activityUnit === "km" ? row.swimDistance + "km" : row.swimDistanceMile + "miles"}</td>
+                <td key={i} className="myTableContents">{activityUnit === "km" ? swimDistance + "km" : swimDistanceMile + "miles"}</td>
                 <td key={i} className="myTableContents">{percentage.toFixed(2)}%</td>
             </tr>
         )

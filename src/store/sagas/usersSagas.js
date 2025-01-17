@@ -1,7 +1,7 @@
 import {call, put} from 'redux-saga/effects';
 import * as actions from '../actions';
 import {fetchActivitiesSaga} from "./activitiesSagas";
-import {users} from "../tmp-data/users.js";
+// import {users} from "../tmp-data/users.js";
 
 const getUsers = async () => {
     // const userLink = "https://raj.bariah.com:2010/strava/users";
