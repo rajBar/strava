@@ -14,6 +14,8 @@ class StravaTable extends Component {
                 'Run Distance',
                 'No. Cycles',
                 'Cycle Distance',
+                'No. Swims',
+                'Swim Distance',
             ],
             tableHeadSecond: [
                 'Date',
@@ -22,6 +24,13 @@ class StravaTable extends Component {
                 'Average Speed',
                 'Activity Time',
                 'Elevation Gain',
+            ],
+            tableHeadSwim: [
+                'Date',
+                'Activity',
+                'Distance',
+                'Average Speed',
+                'Activity Time',
             ],
             sort: {
                 field: "date",
@@ -87,6 +96,8 @@ class StravaTable extends Component {
                 <td key={i} className="myTableContents">{activityUnit === "km" ? row.runDistance + "km" : row.runDistanceMile + "miles"}</td>
                 <td key={i} className="myTableContents">{row.bikeQuantity}</td>
                 <td key={i} className="myTableContents">{activityUnit === "km" ? row.bikeDistance + "km" : row.bikeDistanceMile + "miles"}</td>
+                <td key={i} className="myTableContents">{row.swimQuantity}</td>
+                <td key={i} className="myTableContents">{activityUnit === "km" ? row.swimDistance + "km" : row.swimDistanceMile + "miles"}</td>
             </tr>
         )
     }
@@ -103,6 +114,7 @@ class StravaTable extends Component {
                 <div>
                     <button className={currentActivityType === "run" ? "selectedButton" : "nonSelectedButton"} onClick={() => setCurrentActivityType("run")}>Run</button>
                     <button className={currentActivityType === "cycle" ? "selectedButton" : "nonSelectedButton"} onClick={() => setCurrentActivityType("cycle")}>Cycle</button>
+                    <button className={currentActivityType === "swim" ? "selectedButton" : "nonSelectedButton"} onClick={() => setCurrentActivityType("swim")}>Swim</button>
 
 
                     {userRows.length > 0 ?
@@ -111,20 +123,38 @@ class StravaTable extends Component {
 
                             <table className="myTableTwo">
                                 <thead>
-                                    <tr>{this.getHeader(this.state.tableHeadSecond, "sorting function")}</tr>
+                                    <tr>{currentActivityType !== "swim" ?
+                                        this.getHeader(this.state.tableHeadSecond, "sorting function") :
+                                        this.getHeader(this.state.tableHeadSwim, "sorting function")}</tr>
                                 </thead>
                                 <tbody>
                                     {userRows.map(row => {
                                         const singleUnit = activityUnit === "km" ? "km" : "mile";
                                         const speedUnit = activityUnit === "km" ? "k" : "m";
+                                        const swimSpeedUnit = activityUnit === "km" ? "100m" : "100y";
                                         return (
                                             <tr>
                                                 <td>{row.date}</td>
                                                 <td>{row.activity}</td>
-                                                <td>{activityUnit === "km" ? row.distance + " km" : row.distanceMile + " miles"}</td>
-                                                <td>{activityUnit === "km" ? row.averageSpeed : row.averageSpeedMile} {currentActivityType === "run" ? "min/" + singleUnit : speedUnit + "ph"}</td>
+                                                <td>{activityUnit === "km" ?
+                                                    row.distance + (currentActivityType === "swim" ? "m" : " km") :
+                                                    row.distanceMile + " miles"}
+                                                </td>
+                                                <td>
+                                                    {activityUnit === "km" ? row.averageSpeed : row.averageSpeedMile}
+                                                    {
+                                                        currentActivityType === "cycle" ?
+                                                            speedUnit + "ph" :
+                                                            "min/" + (currentActivityType === "run" ?
+                                                                singleUnit :
+                                                                swimSpeedUnit)
+                                                    }
+                                                </td>
                                                 <td>{row.movingTime} min</td>
-                                                <td>{row.elevationGain} m</td>
+                                                {
+                                                    currentActivityType !== "swim" ?
+                                                    <td>{row.elevationGain} m</td> : null
+                                                }
                                             </tr>
                                         )
                                     })}

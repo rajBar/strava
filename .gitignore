@@ -6,3 +6,4 @@ _site/
 ._site/
 node_modules/
 build
+src/store/tmp-data/

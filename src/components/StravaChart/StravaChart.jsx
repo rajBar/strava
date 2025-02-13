@@ -4,15 +4,17 @@ import Chart from "react-google-charts";
 class StravaChart extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-            runSegments: 2.5,
-            cycleSegments: 5,
-        }
     }
 
     parseOptions(activity, unit) {
         const unitType = unit === "km" ? "k" : "m";
-        const speed = activity === "run" ? "min/" + unit : unitType + "ph";
+        const swimSpeedUnit = unit === "km" ? "100m" : "100y";
+        const speed = activity === "cycle" ?
+            unitType + "ph" :
+            "min/" + (activity === "run" ?
+                unit :
+                swimSpeedUnit)
+
         return {
             title: "Lifetime " + activity + "s",
             hAxis: {

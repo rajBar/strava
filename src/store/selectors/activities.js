@@ -18,7 +18,17 @@ export const selectUserActivity = createSelector(
 export const selectUserSpecificActivity = createSelector(
     selectUserActivity,
     selectCurrentActivityType,
-    (userActivity, currentActivityType) => currentActivityType === "run" ? userActivity?.allRuns : userActivity?.allCycles
+    (userActivity, currentActivityType) => {
+            switch(currentActivityType) {
+                case "run":
+                    return userActivity?.allRuns;
+                case "cycle":
+                    return userActivity?.allCycles;
+                case "swim":
+                    return userActivity?.allSwims;
+            }
+        }
+//    (userActivity, currentActivityType) => currentActivityType === "run" ? userActivity?.allRuns : userActivity?.allCycles
 );
 
 const calculateTotalPercent = (user) => {
@@ -26,15 +36,19 @@ const calculateTotalPercent = (user) => {
     const monthIndex = date.getMonth() + 1;
     const competitionRun = COMPETITION_DISTANCE.run * monthIndex;
     const competitionCycle = COMPETITION_DISTANCE.cycle * monthIndex;
+    const competitionSwim = COMPETITION_DISTANCE.swim * monthIndex;
     const runDistance = user.runDistance;
     const cycleDistance = user.bikeDistance;
+    const swimDistance = user.swimDistance;
 
     const runPercentageCapped = runDistance > competitionRun ? 100 : (runDistance / competitionRun) * 100;
     const runPercentage = (runDistance / competitionRun) * 100;
     const cyclePercentageCapped = cycleDistance > competitionCycle ? 100 : (cycleDistance / competitionCycle) * 100;
     const cyclePercentage = (cycleDistance / competitionCycle) * 100;
+    const swimPercentageCapped = swimDistance > competitionSwim ? 100 : (swimDistance / competitionSwim) * 100;
+    const swimPercentage = (swimDistance / competitionSwim) * 100;
 
-    const totalPercentage =  (runPercentageCapped + cyclePercentageCapped) / 2 === 100 ? (runPercentage + cyclePercentage) / 2 : (runPercentageCapped + cyclePercentageCapped) / 2;
+    const totalPercentage =  (runPercentageCapped + cyclePercentageCapped + swimPercentageCapped) / 3 === 100 ? (runPercentage + cyclePercentage, swimPercentage) / 3 : (runPercentageCapped + cyclePercentageCapped + swimPercentageCapped) / 3;
 
     return {
         ...user,
@@ -57,8 +71,10 @@ export const selectFormattedActivitiesForCurrentYear = createSelector(
         activities.forEach(userActivities => {
             const cycles = _.filter(userActivities.allCycles, cycle => { return isThisYear(cycle.startDate) })
             const runs = _.filter(userActivities.allRuns, run => { return isThisYear(run.startDate) });
+            const swims = _.filter(userActivities.allSwims, swim => { return isThisYear(swim.startDate) });
             const runDistance = runs.reduce((a, b) => a + (parseFloat(b['distance']) || 0), 0);
             const cycleDistance = cycles.reduce((a, b) => a + (parseFloat(b['distance']) || 0), 0);
+            const swimDistance = swims.reduce((a, b) => a + (parseFloat(b['distance']) || 0), 0);
             const newUser = {
                 ...userActivities,
                 allRuns: runs,
@@ -68,7 +84,11 @@ export const selectFormattedActivitiesForCurrentYear = createSelector(
                 allCycles: cycles,
                 bikeDistance: cycleDistance.toFixed(2),
                 bikeDistanceMile: (cycleDistance * mileConversion).toFixed(2),
-                bikeQuantity: cycles.length
+                bikeQuantity: cycles.length,
+                allSwims: swims,
+                swimDistance: (swimDistance/1000).toFixed(2),
+                swimDistanceMile: ((swimDistance * mileConversion)/1000).toFixed(2),
+                swimQuantity: swims.length
             }
             activitiesCurrentYear.push(newUser);
         });
@@ -97,7 +117,18 @@ export const selectFormattedUserActivityForCurrentYear = createSelector(
 export const selectFormattedUserSpecificActivityCurrentYear = createSelector(
     selectFormattedUserActivityForCurrentYear,
     selectCurrentActivityType,
-    (userActivity, currentActivityType) => currentActivityType === "run" ? userActivity?.allRuns : userActivity?.allCycles
+    (userActivity, currentActivityType) => {
+        switch(currentActivityType) {
+            case "run":
+                return userActivity?.allRuns;
+            case "cycle":
+                return userActivity?.allCycles;
+            case "swim":
+                return userActivity?.allSwims;
+        }
+    }
+
+//    currentActivityType === "run" ? userActivity?.allRuns : userActivity?.allCycles
 );
 
 const formatSpeed = (speed) => {
@@ -120,7 +151,10 @@ const getDate = (date) => {
 const getSegK = (distance, activity) => {
     const newDistance = parseFloat(distance);
 
-    const segment = activity === "run" ? 2.5 : 5;
+    const segment = activity === "run" ? 2.5
+                      : activity === "cycle" ? 5
+                      : activity === "swim" ? 400
+                      : 1;
 
     const ceilingFive = Math.ceil(newDistance / segment) * segment;
     const floorFive = ceilingFive - segment;
@@ -140,7 +174,10 @@ const getThreeM = (distance) => {
 const parseData = (rows, activity, unit) => {
     const data = [];
     const whatSpeed = activity === "run" ? "N/A" : "Speed (km/h)";
-    const segment = activity === "run" ? "2.5k" : "5k";
+    const segment = activity === "run" ? "2.5"
+                                  : activity === "cycle" ? "5"
+                                  : activity === "swim" ? "400"
+                                  : "1";
     const unitRange = unit === "km" ? segment : "3m";
     const header = ["ID", "Date", whatSpeed, unitRange, "Distance"];
     data.push(header);
@@ -152,7 +189,7 @@ const parseData = (rows, activity, unit) => {
         const distance = unit === "km" ? row.distance : row.distanceMile;
         const unitRange = unit === "km" ? getSegK(distance, activity) : getThreeM(distance);
         let speed = parseFloat(averageSpeed);
-        if (activity === "run") {
+        if (activity === "run" || activity === "swim") {
             speed = formatSpeed(averageSpeed);
         }
         const dataRow =[averageSpeed, getDate(row.date), speed, unitRange, parseFloat(distance)];
