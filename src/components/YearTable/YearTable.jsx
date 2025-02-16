@@ -102,7 +102,8 @@ class YearTable extends Component {
     }
 
     detailedRows() {
-        const { currentUser, currentActivityType, setCurrentActivityType, activityUnit, formattedUserSpecificActivityForCurrentYear } = this.props;
+        const { currentUser, currentActivityType, setCurrentActivityType, activityUnit, formattedUserSpecificActivityForCurrentYear, selectedYear } = this.props;
+        const currentYear = new Date().getFullYear();
 
         if (currentUser === "") {
             return <br />;
@@ -150,7 +151,10 @@ class YearTable extends Component {
                                 })}
                                 </tbody>
                             </table>
-                        </div>) : <h6 style={{paddingTop: '20px'}}>{currentUser} is yet to {currentActivityType} this year</h6>
+                        </div>) : currentYear === selectedYear ?
+                                    <h6 style={{paddingTop: '20px'}}>{currentUser} is yet to {currentActivityType} this year</h6> :
+                                    <h6 style={{paddingTop: '20px'}}>{currentUser} did not {currentActivityType} in {selectedYear}</h6>
+
                     }
                 </div>
             );
