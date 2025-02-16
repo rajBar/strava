@@ -5,6 +5,7 @@ const initialState = {
     currentActivityType: 'run',
     activityUnit: 'km',
     error: null,
+    selectedYear: new Date().getFullYear(),
 };
 
 const fetchActivitiesSuccess = (state, action) => ({
@@ -27,6 +28,11 @@ const setActivityUnit = (state, action) => ({
     activityUnit: action.payload.activityUnit,
 })
 
+const setSelectedYear = (state, action) => ({
+    ...state,
+    selectedYear: action.payload.selectedYear,
+});
+
 export default (state = initialState, action) => {
     switch(action.type) {
         case actionTypes.FETCH_ACTIVITIES_SUCCESS:
@@ -37,6 +43,8 @@ export default (state = initialState, action) => {
             return setCurrentActivityType(state, action);
         case actionTypes.SET_ACTIVITY_UNIT:
             return setActivityUnit(state, action);
+        case actionTypes.SET_SELECTED_YEAR:
+            return setSelectedYear(state, action);
         default:
             return state;
     }

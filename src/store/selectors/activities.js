@@ -15,6 +15,30 @@ export const selectUserActivity = createSelector(
     (formattedActivities, currentUser) => _.find(formattedActivities, userActivity => userActivity.name === currentUser)
 );
 
+export const selectSelectedYear = state => state.activities.selectedYear;
+
+export const selectEarliestYearForUserActivity = createSelector(
+    selectActivities,
+    activities => {
+        const allYears = [];
+
+        activities.forEach(user => {
+                user.allRuns.forEach(run => {
+                    allYears.push(run.date.substr(6,2));
+                });
+                user.allCycles.forEach(cycle => {
+                    allYears.push(cycle.date.substr(6,2));
+                });
+                user.allSwims.forEach(swim => {
+                    allYears.push(swim.date.substr(6,2));
+                });
+            });
+
+        const earliestYear = Math.min(...allYears);
+        return (earliestYear + 2000);
+    }
+)
+
 export const selectUserSpecificActivity = createSelector(
     selectUserActivity,
     selectCurrentActivityType,
@@ -28,12 +52,11 @@ export const selectUserSpecificActivity = createSelector(
                     return userActivity?.allSwims;
             }
         }
-//    (userActivity, currentActivityType) => currentActivityType === "run" ? userActivity?.allRuns : userActivity?.allCycles
 );
 
-const calculateTotalPercent = (user) => {
+const calculateTotalPercent = (user, selectedYear) => {
     const date = new Date();
-    const monthIndex = date.getMonth() + 1;
+    const monthIndex = parseInt(selectedYear) === date.getFullYear() ? date.getMonth() + 1 : 12;
     const competitionRun = COMPETITION_DISTANCE.run * monthIndex;
     const competitionCycle = COMPETITION_DISTANCE.cycle * monthIndex;
     const competitionSwim = COMPETITION_DISTANCE.swim * monthIndex;
@@ -56,22 +79,22 @@ const calculateTotalPercent = (user) => {
     };
 };
 
-const isThisYear = (date) => {
-    const currentDate = new Date();
-    const activityDate = new Date(date);
+const isThisYear = (date, selectedYear) => {
+    const activityDate = new Date(date).getFullYear();
 
-    return currentDate.getFullYear() === activityDate.getFullYear();
+    return parseInt(selectedYear) === parseInt(activityDate);
 }
 
 export const selectFormattedActivitiesForCurrentYear = createSelector(
     selectActivities,
-    activities => {
+    selectSelectedYear,
+    (activities, selectSelectedYear) => {
         const mileConversion = 0.6214;
         const activitiesCurrentYear = [];
         activities.forEach(userActivities => {
-            const cycles = _.filter(userActivities.allCycles, cycle => { return isThisYear(cycle.startDate) })
-            const runs = _.filter(userActivities.allRuns, run => { return isThisYear(run.startDate) });
-            const swims = _.filter(userActivities.allSwims, swim => { return isThisYear(swim.startDate) });
+            const cycles = _.filter(userActivities.allCycles, cycle => { return isThisYear(cycle.startDate, selectSelectedYear) })
+            const runs = _.filter(userActivities.allRuns, run => { return isThisYear(run.startDate, selectSelectedYear) });
+            const swims = _.filter(userActivities.allSwims, swim => { return isThisYear(swim.startDate, selectSelectedYear) });
             const runDistance = runs.reduce((a, b) => a + (parseFloat(b['distance']) || 0), 0);
             const cycleDistance = cycles.reduce((a, b) => a + (parseFloat(b['distance']) || 0), 0);
             const swimDistance = swims.reduce((a, b) => a + (parseFloat(b['distance']) || 0), 0);
@@ -99,9 +122,10 @@ export const selectFormattedActivitiesForCurrentYear = createSelector(
 
 export const selectFormattedActivitiesForCurrentYearWithPercentage = createSelector(
     selectFormattedActivitiesForCurrentYear,
-    activities => {
+    selectSelectedYear,
+    (activities, selectSelectedYear) => {
         const activitiesPercentage = activities.map(user => {
-            return calculateTotalPercent(user);
+            return calculateTotalPercent(user, selectSelectedYear);
         })
 
         return _.orderBy(activitiesPercentage, ['totalPercentage'], ['desc']);

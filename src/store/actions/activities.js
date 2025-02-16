@@ -19,3 +19,8 @@ export const setActivityUnit = activityUnit => ({
     type: actionTypes.SET_ACTIVITY_UNIT,
     payload: { activityUnit },
 })
+
+export const setSelectedYear = selectedYear => ({
+    type: actionTypes.SET_SELECTED_YEAR,
+    payload: { selectedYear },
+});
