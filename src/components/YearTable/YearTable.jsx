@@ -35,7 +35,14 @@ class YearTable extends Component {
                 'Activity Time',
             ],
         };
+        this.handleYearChange = this.handleYearChange.bind(this)
     }
+
+    handleYearChange(event) {
+        let { setSelectedYear } = this.props;
+        const selectedValue = event.target.value;
+        setSelectedYear(selectedValue);
+    };
 
     getHeader(headers) {
         return headers.map((header) => {
@@ -151,8 +158,9 @@ class YearTable extends Component {
     }
 
     render() {
-        let { allRows, activityUnit, setActivityUnit } = this.props;
+        let { allRows, activityUnit, setActivityUnit, selectedYear, earliestYear } = this.props;
         const monthIndex = DATE.getMonth() + 1;
+        const currentYear = new Date().getFullYear();
 
         const currentURL = window.location.href;
         const urlArr = currentURL.split('/');
@@ -164,11 +172,23 @@ class YearTable extends Component {
 
         return (
             <div>
-                <h4>Jan - {THIS_MONTH} Triathlon</h4>
+                <select value={selectedYear} onChange={this.handleYearChange}>
+                    {Array.from({ length: currentYear - earliestYear + 1 }, (_, index) => {
+                      const year = currentYear - index;
+                      return <option key={year} value={year}>{year}</option>;
+                    })}
+                </select>
+                <br/>
+                {
+                    (selectedYear == currentYear) ?
+                        <h4>Jan - {THIS_MONTH} Triathlon</h4>
+                    :
+                        <h4>{selectedYear} Triathlon</h4>
+                }
                 <h6>
-                    Run {COMPETITION_DISTANCE.run * monthIndex} km,
-                    Cycle {COMPETITION_DISTANCE.cycle * monthIndex} km &
-                    Swim {COMPETITION_DISTANCE.swim * monthIndex} km
+                    Run {COMPETITION_DISTANCE.run * ((selectedYear == currentYear) ? monthIndex : 12)} km,
+                    Cycle {COMPETITION_DISTANCE.cycle * ((selectedYear == currentYear) ? monthIndex : 12)} km &
+                    Swim {COMPETITION_DISTANCE.swim * ((selectedYear == currentYear) ? monthIndex : 12)} km
                 </h6>
                 <p style={{fontSize: "11px", padding: 0}}>
                     ({COMPETITION_DISTANCE.run} km, {COMPETITION_DISTANCE.cycle} km & {COMPETITION_DISTANCE.swim} km a month)
