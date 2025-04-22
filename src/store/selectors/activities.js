@@ -71,7 +71,7 @@ const calculateTotalPercent = (user, selectedYear) => {
     const swimPercentageCapped = swimDistance > competitionSwim ? 100 : (swimDistance / competitionSwim) * 100;
     const swimPercentage = (swimDistance / competitionSwim) * 100;
 
-    const totalPercentage =  (runPercentageCapped + cyclePercentageCapped + swimPercentageCapped) / 3 === 100 ? (runPercentage + cyclePercentage, swimPercentage) / 3 : (runPercentageCapped + cyclePercentageCapped + swimPercentageCapped) / 3;
+    const totalPercentage =  (runPercentageCapped + cyclePercentageCapped + swimPercentageCapped) / 3 === 100 ? (runPercentage + cyclePercentage + swimPercentage) / 3 : (runPercentageCapped + cyclePercentageCapped + swimPercentageCapped) / 3;
 
     return {
         ...user,
