@@ -1,13 +1,22 @@
 {
   "files": {
-    "main.css": "/strava/static/css/main.7402bca0.css",
-    "main.js": "/strava/static/js/main.04bb175e.js",
+    "main.css": "/strava/static/css/main.c6b54710.chunk.css",
+    "main.js": "/strava/static/js/main.ac585f65.chunk.js",
+    "main.js.map": "/strava/static/js/main.ac585f65.chunk.js.map",
+    "runtime-main.js": "/strava/static/js/runtime-main.a7916270.js",
+    "runtime-main.js.map": "/strava/static/js/runtime-main.a7916270.js.map",
+    "static/js/2.d0071c05.chunk.js": "/strava/static/js/2.d0071c05.chunk.js",
+    "static/js/2.d0071c05.chunk.js.map": "/strava/static/js/2.d0071c05.chunk.js.map",
     "index.html": "/strava/index.html",
-    "main.7402bca0.css.map": "/strava/static/css/main.7402bca0.css.map",
-    "main.04bb175e.js.map": "/strava/static/js/main.04bb175e.js.map"
+    "precache-manifest.e94394ca6c24be94cb7a213727af6276.js": "/strava/precache-manifest.e94394ca6c24be94cb7a213727af6276.js",
+    "service-worker.js": "/strava/service-worker.js",
+    "static/css/main.c6b54710.chunk.css.map": "/strava/static/css/main.c6b54710.chunk.css.map",
+    "static/js/2.d0071c05.chunk.js.LICENSE.txt": "/strava/static/js/2.d0071c05.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
-    "static/css/main.7402bca0.css",
-    "static/js/main.04bb175e.js"
+    "static/js/runtime-main.a7916270.js",
+    "static/js/2.d0071c05.chunk.js",
+    "static/css/main.c6b54710.chunk.css",
+    "static/js/main.ac585f65.chunk.js"
   ]
 }
