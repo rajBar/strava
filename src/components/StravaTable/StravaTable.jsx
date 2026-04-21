@@ -1,37 +1,15 @@
 import React, {Component} from 'react';
-import './StravaTable-style.css';
 import StravaChart from "../../containers/StravaChart";
-import _ from 'lodash';
-import {Link} from "react-router-dom";
+import { Table, Radio, Space, Typography, Empty, Card } from 'antd';
+import { UserOutlined, DashboardOutlined, ThunderboltOutlined, TrophyOutlined } from '@ant-design/icons';
+import { Link } from "react-router-dom";
+
+const { Title } = Typography;
 
 class StravaTable extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            tableHead: [
-                'Name',
-                'No. Runs',
-                'Run Distance',
-                'No. Cycles',
-                'Cycle Distance',
-                'No. Swims',
-                'Swim Distance',
-            ],
-            tableHeadSecond: [
-                'Date',
-                'Activity',
-                'Distance',
-                'Average Speed',
-                'Activity Time',
-                'Elevation Gain',
-            ],
-            tableHeadSwim: [
-                'Date',
-                'Activity',
-                'Distance',
-                'Average Speed',
-                'Activity Time',
-            ],
             sort: {
                 field: "date",
                 direction: true
@@ -39,32 +17,8 @@ class StravaTable extends Component {
         };
     }
 
-    getHeader(headers, sorter) {
-        return headers.map((header) => {
-            if (sorter) {
-                return <th className="myTableHeaders" onClick={() => this.setSort(header)}>{header}</th>
-            } else {
-                return <th className="myTableHeaders">{header}</th>
-            }
-        })
-    }
-
-    setSort(field) {
-        const currentSort = this.state.sort;
-        const newDirection = field === currentSort.field ? !currentSort.direction : true;
-
-        this.setState({
-            ...this.state,
-            sort: {
-                field: field,
-                direction: newDirection
-            }
-        });
-    }
-
     singleSetUser(user) {
         const { currentUser, setCurrentUser } = this.props;
-
         if (user !== currentUser) {
             setCurrentUser(user);
         }
@@ -72,168 +26,210 @@ class StravaTable extends Component {
 
     setUser(selectedUser) {
         const { currentUser, setCurrentUser } = this.props;
-        const currentURL = window.location.href;
-        const urlArr = currentURL.split('/');
-        const name = urlArr[urlArr.length - 1];
-        const userNames = this.props.userNames;
-        if (userNames.includes(name) && (name !== selectedUser)) {
-            window.location = window.location.href.replace(name, '');
-        }
-
         const athlete = currentUser === selectedUser ? "" : selectedUser;
-
         setCurrentUser(athlete);
     }
 
-    getRowsData(row, i) {
-        const { currentUser, activityUnit } = this.props;
-        const name = row.name;
+    getSummaryColumns() {
+        const { activityUnit } = this.props;
+        const unit = activityUnit === "km" ? "km" : "miles";
 
-        return (
-            <tr className={currentUser === name ? "selectedRow" : "selectableRow"} onClick={() => this.setUser(name)}>
-                <td key={i} className="myTableContents"><Link className="hidden-link" to={`/home/${name}`}>{name}</Link></td>
-                <td key={i} className="myTableContents">{row.runQuantity}</td>
-                <td key={i} className="myTableContents">{activityUnit === "km" ? row.runDistance + "km" : row.runDistanceMile + "miles"}</td>
-                <td key={i} className="myTableContents">{row.bikeQuantity}</td>
-                <td key={i} className="myTableContents">{activityUnit === "km" ? row.bikeDistance + "km" : row.bikeDistanceMile + "miles"}</td>
-                <td key={i} className="myTableContents">{row.swimQuantity}</td>
-                <td key={i} className="myTableContents">{activityUnit === "km" ? row.swimDistance + "km" : row.swimDistanceMile + "miles"}</td>
-            </tr>
-        )
+        return [
+            {
+                title: <span><UserOutlined /> Name</span>,
+                dataIndex: 'name',
+                key: 'name',
+                render: (text) => <Link to={`/home/${text}`} style={{ fontWeight: 500 }}>{text}</Link>,
+                sorter: (a, b) => a.name.localeCompare(b.name),
+            },
+            {
+                title: <span><ThunderboltOutlined /> Runs</span>,
+                dataIndex: 'runQuantity',
+                key: 'runQuantity',
+                sorter: (a, b) => a.runQuantity - b.runQuantity,
+                align: 'center',
+            },
+            {
+                title: `Run Dist (${unit})`,
+                key: 'runDistance',
+                render: (_, record) => activityUnit === "km" ? record.runDistance : record.runDistanceMile,
+                sorter: (a, b) => activityUnit === "km" ? a.runDistance - b.runDistance : a.runDistanceMile - b.runDistanceMile,
+                align: 'right',
+            },
+            {
+                title: <span><DashboardOutlined /> Cycles</span>,
+                dataIndex: 'bikeQuantity',
+                key: 'bikeQuantity',
+                sorter: (a, b) => a.bikeQuantity - b.bikeQuantity,
+                align: 'center',
+            },
+            {
+                title: `Cycle Dist (${unit})`,
+                key: 'bikeDistance',
+                render: (_, record) => activityUnit === "km" ? record.bikeDistance : record.bikeDistanceMile,
+                sorter: (a, b) => activityUnit === "km" ? a.bikeDistance - b.bikeDistance : a.bikeDistanceMile - b.bikeDistanceMile,
+                align: 'right',
+            },
+            {
+                title: <span><TrophyOutlined /> Swims</span>,
+                dataIndex: 'swimQuantity',
+                key: 'swimQuantity',
+                sorter: (a, b) => a.swimQuantity - b.swimQuantity,
+                align: 'center',
+            },
+            {
+                title: `Swim Dist (${unit})`,
+                key: 'swimDistance',
+                render: (_, record) => activityUnit === "km" ? record.swimDistance : record.swimDistanceMile,
+                sorter: (a, b) => activityUnit === "km" ? a.swimDistance - b.swimDistance : a.swimDistanceMile - b.swimDistanceMile,
+                align: 'right',
+            },
+        ];
     }
 
-    detailedRows() {
-        const { currentUser, currentActivityType, setCurrentActivityType, activityUnit, userNames } = this.props;
+    getDetailedColumns() {
+        const { currentActivityType, activityUnit } = this.props;
+        const singleUnit = activityUnit === "km" ? "km" : "mile";
+        const speedUnit = activityUnit === "km" ? "k" : "m";
+        const swimSpeedUnit = activityUnit === "km" ? "100m" : "100y";
 
-        const userRows = this.getSortedCurrentUserRows();
-
-        if (!userNames.includes(currentUser)) {
-            return <br />;
-        } else {
-            return (
-                <div>
-                    <button className={currentActivityType === "run" ? "selectedButton" : "nonSelectedButton"} onClick={() => setCurrentActivityType("run")}>Run</button>
-                    <button className={currentActivityType === "cycle" ? "selectedButton" : "nonSelectedButton"} onClick={() => setCurrentActivityType("cycle")}>Cycle</button>
-                    <button className={currentActivityType === "swim" ? "selectedButton" : "nonSelectedButton"} onClick={() => setCurrentActivityType("swim")}>Swim</button>
-
-
-                    {userRows.length > 0 ?
-                        (<div>
-                            <StravaChart />
-
-                            <table className="myTableTwo">
-                                <thead>
-                                    <tr>{currentActivityType !== "swim" ?
-                                        this.getHeader(this.state.tableHeadSecond, "sorting function") :
-                                        this.getHeader(this.state.tableHeadSwim, "sorting function")}</tr>
-                                </thead>
-                                <tbody>
-                                    {userRows.map(row => {
-                                        const singleUnit = activityUnit === "km" ? "km" : "mile";
-                                        const speedUnit = activityUnit === "km" ? "k" : "m";
-                                        const swimSpeedUnit = activityUnit === "km" ? "100m" : "100y";
-                                        return (
-                                            <tr>
-                                                <td>{row.date}</td>
-                                                <td>{row.activity}</td>
-                                                <td>{activityUnit === "km" ?
-                                                    row.distance + (currentActivityType === "swim" ? "m" : " km") :
-                                                    row.distanceMile + " miles"}
-                                                </td>
-                                                <td>
-                                                    {activityUnit === "km" ? row.averageSpeed : row.averageSpeedMile}
-                                                    {
-                                                        currentActivityType === "cycle" ?
-                                                            speedUnit + "ph" :
-                                                            "min/" + (currentActivityType === "run" ?
-                                                                singleUnit :
-                                                                swimSpeedUnit)
-                                                    }
-                                                </td>
-                                                <td>{row.movingTime} min</td>
-                                                {
-                                                    currentActivityType !== "swim" ?
-                                                    <td>{row.elevationGain} m</td> : null
-                                                }
-                                            </tr>
-                                        )
-                                    })}
-                                </tbody>
-                            </table>
-                        </div>) : <h6 style={{paddingTop: '20px'}}>{currentUser} is yet to {currentActivityType}</h6>
+        const cols = [
+            {
+                title: 'Date',
+                dataIndex: 'date',
+                key: 'date',
+                sorter: (a, b) => {
+                    const parseDate = (d) => {
+                        const parts = d.split('/');
+                        return new Date(2000 + parseInt(parts[2]), parts[1] - 1, parts[0]);
+                    };
+                    return parseDate(a.date) - parseDate(b.date);
+                },
+            },
+            {
+                title: 'Activity',
+                dataIndex: 'activity',
+                key: 'activity',
+            },
+            {
+                title: `Distance (${activityUnit === "km" && currentActivityType === "swim" ? "m" : singleUnit})`,
+                key: 'distance',
+                render: (_, record) => {
+                    if (activityUnit === "km") {
+                        return record.distance + (currentActivityType === "swim" ? "m" : " km");
                     }
-                </div>
-            );
-        }
-    };
+                    return record.distanceMile + " miles";
+                },
+                sorter: (a, b) => activityUnit === "km" ? a.distance - b.distance : a.distanceMile - b.distanceMile,
+            },
+            {
+                title: 'Average Speed',
+                key: 'averageSpeed',
+                render: (_, record) => {
+                    const speed = activityUnit === "km" ? record.averageSpeed : record.averageSpeedMile;
+                    const unitStr = currentActivityType === "cycle" ? 
+                                    speedUnit + "ph" : 
+                                    "min/" + (currentActivityType === "run" ? singleUnit : swimSpeedUnit);
+                    return `${speed} ${unitStr}`;
+                },
+                sorter: (a, b) => activityUnit === "km" ? a.averageSpeed - b.averageSpeed : a.averageSpeedMile - b.averageSpeedMile,
+            },
+            {
+                title: 'Time (min)',
+                dataIndex: 'movingTime',
+                key: 'movingTime',
+                sorter: (a, b) => a.movingTime - b.movingTime,
+            },
+        ];
 
-    getSortedCurrentUserRows() {
-        const { currentUserCurrentActivityData } = this.props
-        let userActivity = currentUserCurrentActivityData ? [...currentUserCurrentActivityData] : [];
-        const { sort } = this.state;
-
-
-        if (sort.field === "Date") {
-            userActivity = [...currentUserCurrentActivityData];
-        } else if (sort.field === "Distance") {
-            if (sort.direction) {
-                userActivity = _.orderBy(userActivity, function (o) { return Number(o.distance); }, 'asc');
-            } else {
-                userActivity = _.orderBy(userActivity, function (o) { return Number(o.distance); }, 'desc');
-            }
-        } else if (sort.field === "Average Speed") {
-            if (sort.direction) {
-                userActivity = _.orderBy(userActivity, o => { return Number(o.averageSpeed) }, 'asc');
-            } else {
-                userActivity = _.orderBy(userActivity, o => { return Number(o.averageSpeed) }, 'desc');
-            }
-        } else if (sort.field === "Activity Time") {
-            if (sort.direction) {
-                userActivity = _.orderBy(userActivity, 'movingTime', 'asc');
-            } else {
-                userActivity = _.orderBy(userActivity, 'movingTime', 'desc');
-            }
-        } else if (sort.field === "Elevation Gain") {
-            if (sort.direction) {
-                userActivity = _.orderBy(userActivity, 'elevationGain', 'asc');
-            } else {
-                userActivity = _.orderBy(userActivity, 'elevationGain', 'desc');
-            }
+        if (currentActivityType !== "swim") {
+            cols.push({
+                title: 'Elevation (m)',
+                dataIndex: 'elevationGain',
+                key: 'elevationGain',
+                sorter: (a, b) => a.elevationGain - b.elevationGain,
+            });
         }
 
-        return userActivity;
+        return cols;
     }
 
     render() {
-        const { allRows, activityUnit, setActivityUnit } = this.props;
+        const { 
+            allRows, 
+            activityUnit, 
+            setActivityUnit, 
+            currentUser, 
+            currentActivityType, 
+            setCurrentActivityType,
+            currentUserCurrentActivityData,
+            userNames 
+        } = this.props;
 
         const currentURL = window.location.href;
         const urlArr = currentURL.split('/');
-        const name = urlArr[urlArr.length - 1];
-        const userNames = this.props.userNames;
-        if (userNames.includes(name)) {
-            this.singleSetUser(name);
+        const nameInUrl = urlArr[urlArr.length - 1];
+        if (userNames.includes(nameInUrl)) {
+            this.singleSetUser(nameInUrl);
         }
 
         return (
-            <div>
-                <button className={activityUnit === "km" ? "selectedButton" : "nonSelectedButton"} onClick={() => setActivityUnit("km")}>Km</button>
-                <button className={activityUnit === "miles" ? "selectedButton" : "nonSelectedButton"} onClick={() => setActivityUnit("miles")}>Miles</button>
+            <Space direction="vertical" size="large" style={{ width: '100%' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                    <Title level={4} style={{ margin: 0 }}>Activity Overview</Title>
+                    <Radio.Group value={activityUnit} onChange={(e) => setActivityUnit(e.target.value)} buttonStyle="solid">
+                        <Radio.Button value="km">Metric (km)</Radio.Button>
+                        <Radio.Button value="miles">Imperial (miles)</Radio.Button>
+                    </Radio.Group>
+                </div>
 
-                <table className="myTable">
-                    <thead>
-                        <tr>{this.getHeader(this.state.tableHead)}</tr>
-                    </thead>
-                    <tbody>
-                        {allRows.map((row, i) => {
-                            return this.getRowsData(row, i)
-                        })}
-                    </tbody>
-                </table>
+                <Table 
+                    columns={this.getSummaryColumns()} 
+                    dataSource={allRows} 
+                    rowKey="name"
+                    pagination={false}
+                    onRow={(record) => ({
+                        onClick: () => this.setUser(record.name),
+                        style: { cursor: 'pointer' }
+                    })}
+                    rowClassName={(record) => record.name === currentUser ? 'ant-table-row-selected' : ''}
+                    size="middle"
+                    bordered
+                />
 
-                {this.detailedRows()}
-            </div>
-        )
+                {userNames.includes(currentUser) ? (
+                    <Card style={{ marginTop: '20px', border: '1px solid #f0f0f0' }}>
+                        <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <Title level={4} style={{ margin: 0 }}>{currentUser}'s Detailed Stats</Title>
+                                <Radio.Group value={currentActivityType} onChange={(e) => setCurrentActivityType(e.target.value)} buttonStyle="solid">
+                                    <Radio.Button value="run">Run</Radio.Button>
+                                    <Radio.Button value="cycle">Cycle</Radio.Button>
+                                    <Radio.Button value="swim">Swim</Radio.Button>
+                                </Radio.Group>
+                            </div>
+
+                            {currentUserCurrentActivityData && currentUserCurrentActivityData.length > 0 ? (
+                                <>
+                                    <div style={{ background: '#fafafa', padding: '20px', borderRadius: '8px', marginBottom: '20px' }}>
+                                        <StravaChart />
+                                    </div>
+                                    <Table 
+                                        columns={this.getDetailedColumns()} 
+                                        dataSource={currentUserCurrentActivityData} 
+                                        rowKey={(record) => record.date + record.distance}
+                                        pagination={{ pageSize: 1000, hideOnSinglePage: true }}
+                                        size="small"
+                                    />
+                                </>
+                            ) : (
+                                <Empty description={<span>{currentUser} has no {currentActivityType} data available.</span>} />
+                            )}
+                        </Space>
+                    </Card>
+                ) : null}
+            </Space>
+        );
     }
 }
 

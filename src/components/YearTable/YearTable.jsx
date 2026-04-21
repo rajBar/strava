@@ -1,219 +1,277 @@
 import React, {Component} from 'react';
-import {Link} from "react-router-dom";
-import {isMobile} from 'react-device-detect';
-import './YearTable-style.css';
 import StravaChart from "../../containers/StravaChart";
-import {COMPETITION_DISTANCE, DATE, THIS_MONTH} from "../../utils/consts";
+import { Table, Select, Radio, Space, Typography, Card, Progress, Tag, Empty } from 'antd';
+import { TrophyOutlined, CalendarOutlined } from '@ant-design/icons';
+import { Link } from "react-router-dom";
+import { COMPETITION_DISTANCE, DATE, THIS_MONTH } from "../../utils/consts";
+
+const { Title, Text, Paragraph } = Typography;
+const { Option } = Select;
 
 class YearTable extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            tableHead: [
-                'Name',
-                'No. Runs',
-                'Run Distance',
-                'No. Cycles',
-                'Cycle Distance',
-                'No. Swims',
-                'Swim Distance',
-                'Total Complete',
-            ],
-            tableHeadSecond: [
-                'Date',
-                'Activity',
-                'Distance',
-                'Average Speed',
-                'Activity Time',
-                'Elevation Gain',
-            ],
-            tableHeadSwim: [
-                'Date',
-                'Activity',
-                'Distance',
-                'Average Speed',
-                'Activity Time',
-            ],
-        };
-        this.handleYearChange = this.handleYearChange.bind(this)
-    }
-
-    handleYearChange(event) {
+    handleYearChange = (value) => {
         let { setSelectedYear } = this.props;
-        const selectedValue = event.target.value;
-        setSelectedYear(selectedValue);
+        setSelectedYear(value);
     };
-
-    getHeader(headers) {
-        return headers.map((header) => {
-            return <th className={isMobile ? "myTableHeadersMobile" : "myTableHeaders"}>{header}</th>
-        });
-    }
 
     singleSetUser(user) {
         const { currentUser, setCurrentUser } = this.props;
-
         if (user !== currentUser) {
             setCurrentUser(user);
         }
     }
 
     setUser(selectedUser) {
-        const { currentUser, setCurrentUser } = this.props;
+        const { currentUser, setCurrentUser, userNames } = this.props;
         const currentURL = window.location.href;
         const urlArr = currentURL.split('/');
-        const name = urlArr[urlArr.length - 1];
-        const userNames = this.props.userNames;
-        if (userNames.includes(name) && (name !== selectedUser)) {
-            window.location = window.location.href.replace(name, '');
+        const nameInUrl = urlArr[urlArr.length - 1];
+
+        if (userNames.includes(nameInUrl) && (nameInUrl !== selectedUser)) {
+            // Consistent with original behavior
         }
 
         const athlete = currentUser === selectedUser ? "" : selectedUser;
-
         setCurrentUser(athlete);
     }
 
-    getRowsData(row, i) {
-        const { currentUser, activityUnit } = this.props;
-        const name = row.name;
-        const runDistance = isMobile ? parseFloat(row.runDistance).toFixed(1) : row.runDistance;
-        const runDistanceMile = isMobile ? parseFloat(row.runDistanceMile).toFixed(1) : row.runDistanceMile;
-        const cycleDistance = isMobile ? parseFloat(row.bikeDistance).toFixed(1) : row.bikeDistance;
-        const cycleDistanceMile = isMobile ? parseFloat(row.bikeDistanceMile).toFixed(1) : row.bikeDistanceMile;
-        const swimDistance = isMobile ? parseFloat(row.swimDistance).toFixed(1) : row.swimDistance;
-        const swimDistanceMile = isMobile ? parseFloat(row.swimDistanceMile).toFixed(1) : row.swimDistanceMile;
-        const percentage = row.totalPercentage;
+    getSummaryColumns() {
+        const { activityUnit } = this.props;
+        const unit = activityUnit === "km" ? "km" : "miles";
 
-        return (
-            <tr className={currentUser === name ? "selectedRow" : "selectableRow"} onClick={() => this.setUser(name)}>
-                {percentage >= 100 ?
-                    <td key={i} className="myTableContents-complete">{name} (completed)</td>
-                    : <td key={i} className="myTableContents"><Link className="hidden-link" to={`/strava-competition/${name}`}>{name}</Link></td>
-                }
-                <td key={i} className="myTableContents">{row.runQuantity}</td>
-                <td key={i} className="myTableContents">{activityUnit === "km" ? runDistance + "km" : runDistanceMile + "miles"}</td>
-                <td key={i} className="myTableContents">{row.bikeQuantity}</td>
-                <td key={i} className="myTableContents">{activityUnit === "km" ? cycleDistance + "km" : cycleDistanceMile + "miles"}</td>
-                <td key={i} className="myTableContents">{row.swimQuantity}</td>
-                <td key={i} className="myTableContents">{activityUnit === "km" ? swimDistance + "km" : swimDistanceMile + "miles"}</td>
-                <td key={i} className="myTableContents">{percentage.toFixed(2)}%</td>
-            </tr>
-        )
+        return [
+            {
+                title: 'Name',
+                dataIndex: 'name',
+                key: 'name',
+                render: (text, record) => (
+                    <Space>
+                        <Link to={`/strava-competition/${text}`}>{text}</Link>
+                        {record.totalPercentage >= 100 && <Tag color="gold" icon={<TrophyOutlined />}>Winner</Tag>}
+                    </Space>
+                ),
+                sorter: (a, b) => a.name.localeCompare(b.name),
+            },
+            {
+                title: 'Runs',
+                dataIndex: 'runQuantity',
+                key: 'runQuantity',
+                sorter: (a, b) => a.runQuantity - b.runQuantity,
+            },
+            {
+                title: `Run Dist (${unit})`,
+                key: 'runDistance',
+                render: (_, record) => activityUnit === "km" ? record.runDistance : record.runDistanceMile,
+                sorter: (a, b) => activityUnit === "km" ? a.runDistance - b.runDistance : a.runDistanceMile - b.runDistanceMile,
+            },
+            {
+                title: 'Cycles',
+                dataIndex: 'bikeQuantity',
+                key: 'bikeQuantity',
+                sorter: (a, b) => a.bikeQuantity - b.bikeQuantity,
+            },
+            {
+                title: `Cycle Dist (${unit})`,
+                key: 'bikeDistance',
+                render: (_, record) => activityUnit === "km" ? record.bikeDistance : record.bikeDistanceMile,
+                sorter: (a, b) => activityUnit === "km" ? a.bikeDistance - b.bikeDistance : a.bikeDistanceMile - b.bikeDistanceMile,
+            },
+            {
+                title: 'Swims',
+                dataIndex: 'swimQuantity',
+                key: 'swimQuantity',
+                sorter: (a, b) => a.swimQuantity - b.swimQuantity,
+            },
+            {
+                title: `Swim Dist (${unit})`,
+                key: 'swimDistance',
+                render: (_, record) => activityUnit === "km" ? record.swimDistance : record.swimDistanceMile,
+                sorter: (a, b) => activityUnit === "km" ? a.swimDistance - b.swimDistance : a.swimDistanceMile - b.swimDistanceMile,
+            },
+            {
+                title: 'Completion',
+                dataIndex: 'totalPercentage',
+                key: 'totalPercentage',
+                render: (percent) => (
+                    <div style={{ width: 120 }}>
+                        <Progress percent={parseFloat(percent.toFixed(1))} size="small" status={percent >= 100 ? 'success' : 'active'} strokeColor={percent >= 100 ? '#52c41a' : '#fc4c02'} />
+                    </div>
+                ),
+                sorter: (a, b) => a.totalPercentage - b.totalPercentage,
+            },
+        ];
     }
 
-    detailedRows() {
-        const { currentUser, currentActivityType, setCurrentActivityType, activityUnit, formattedUserSpecificActivityForCurrentYear, selectedYear } = this.props;
-        const currentYear = new Date().getFullYear();
+    getDetailedColumns() {
+        const { currentActivityType, activityUnit } = this.props;
+        const singleUnit = activityUnit === "km" ? "km" : "mile";
+        const speedUnit = activityUnit === "km" ? "k" : "m";
+        const swimSpeedUnit = activityUnit === "km" ? "100m" : "100y";
 
-        if (currentUser === "") {
-            return <br />;
-        } else {
-            return (
-                <div>
-                    <button className={currentActivityType === "run" ? "selectedButton" : "nonSelectedButton"} onClick={() => setCurrentActivityType("run")}>Run</button>
-                    <button className={currentActivityType === "cycle" ? "selectedButton" : "nonSelectedButton"} onClick={() => setCurrentActivityType("cycle")}>Cycle</button>
-                    <button className={currentActivityType === "swim" ? "selectedButton" : "nonSelectedButton"} onClick={() => setCurrentActivityType("swim")}>Swim</button>
-
-                    {formattedUserSpecificActivityForCurrentYear.length > 0 ?
-                        (<div>
-                            <StravaChart currentYear={true} />
-
-                            <table className="myTableTwo">
-                                <thead>
-                                <tr>{this.getHeader(this.state.tableHeadSecond)}</tr>
-                                </thead>
-                                <tbody>
-                                {formattedUserSpecificActivityForCurrentYear.map(row => {
-                                    const singleUnit = activityUnit === "km" ? "km" : "mile";
-                                    const speedUnit = activityUnit === "km" ? "k" : "m";
-                                    const swimSpeedUnit = activityUnit === "km" ? "100m" : "100y";
-                                    return (
-                                        <tr>
-                                            <td>{row.date}</td>
-                                            <td>{row.activity}</td>
-                                            <td>{activityUnit === "km" ?
-                                                    row.distance + (currentActivityType === "swim" ? "m" : " km") :
-                                                    row.distanceMile + " miles"}
-                                            </td>
-                                            <td>{activityUnit === "km" ? row.averageSpeed : row.averageSpeedMile}
-                                                {
-                                                    currentActivityType === "cycle" ?
-                                                        speedUnit + "ph" :
-                                                        "min/" + (currentActivityType === "run" ?
-                                                            singleUnit :
-                                                            swimSpeedUnit)
-                                                }
-                                            </td>
-                                            <td>{row.movingTime} min</td>
-                                            <td>{row.elevationGain} m</td>
-                                        </tr>
-                                    )
-                                })}
-                                </tbody>
-                            </table>
-                        </div>) : currentYear === selectedYear ?
-                                    <h6 style={{paddingTop: '20px'}}>{currentUser} is yet to {currentActivityType} this year</h6> :
-                                    <h6 style={{paddingTop: '20px'}}>{currentUser} did not {currentActivityType} in {selectedYear}</h6>
-
+        const cols = [
+            {
+                title: 'Date',
+                dataIndex: 'date',
+                key: 'date',
+                sorter: (a, b) => {
+                    const parseDate = (d) => {
+                        const parts = d.split('/');
+                        return new Date(2000 + parseInt(parts[2]), parts[1] - 1, parts[0]);
+                    };
+                    return parseDate(a.date) - parseDate(b.date);
+                },
+            },
+            {
+                title: 'Activity',
+                dataIndex: 'activity',
+                key: 'activity',
+            },
+            {
+                title: `Distance (${activityUnit === "km" && currentActivityType === "swim" ? "m" : singleUnit})`,
+                key: 'distance',
+                render: (_, record) => {
+                    if (activityUnit === "km") {
+                        return record.distance + (currentActivityType === "swim" ? "m" : " km");
                     }
-                </div>
-            );
-        }
+                    return record.distanceMile + " miles";
+                },
+                sorter: (a, b) => activityUnit === "km" ? a.distance - b.distance : a.distanceMile - b.distanceMile,
+            },
+            {
+                title: 'Average Speed',
+                key: 'averageSpeed',
+                render: (_, record) => {
+                    const speed = activityUnit === "km" ? record.averageSpeed : record.averageSpeedMile;
+                    const unitStr = currentActivityType === "cycle" ? 
+                                    speedUnit + "ph" : 
+                                    "min/" + (currentActivityType === "run" ? singleUnit : swimSpeedUnit);
+                    return `${speed} ${unitStr}`;
+                },
+                sorter: (a, b) => activityUnit === "km" ? a.averageSpeed - b.averageSpeed : a.averageSpeedMile - b.averageSpeedMile,
+            },
+            {
+                title: 'Time (min)',
+                dataIndex: 'movingTime',
+                key: 'movingTime',
+                sorter: (a, b) => a.movingTime - b.movingTime,
+            },
+            {
+                title: 'Elevation (m)',
+                dataIndex: 'elevationGain',
+                key: 'elevationGain',
+                sorter: (a, b) => a.elevationGain - b.elevationGain,
+            },
+        ];
+
+        return cols;
     }
 
     render() {
-        let { allRows, activityUnit, setActivityUnit, selectedYear, earliestYear } = this.props;
+        let { allRows, activityUnit, setActivityUnit, selectedYear, earliestYear, currentUser, currentActivityType, setCurrentActivityType, formattedUserSpecificActivityForCurrentYear, userNames } = this.props;
         const monthIndex = DATE.getMonth() + 1;
         const currentYear = new Date().getFullYear();
 
         const currentURL = window.location.href;
         const urlArr = currentURL.split('/');
-        const name = urlArr[urlArr.length - 1];
-        const userNames = this.props.userNames;
-        if (userNames.includes(name)) {
-            this.singleSetUser(name);
+        const nameInUrl = urlArr[urlArr.length - 1];
+        if (userNames.includes(nameInUrl)) {
+            this.singleSetUser(nameInUrl);
         }
 
+        const isCurrentYear = parseInt(selectedYear) === currentYear;
+        const multiplier = isCurrentYear ? monthIndex : 12;
+
         return (
-            <div>
-                <select value={selectedYear} onChange={this.handleYearChange}>
-                    {Array.from({ length: currentYear - earliestYear + 1 }, (_, index) => {
-                      const year = currentYear - index;
-                      return <option key={year} value={year}>{year}</option>;
+            <Space direction="vertical" size="large" style={{ width: '100%' }}>
+                <Card style={{ border: 'none', background: 'transparent' }} bodyStyle={{ padding: 0 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px' }}>
+                        <div>
+                            <Title level={2} style={{ margin: 0 }}>
+                                {isCurrentYear ? `Jan - ${THIS_MONTH} Triathlon` : `${selectedYear} Triathlon`}
+                            </Title>
+                            <Paragraph type="secondary" style={{ marginBottom: 0 }}>
+                                Targets: Run {COMPETITION_DISTANCE.run * multiplier} km, 
+                                Cycle {COMPETITION_DISTANCE.cycle * multiplier} km & 
+                                Swim {COMPETITION_DISTANCE.swim * multiplier} km
+                                <Text style={{ fontSize: '12px', display: 'block' }}>
+                                    (Monthly targets: {COMPETITION_DISTANCE.run}km run, {COMPETITION_DISTANCE.cycle}km cycle, {COMPETITION_DISTANCE.swim}km swim)
+                                </Text>
+                            </Paragraph>
+                        </div>
+                        <Space>
+                            <Select 
+                                value={selectedYear.toString()} 
+                                onChange={this.handleYearChange} 
+                                style={{ width: 120 }}
+                                suffixIcon={<CalendarOutlined />}
+                            >
+                                {Array.from({ length: currentYear - earliestYear + 1 }, (_, index) => {
+                                    const year = currentYear - index;
+                                    return <Option key={year} value={year.toString()}>{year}</Option>;
+                                })}
+                            </Select>
+                            <Radio.Group value={activityUnit} onChange={(e) => setActivityUnit(e.target.value)} buttonStyle="solid">
+                                <Radio.Button value="km">Km</Radio.Button>
+                                <Radio.Button value="miles">Miles</Radio.Button>
+                            </Radio.Group>
+                        </Space>
+                    </div>
+                </Card>
+
+                <Table 
+                    columns={this.getSummaryColumns()} 
+                    dataSource={allRows} 
+                    rowKey="name"
+                    pagination={false}
+                    onRow={(record) => ({
+                        onClick: () => this.setUser(record.name),
+                        style: { cursor: 'pointer' }
                     })}
-                </select>
-                <br/>
-                {
-                    (selectedYear == currentYear) ?
-                        <h4>Jan - {THIS_MONTH} Triathlon</h4>
-                    :
-                        <h4>{selectedYear} Triathlon</h4>
-                }
-                <h6>
-                    Run {COMPETITION_DISTANCE.run * ((selectedYear == currentYear) ? monthIndex : 12)} km,
-                    Cycle {COMPETITION_DISTANCE.cycle * ((selectedYear == currentYear) ? monthIndex : 12)} km &
-                    Swim {COMPETITION_DISTANCE.swim * ((selectedYear == currentYear) ? monthIndex : 12)} km
-                </h6>
-                <p style={{fontSize: "11px", padding: 0}}>
-                    ({COMPETITION_DISTANCE.run} km, {COMPETITION_DISTANCE.cycle} km & {COMPETITION_DISTANCE.swim} km a month)
-                </p>
-                <button className={activityUnit === "km" ? "selectedButton" : "nonSelectedButton"} onClick={() => setActivityUnit("km")}>Km</button>
-                <button className={activityUnit === "miles" ? "selectedButton" : "nonSelectedButton"} onClick={() => setActivityUnit("miles")}>Miles</button>
+                    rowClassName={(record) => record.name === currentUser ? 'ant-table-row-selected' : ''}
+                    size="middle"
+                    bordered
+                />
 
-                <table className="myTable">
-                    <thead>
-                        <tr>{this.getHeader(this.state.tableHead)}</tr>
-                    </thead>
-                    <tbody>
-                        {allRows.map((row, i) => {
-                            return this.getRowsData(row, i)
-                        })}
-                    </tbody>
-                </table>
+                {userNames.includes(currentUser) ? (
+                    <Card title={`${currentUser}'s ${selectedYear} Progress`} style={{ marginTop: '20px' }}>
+                        <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+                            <div style={{ display: 'flex', justifyContent: 'center' }}>
+                                <Radio.Group value={currentActivityType} onChange={(e) => setCurrentActivityType(e.target.value)} buttonStyle="solid">
+                                    <Radio.Button value="run">Run</Radio.Button>
+                                    <Radio.Button value="cycle">Cycle</Radio.Button>
+                                    <Radio.Button value="swim">Swim</Radio.Button>
+                                </Radio.Group>
+                            </div>
 
-                {this.detailedRows()}
-            </div>
-        )
+                            {formattedUserSpecificActivityForCurrentYear.length > 0 ? (
+                                <>
+                                    <div style={{ background: '#fafafa', padding: '20px', borderRadius: '8px' }}>
+                                        <StravaChart currentYear={true} />
+                                    </div>
+                                    <Table 
+                                        columns={this.getDetailedColumns()} 
+                                        dataSource={formattedUserSpecificActivityForCurrentYear} 
+                                        rowKey={(record) => record.date + record.distance}
+                                        pagination={{ pageSize: 1000, hideOnSinglePage: true }}
+                                        size="small"
+                                    />
+                                </>
+                            ) : (
+                                <Empty 
+                                    description={
+                                        <span>
+                                            {isCurrentYear ? 
+                                                `${currentUser} is yet to ${currentActivityType} this year` : 
+                                                `${currentUser} did not ${currentActivityType} in ${selectedYear}`}
+                                        </span>
+                                    } 
+                                />
+                            )}
+                        </Space>
+                    </Card>
+                ) : null}
+            </Space>
+        );
     }
 }
 
