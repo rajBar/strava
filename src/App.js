@@ -4,7 +4,19 @@ import Home from './containers/Home';
 import { ConfigProvider, theme } from 'antd';
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      isDarkMode: false
+    };
+  }
+
+  toggleDarkMode = (checked) => {
+    this.setState({ isDarkMode: checked });
+  };
+
   render () {
+    const { isDarkMode } = this.state;
     return (
         <ConfigProvider
             theme={{
@@ -12,11 +24,11 @@ class App extends Component {
                     colorPrimary: '#fc4c02',
                     borderRadius: 6,
                 },
-                algorithm: theme.defaultAlgorithm,
+                algorithm: isDarkMode ? theme.darkAlgorithm : theme.defaultAlgorithm,
             }}
         >
-            <div className="App">
-              <Home />
+            <div className="App" style={{ background: isDarkMode ? '#000' : '#f5f5f5', minHeight: '100vh', transition: 'background 0.3s' }}>
+              <Home isDarkMode={isDarkMode} toggleDarkMode={this.toggleDarkMode} />
             </div>
         </ConfigProvider>
     );
