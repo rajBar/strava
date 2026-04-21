@@ -114,8 +114,8 @@ class Home extends Component {
                                 <Route exact path={"/"}>
                                     <Redirect to={"/home"} />
                                 </Route>
-                                <Route path={'/home'} component={StravaTable} />
-                                <Route path={'/strava-competition'} component={YearTable} />
+                                <Route path={'/home'} render={(props) => <StravaTable {...props} isDarkMode={isDarkMode} />} />
+                                <Route path={'/strava-competition'} render={(props) => <YearTable {...props} isDarkMode={isDarkMode} />} />
                             </RouterSwitch>
                         </div>
                     </Content>

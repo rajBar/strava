@@ -167,7 +167,7 @@ class YearTable extends Component {
     }
 
     render() {
-        let { allRows, activityUnit, setActivityUnit, selectedYear, earliestYear, currentUser, currentActivityType, setCurrentActivityType, formattedUserSpecificActivityForCurrentYear, userNames } = this.props;
+        let { allRows, activityUnit, setActivityUnit, selectedYear, earliestYear, currentUser, currentActivityType, setCurrentActivityType, formattedUserSpecificActivityForCurrentYear, userNames, isDarkMode } = this.props;
         const monthIndex = DATE.getMonth() + 1;
         const currentYear = new Date().getFullYear();
 
@@ -245,8 +245,8 @@ class YearTable extends Component {
 
                             {formattedUserSpecificActivityForCurrentYear.length > 0 ? (
                                 <>
-                                    <div style={{ background: '#fafafa', padding: '20px', borderRadius: '8px' }}>
-                                        <StravaChart currentYear={true} />
+                                    <div style={{ background: isDarkMode ? '#1f1f1f' : '#fafafa', padding: '20px', borderRadius: '8px' }}>
+                                        <StravaChart currentYear={true} isDarkMode={isDarkMode} />
                                     </div>
                                     <Table 
                                         columns={this.getDetailedColumns()} 

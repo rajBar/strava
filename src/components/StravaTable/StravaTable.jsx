@@ -163,7 +163,8 @@ class StravaTable extends Component {
             currentActivityType, 
             setCurrentActivityType,
             currentUserCurrentActivityData,
-            userNames 
+            userNames,
+            isDarkMode
         } = this.props;
 
         const currentURL = window.location.href;
@@ -211,8 +212,8 @@ class StravaTable extends Component {
 
                             {currentUserCurrentActivityData && currentUserCurrentActivityData.length > 0 ? (
                                 <>
-                                    <div style={{ background: '#fafafa', padding: '20px', borderRadius: '8px', marginBottom: '20px' }}>
-                                        <StravaChart />
+                                    <div style={{ background: isDarkMode ? '#1f1f1f' : '#fafafa', padding: '20px', borderRadius: '8px', marginBottom: '20px' }}>
+                                        <StravaChart isDarkMode={isDarkMode} />
                                     </div>
                                     <Table 
                                         columns={this.getDetailedColumns()} 

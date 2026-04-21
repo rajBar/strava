@@ -2,7 +2,7 @@ import React from "react";
 import { Scatter } from "@ant-design/plots";
 import dayjs from "dayjs";
 
-const StravaChart = ({ currentActivityType, activityUnit, chartData, chartDataCurrentYear, currentYear }) => {
+const StravaChart = ({ currentActivityType, activityUnit, chartData, chartDataCurrentYear, currentYear, isDarkMode }) => {
     const rawData = currentYear ? chartDataCurrentYear : chartData;
 
     if (!rawData || rawData.length <= 1) {
@@ -39,11 +39,12 @@ const StravaChart = ({ currentActivityType, activityUnit, chartData, chartDataCu
         yField: "speed",
         sizeField: "distance",
         colorField: "range",
+        theme: isDarkMode ? 'dark' : 'default',
         size: [4, 20],
         shape: "circle",
         pointStyle: {
             fillOpacity: 0.6,
-            stroke: "#fff",
+            stroke: isDarkMode ? '#1f1f1f' : '#fff',
             lineWidth: 1,
         },
         meta: {
