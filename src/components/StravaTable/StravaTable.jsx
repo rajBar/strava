@@ -7,14 +7,24 @@ import { Link } from "react-router-dom";
 const { Title } = Typography;
 
 class StravaTable extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            sort: {
-                field: "date",
-                direction: true
-            },
-        };
+    componentDidMount() {
+        this.checkUrlForUser();
+    }
+
+    componentDidUpdate(prevProps) {
+        if (this.props.location.pathname !== prevProps.location.pathname) {
+            this.checkUrlForUser();
+        }
+    }
+
+    checkUrlForUser() {
+        const { userNames } = this.props;
+        const currentURL = window.location.href;
+        const urlArr = currentURL.split('/');
+        const nameInUrl = urlArr[urlArr.length - 1];
+        if (userNames.includes(nameInUrl)) {
+            this.singleSetUser(nameInUrl);
+        }
     }
 
     singleSetUser(user) {
@@ -53,7 +63,11 @@ class StravaTable extends Component {
                 title: `Run Dist (${unit})`,
                 key: 'runDistance',
                 render: (_, record) => activityUnit === "km" ? record.runDistance : record.runDistanceMile,
-                sorter: (a, b) => activityUnit === "km" ? a.runDistance - b.runDistance : a.runDistanceMile - b.runDistanceMile,
+                sorter: (a, b) => {
+                    const valA = activityUnit === "km" ? a.runDistance : a.runDistanceMile;
+                    const valB = activityUnit === "km" ? b.runDistance : b.runDistanceMile;
+                    return Number(valA) - Number(valB);
+                },
                 align: 'right',
             },
             {
@@ -67,7 +81,11 @@ class StravaTable extends Component {
                 title: `Cycle Dist (${unit})`,
                 key: 'bikeDistance',
                 render: (_, record) => activityUnit === "km" ? record.bikeDistance : record.bikeDistanceMile,
-                sorter: (a, b) => activityUnit === "km" ? a.bikeDistance - b.bikeDistance : a.bikeDistanceMile - b.bikeDistanceMile,
+                sorter: (a, b) => {
+                    const valA = activityUnit === "km" ? a.bikeDistance : a.bikeDistanceMile;
+                    const valB = activityUnit === "km" ? b.bikeDistance : b.bikeDistanceMile;
+                    return Number(valA) - Number(valB);
+                },
                 align: 'right',
             },
             {
@@ -81,7 +99,11 @@ class StravaTable extends Component {
                 title: `Swim Dist (${unit})`,
                 key: 'swimDistance',
                 render: (_, record) => activityUnit === "km" ? record.swimDistance : record.swimDistanceMile,
-                sorter: (a, b) => activityUnit === "km" ? a.swimDistance - b.swimDistance : a.swimDistanceMile - b.swimDistanceMile,
+                sorter: (a, b) => {
+                    const valA = activityUnit === "km" ? a.swimDistance : a.swimDistanceMile;
+                    const valB = activityUnit === "km" ? b.swimDistance : b.swimDistanceMile;
+                    return Number(valA) - Number(valB);
+                },
                 align: 'right',
             },
         ];
@@ -105,11 +127,13 @@ class StravaTable extends Component {
                     };
                     return parseDate(a.date) - parseDate(b.date);
                 },
+                defaultSortOrder: 'descend',
             },
             {
                 title: 'Activity',
                 dataIndex: 'activity',
                 key: 'activity',
+                sorter: (a, b) => a.activity.localeCompare(b.activity),
             },
             {
                 title: `Distance (${activityUnit === "km" && currentActivityType === "swim" ? "m" : singleUnit})`,
@@ -120,7 +144,11 @@ class StravaTable extends Component {
                     }
                     return record.distanceMile + " miles";
                 },
-                sorter: (a, b) => activityUnit === "km" ? a.distance - b.distance : a.distanceMile - b.distanceMile,
+                sorter: (a, b) => {
+                    const valA = activityUnit === "km" ? a.distance : a.distanceMile;
+                    const valB = activityUnit === "km" ? b.distance : b.distanceMile;
+                    return Number(valA) - Number(valB);
+                },
             },
             {
                 title: 'Average Speed',
@@ -132,13 +160,17 @@ class StravaTable extends Component {
                                     "min/" + (currentActivityType === "run" ? singleUnit : swimSpeedUnit);
                     return `${speed} ${unitStr}`;
                 },
-                sorter: (a, b) => activityUnit === "km" ? a.averageSpeed - b.averageSpeed : a.averageSpeedMile - b.averageSpeedMile,
+                sorter: (a, b) => {
+                    const valA = activityUnit === "km" ? a.averageSpeed : a.averageSpeedMile;
+                    const valB = activityUnit === "km" ? b.averageSpeed : b.averageSpeedMile;
+                    return Number(valA) - Number(valB);
+                },
             },
             {
                 title: 'Time (min)',
                 dataIndex: 'movingTime',
                 key: 'movingTime',
-                sorter: (a, b) => a.movingTime - b.movingTime,
+                sorter: (a, b) => Number(a.movingTime) - Number(b.movingTime),
             },
         ];
 
@@ -147,7 +179,7 @@ class StravaTable extends Component {
                 title: 'Elevation (m)',
                 dataIndex: 'elevationGain',
                 key: 'elevationGain',
-                sorter: (a, b) => a.elevationGain - b.elevationGain,
+                sorter: (a, b) => Number(a.elevationGain) - Number(b.elevationGain),
             });
         }
 
@@ -163,16 +195,8 @@ class StravaTable extends Component {
             currentActivityType, 
             setCurrentActivityType,
             currentUserCurrentActivityData,
-            userNames,
             isDarkMode
         } = this.props;
-
-        const currentURL = window.location.href;
-        const urlArr = currentURL.split('/');
-        const nameInUrl = urlArr[urlArr.length - 1];
-        if (userNames.includes(nameInUrl)) {
-            this.singleSetUser(nameInUrl);
-        }
 
         return (
             <Space direction="vertical" size="large" style={{ width: '100%' }}>
@@ -198,7 +222,7 @@ class StravaTable extends Component {
                     bordered
                 />
 
-                {userNames.includes(currentUser) ? (
+                {currentUser ? (
                     <Card style={{ marginTop: '20px', border: '1px solid #f0f0f0' }}>
                         <Space direction="vertical" size="middle" style={{ width: '100%' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -218,8 +242,8 @@ class StravaTable extends Component {
                                     <Table 
                                         columns={this.getDetailedColumns()} 
                                         dataSource={currentUserCurrentActivityData} 
-                                        rowKey={(record) => record.date + record.distance}
-                                        pagination={{ pageSize: 1000, hideOnSinglePage: true }}
+                                        rowKey="startDate"
+                                        pagination={false}
                                         size="small"
                                     />
                                 </>

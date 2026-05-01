@@ -9,6 +9,26 @@ const { Title, Text, Paragraph } = Typography;
 const { Option } = Select;
 
 class YearTable extends Component {
+    componentDidMount() {
+        this.checkUrlForUser();
+    }
+
+    componentDidUpdate(prevProps) {
+        if (this.props.location.pathname !== prevProps.location.pathname) {
+            this.checkUrlForUser();
+        }
+    }
+
+    checkUrlForUser() {
+        const { userNames } = this.props;
+        const currentURL = window.location.href;
+        const urlArr = currentURL.split('/');
+        const nameInUrl = urlArr[urlArr.length - 1];
+        if (userNames.includes(nameInUrl)) {
+            this.singleSetUser(nameInUrl);
+        }
+    }
+
     handleYearChange = (value) => {
         let { setSelectedYear } = this.props;
         setSelectedYear(value);
@@ -22,15 +42,7 @@ class YearTable extends Component {
     }
 
     setUser(selectedUser) {
-        const { currentUser, setCurrentUser, userNames } = this.props;
-        const currentURL = window.location.href;
-        const urlArr = currentURL.split('/');
-        const nameInUrl = urlArr[urlArr.length - 1];
-
-        if (userNames.includes(nameInUrl) && (nameInUrl !== selectedUser)) {
-            // Consistent with original behavior
-        }
-
+        const { currentUser, setCurrentUser } = this.props;
         const athlete = currentUser === selectedUser ? "" : selectedUser;
         setCurrentUser(athlete);
     }
@@ -62,7 +74,11 @@ class YearTable extends Component {
                 title: `Run Dist (${unit})`,
                 key: 'runDistance',
                 render: (_, record) => activityUnit === "km" ? record.runDistance : record.runDistanceMile,
-                sorter: (a, b) => activityUnit === "km" ? a.runDistance - b.runDistance : a.runDistanceMile - b.runDistanceMile,
+                sorter: (a, b) => {
+                    const valA = activityUnit === "km" ? a.runDistance : a.runDistanceMile;
+                    const valB = activityUnit === "km" ? b.runDistance : b.runDistanceMile;
+                    return Number(valA) - Number(valB);
+                },
             },
             {
                 title: 'Cycles',
@@ -74,7 +90,11 @@ class YearTable extends Component {
                 title: `Cycle Dist (${unit})`,
                 key: 'bikeDistance',
                 render: (_, record) => activityUnit === "km" ? record.bikeDistance : record.bikeDistanceMile,
-                sorter: (a, b) => activityUnit === "km" ? a.bikeDistance - b.bikeDistance : a.bikeDistanceMile - b.bikeDistanceMile,
+                sorter: (a, b) => {
+                    const valA = activityUnit === "km" ? a.bikeDistance : a.bikeDistanceMile;
+                    const valB = activityUnit === "km" ? b.bikeDistance : b.bikeDistanceMile;
+                    return Number(valA) - Number(valB);
+                },
             },
             {
                 title: 'Swims',
@@ -86,7 +106,11 @@ class YearTable extends Component {
                 title: `Swim Dist (${unit})`,
                 key: 'swimDistance',
                 render: (_, record) => activityUnit === "km" ? record.swimDistance : record.swimDistanceMile,
-                sorter: (a, b) => activityUnit === "km" ? a.swimDistance - b.swimDistance : a.swimDistanceMile - b.swimDistanceMile,
+                sorter: (a, b) => {
+                    const valA = activityUnit === "km" ? a.swimDistance : a.swimDistanceMile;
+                    const valB = activityUnit === "km" ? b.swimDistance : b.swimDistanceMile;
+                    return Number(valA) - Number(valB);
+                },
             },
             {
                 title: 'Completion',
@@ -120,11 +144,13 @@ class YearTable extends Component {
                     };
                     return parseDate(a.date) - parseDate(b.date);
                 },
+                defaultSortOrder: 'descend',
             },
             {
                 title: 'Activity',
                 dataIndex: 'activity',
                 key: 'activity',
+                sorter: (a, b) => a.activity.localeCompare(b.activity),
             },
             {
                 title: `Distance (${activityUnit === "km" && currentActivityType === "swim" ? "m" : singleUnit})`,
@@ -135,7 +161,11 @@ class YearTable extends Component {
                     }
                     return record.distanceMile + " miles";
                 },
-                sorter: (a, b) => activityUnit === "km" ? a.distance - b.distance : a.distanceMile - b.distanceMile,
+                sorter: (a, b) => {
+                    const valA = activityUnit === "km" ? a.distance : a.distanceMile;
+                    const valB = activityUnit === "km" ? b.distance : b.distanceMile;
+                    return Number(valA) - Number(valB);
+                },
             },
             {
                 title: 'Average Speed',
@@ -147,19 +177,23 @@ class YearTable extends Component {
                                     "min/" + (currentActivityType === "run" ? singleUnit : swimSpeedUnit);
                     return `${speed} ${unitStr}`;
                 },
-                sorter: (a, b) => activityUnit === "km" ? a.averageSpeed - b.averageSpeed : a.averageSpeedMile - b.averageSpeedMile,
+                sorter: (a, b) => {
+                    const valA = activityUnit === "km" ? a.averageSpeed : a.averageSpeedMile;
+                    const valB = activityUnit === "km" ? b.averageSpeed : b.averageSpeedMile;
+                    return Number(valA) - Number(valB);
+                },
             },
             {
                 title: 'Time (min)',
                 dataIndex: 'movingTime',
                 key: 'movingTime',
-                sorter: (a, b) => a.movingTime - b.movingTime,
+                sorter: (a, b) => Number(a.movingTime) - Number(b.movingTime),
             },
             {
                 title: 'Elevation (m)',
                 dataIndex: 'elevationGain',
                 key: 'elevationGain',
-                sorter: (a, b) => a.elevationGain - b.elevationGain,
+                sorter: (a, b) => Number(a.elevationGain) - Number(b.elevationGain),
             },
         ];
 
@@ -167,16 +201,9 @@ class YearTable extends Component {
     }
 
     render() {
-        let { allRows, activityUnit, setActivityUnit, selectedYear, earliestYear, currentUser, currentActivityType, setCurrentActivityType, formattedUserSpecificActivityForCurrentYear, userNames, isDarkMode } = this.props;
+        let { allRows, activityUnit, setActivityUnit, selectedYear, earliestYear, currentUser, currentActivityType, setCurrentActivityType, formattedUserSpecificActivityForCurrentYear, isDarkMode } = this.props;
         const monthIndex = DATE.getMonth() + 1;
         const currentYear = new Date().getFullYear();
-
-        const currentURL = window.location.href;
-        const urlArr = currentURL.split('/');
-        const nameInUrl = urlArr[urlArr.length - 1];
-        if (userNames.includes(nameInUrl)) {
-            this.singleSetUser(nameInUrl);
-        }
 
         const isCurrentYear = parseInt(selectedYear) === currentYear;
         const multiplier = isCurrentYear ? monthIndex : 12;
@@ -232,7 +259,7 @@ class YearTable extends Component {
                     bordered
                 />
 
-                {userNames.includes(currentUser) ? (
+                {currentUser ? (
                     <Card title={`${currentUser}'s ${selectedYear} Progress`} style={{ marginTop: '20px' }}>
                         <Space direction="vertical" size="middle" style={{ width: '100%' }}>
                             <div style={{ display: 'flex', justifyContent: 'center' }}>
@@ -251,8 +278,8 @@ class YearTable extends Component {
                                     <Table 
                                         columns={this.getDetailedColumns()} 
                                         dataSource={formattedUserSpecificActivityForCurrentYear} 
-                                        rowKey={(record) => record.date + record.distance}
-                                        pagination={{ pageSize: 1000, hideOnSinglePage: true }}
+                                        rowKey="startDate"
+                                        pagination={false}
                                         size="small"
                                     />
                                 </>
