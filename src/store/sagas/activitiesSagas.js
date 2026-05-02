@@ -76,11 +76,13 @@ const createUserObj = (athleteID, name, activities) => {
             return {date: date, startDate: r.start_date, activity: "Run", distance: distance, distanceMile: distanceMile, movingTime: movingTime, averageSpeed: km, averageSpeedMile: mile, elevationGain: elevationGain};
         }),
         allCycles: userBike.map((r, i) => {
+            const dist = r.distance / 1000;
+            const time = r.moving_time / 60;
             const distance = (r.distance / 1000).toFixed(2);
             const distanceMile = (distance * mileConversion).toFixed(2);
             const movingTime = (r.moving_time / 60).toFixed(0);
-            const averageSpeed = (distance / (movingTime/60)).toFixed(1);
-            const averageSpeedMile = (averageSpeed * mileConversion).toFixed(1);
+            const averageSpeed = time > 0 ? (dist / (time/60)).toFixed(1) : "0.0";
+            const averageSpeedMile = (parseFloat(averageSpeed) * mileConversion).toFixed(1);
             const day = r.start_date.substr(8,2);
             const month = r.start_date.substr(5,2);
             const year = r.start_date.substr(2, 2)

@@ -31,7 +31,11 @@ const StravaChart = ({ currentActivityType, activityUnit, chartData, chartDataCu
             range: row[3],
             distance: row[4],
         };
-    });
+    }).filter(item => 
+        isFinite(item.date) && 
+        isFinite(item.speed) && 
+        isFinite(item.distance)
+    );
 
     const config = {
         data,
