@@ -4,6 +4,7 @@ import { Table, Select, Radio, Space, Typography, Card, Progress, Tag, Empty } f
 import { TrophyOutlined, CalendarOutlined } from '@ant-design/icons';
 import { Link } from "react-router-dom";
 import { COMPETITION_DISTANCE, DATE, THIS_MONTH } from "../../utils/consts";
+import { isMobile } from 'react-device-detect';
 
 const { Title, Text, Paragraph } = Typography;
 const { Option } = Select;
@@ -53,25 +54,27 @@ class YearTable extends Component {
 
         return [
             {
-                title: 'Name',
+                title: isMobile ? 'Name' : 'Name',
                 dataIndex: 'name',
                 key: 'name',
                 render: (text, record) => (
-                    <Space>
-                        <Link to={`/strava-competition/${text}`}>{text}</Link>
-                        {record.totalPercentage >= 100 && <Tag color="gold" icon={<TrophyOutlined />}>Winner</Tag>}
+                    <Space direction={isMobile ? "vertical" : "horizontal"} size={0}>
+                        <Link to={`/strava-competition/${text}`} style={{ fontWeight: 500 }}>{text}</Link>
+                        {record.totalPercentage >= 100 && <Tag color="gold" icon={<TrophyOutlined />} style={{ fontSize: '10px', margin: 0 }}>Win</Tag>}
                     </Space>
                 ),
                 sorter: (a, b) => a.name.localeCompare(b.name),
+                fixed: isMobile ? 'left' : false,
             },
             {
                 title: 'Runs',
                 dataIndex: 'runQuantity',
                 key: 'runQuantity',
                 sorter: (a, b) => a.runQuantity - b.runQuantity,
+                responsive: ['sm'],
             },
             {
-                title: `Run Dist (${unit})`,
+                title: isMobile ? 'Run' : `Run Dist (${unit})`,
                 key: 'runDistance',
                 render: (_, record) => activityUnit === "km" ? record.runDistance : record.runDistanceMile,
                 sorter: (a, b) => {
@@ -81,13 +84,14 @@ class YearTable extends Component {
                 },
             },
             {
-                title: 'Cycles',
+                title: 'Bikes',
                 dataIndex: 'bikeQuantity',
                 key: 'bikeQuantity',
                 sorter: (a, b) => a.bikeQuantity - b.bikeQuantity,
+                responsive: ['sm'],
             },
             {
-                title: `Cycle Dist (${unit})`,
+                title: isMobile ? 'Bike' : `Cycle Dist (${unit})`,
                 key: 'bikeDistance',
                 render: (_, record) => activityUnit === "km" ? record.bikeDistance : record.bikeDistanceMile,
                 sorter: (a, b) => {
@@ -101,9 +105,10 @@ class YearTable extends Component {
                 dataIndex: 'swimQuantity',
                 key: 'swimQuantity',
                 sorter: (a, b) => a.swimQuantity - b.swimQuantity,
+                responsive: ['sm'],
             },
             {
-                title: `Swim Dist (${unit})`,
+                title: isMobile ? 'Swim' : `Swim Dist (${unit})`,
                 key: 'swimDistance',
                 render: (_, record) => activityUnit === "km" ? record.swimDistance : record.swimDistanceMile,
                 sorter: (a, b) => {
@@ -113,12 +118,18 @@ class YearTable extends Component {
                 },
             },
             {
-                title: 'Completion',
+                title: isMobile ? '%' : 'Completion',
                 dataIndex: 'totalPercentage',
                 key: 'totalPercentage',
                 render: (percent) => (
-                    <div style={{ width: 120 }}>
-                        <Progress percent={parseFloat(percent.toFixed(1))} size="small" status={percent >= 100 ? 'success' : 'active'} strokeColor={percent >= 100 ? '#52c41a' : '#fc4c02'} />
+                    <div style={{ width: isMobile ? 60 : 120 }}>
+                        <Progress 
+                            percent={parseFloat(percent.toFixed(1))} 
+                            size="small" 
+                            status={percent >= 100 ? 'success' : 'active'} 
+                            strokeColor={percent >= 100 ? '#52c41a' : '#fc4c02'} 
+                            format={isMobile ? (p) => `${Math.round(p)}%` : undefined}
+                        />
                     </div>
                 ),
                 sorter: (a, b) => a.totalPercentage - b.totalPercentage,
@@ -145,21 +156,23 @@ class YearTable extends Component {
                     return parseDate(a.date) - parseDate(b.date);
                 },
                 defaultSortOrder: 'descend',
+                fixed: isMobile ? 'left' : false,
             },
             {
                 title: 'Activity',
                 dataIndex: 'activity',
                 key: 'activity',
                 sorter: (a, b) => a.activity.localeCompare(b.activity),
+                responsive: ['sm'],
             },
             {
-                title: `Distance (${activityUnit === "km" && currentActivityType === "swim" ? "m" : singleUnit})`,
+                title: isMobile ? 'Dist' : `Distance (${activityUnit === "km" && currentActivityType === "swim" ? "m" : singleUnit})`,
                 key: 'distance',
                 render: (_, record) => {
                     if (activityUnit === "km") {
                         return record.distance + (currentActivityType === "swim" ? "m" : " km");
                     }
-                    return record.distanceMile + " miles";
+                    return record.distanceMile + (isMobile ? "m" : " miles");
                 },
                 sorter: (a, b) => {
                     const valA = activityUnit === "km" ? a.distance : a.distanceMile;
@@ -168,7 +181,7 @@ class YearTable extends Component {
                 },
             },
             {
-                title: 'Average Speed',
+                title: isMobile ? 'Speed' : 'Average Speed',
                 key: 'averageSpeed',
                 render: (_, record) => {
                     const speed = activityUnit === "km" ? record.averageSpeed : record.averageSpeedMile;
@@ -184,16 +197,18 @@ class YearTable extends Component {
                 },
             },
             {
-                title: 'Time (min)',
+                title: isMobile ? 'Time' : 'Time (min)',
                 dataIndex: 'movingTime',
                 key: 'movingTime',
                 sorter: (a, b) => Number(a.movingTime) - Number(b.movingTime),
+                responsive: ['sm'],
             },
             {
-                title: 'Elevation (m)',
+                title: isMobile ? 'Elev' : 'Elevation (m)',
                 dataIndex: 'elevationGain',
                 key: 'elevationGain',
                 sorter: (a, b) => Number(a.elevationGain) - Number(b.elevationGain),
+                responsive: ['md'],
             },
         ];
 
@@ -201,7 +216,7 @@ class YearTable extends Component {
     }
 
     render() {
-        let { allRows, activityUnit, setActivityUnit, selectedYear, earliestYear, currentUser, currentActivityType, setCurrentActivityType, formattedUserSpecificActivityForCurrentYear, isDarkMode } = this.props;
+        let { allRows, activityUnit, setActivityUnit, selectedYear, earliestYear, currentUser, currentActivityType, setCurrentActivityType, formattedUserSpecificActivityForCurrentYear, isDarkMode, loading } = this.props;
         const monthIndex = DATE.getMonth() + 1;
         const currentYear = new Date().getFullYear();
 
@@ -211,33 +226,42 @@ class YearTable extends Component {
         return (
             <Space direction="vertical" size="large" style={{ width: '100%' }}>
                 <Card style={{ border: 'none', background: 'transparent' }} bodyStyle={{ padding: 0 }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px' }}>
-                        <div>
-                            <Title level={2} style={{ margin: 0 }}>
+                    <div style={{ 
+                        display: 'flex', 
+                        justifyContent: 'space-between', 
+                        alignItems: isMobile ? 'center' : 'flex-start', 
+                        flexWrap: 'wrap', 
+                        gap: '16px' 
+                    }}>
+                        <div style={{ width: isMobile ? '100%' : 'auto' }}>
+                            <Title level={isMobile ? 3 : 2} style={{ margin: 0 }}>
                                 {isCurrentYear ? `Jan - ${THIS_MONTH} Triathlon` : `${selectedYear} Triathlon`}
                             </Title>
-                            <Paragraph type="secondary" style={{ marginBottom: 0 }}>
+                            <Paragraph type="secondary" style={{ marginBottom: 0, fontSize: isMobile ? '12px' : '14px' }}>
                                 Targets: Run {COMPETITION_DISTANCE.run * multiplier} km, 
                                 Cycle {COMPETITION_DISTANCE.cycle * multiplier} km & 
                                 Swim {COMPETITION_DISTANCE.swim * multiplier} km
-                                <Text style={{ fontSize: '12px', display: 'block' }}>
-                                    (Monthly targets: {COMPETITION_DISTANCE.run}km run, {COMPETITION_DISTANCE.cycle}km cycle, {COMPETITION_DISTANCE.swim}km swim)
-                                </Text>
+                                {!isMobile && (
+                                    <Text style={{ fontSize: '12px', display: 'block' }}>
+                                        (Monthly targets: {COMPETITION_DISTANCE.run}km run, {COMPETITION_DISTANCE.cycle}km cycle, {COMPETITION_DISTANCE.swim}km swim)
+                                    </Text>
+                                )}
                             </Paragraph>
                         </div>
-                        <Space>
+                        <Space style={{ width: isMobile ? '100%' : 'auto', justifyContent: isMobile ? 'space-between' : 'flex-end' }}>
                             <Select 
                                 value={selectedYear.toString()} 
                                 onChange={this.handleYearChange} 
-                                style={{ width: 120 }}
+                                style={{ width: isMobile ? 100 : 120 }}
                                 suffixIcon={<CalendarOutlined />}
+                                size={isMobile ? "small" : "middle"}
                             >
                                 {Array.from({ length: currentYear - earliestYear + 1 }, (_, index) => {
                                     const year = currentYear - index;
                                     return <Option key={year} value={year.toString()}>{year}</Option>;
                                 })}
                             </Select>
-                            <Radio.Group value={activityUnit} onChange={(e) => setActivityUnit(e.target.value)} buttonStyle="solid">
+                            <Radio.Group value={activityUnit} onChange={(e) => setActivityUnit(e.target.value)} buttonStyle="solid" size={isMobile ? "small" : "middle"}>
                                 <Radio.Button value="km">Km</Radio.Button>
                                 <Radio.Button value="miles">Miles</Radio.Button>
                             </Radio.Group>
@@ -255,15 +279,21 @@ class YearTable extends Component {
                         style: { cursor: 'pointer' }
                     })}
                     rowClassName={(record) => record.name === currentUser ? 'ant-table-row-selected' : ''}
-                    size="middle"
+                    size={isMobile ? "small" : "middle"}
                     bordered
+                    scroll={{ x: isMobile ? 'max-content' : undefined }}
+                    loading={loading}
                 />
 
                 {currentUser ? (
-                    <Card title={`${currentUser}'s ${selectedYear} Progress`} style={{ marginTop: '20px' }}>
+                    <Card 
+                        title={`${currentUser}'s ${selectedYear} Progress`} 
+                        style={{ marginTop: isMobile ? '10px' : '20px' }}
+                        bodyStyle={{ padding: isMobile ? '12px' : '24px' }}
+                    >
                         <Space direction="vertical" size="middle" style={{ width: '100%' }}>
                             <div style={{ display: 'flex', justifyContent: 'center' }}>
-                                <Radio.Group value={currentActivityType} onChange={(e) => setCurrentActivityType(e.target.value)} buttonStyle="solid">
+                                <Radio.Group value={currentActivityType} onChange={(e) => setCurrentActivityType(e.target.value)} buttonStyle="solid" size={isMobile ? "small" : "middle"}>
                                     <Radio.Button value="run">Run</Radio.Button>
                                     <Radio.Button value="cycle">Cycle</Radio.Button>
                                     <Radio.Button value="swim">Swim</Radio.Button>
@@ -272,7 +302,11 @@ class YearTable extends Component {
 
                             {formattedUserSpecificActivityForCurrentYear.length > 0 ? (
                                 <>
-                                    <div style={{ background: isDarkMode ? '#1f1f1f' : '#fafafa', padding: '20px', borderRadius: '8px' }}>
+                                    <div style={{ 
+                                        background: isDarkMode ? '#1f1f1f' : '#fafafa', 
+                                        padding: isMobile ? '10px' : '20px', 
+                                        borderRadius: '8px' 
+                                    }}>
                                         <StravaChart currentYear={true} isDarkMode={isDarkMode} />
                                     </div>
                                     <Table 
@@ -281,12 +315,13 @@ class YearTable extends Component {
                                         rowKey="startDate"
                                         pagination={false}
                                         size="small"
+                                        scroll={{ x: isMobile ? 'max-content' : undefined }}
                                     />
                                 </>
                             ) : (
                                 <Empty 
                                     description={
-                                        <span>
+                                        <span style={{ fontSize: isMobile ? '12px' : '14px' }}>
                                             {isCurrentYear ? 
                                                 `${currentUser} is yet to ${currentActivityType} this year` : 
                                                 `${currentUser} did not ${currentActivityType} in ${selectedYear}`}
@@ -303,3 +338,4 @@ class YearTable extends Component {
 }
 
 export default YearTable;
+

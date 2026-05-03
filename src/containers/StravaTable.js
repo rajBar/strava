@@ -5,7 +5,8 @@ import {
     selectActivityUnit,
     selectCurrentActivityType,
     selectActivities,
-    selectUserSpecificActivity
+    selectUserSpecificActivity,
+    selectActivitiesLoading
 } from "../store/selectors/activities";
 import * as actions from '../store/actions';
 
@@ -16,6 +17,7 @@ const mapStateToProps = state => ({
     currentUser: selectCurrentUser(state),
     currentActivityType: selectCurrentActivityType(state),
     activityUnit: selectActivityUnit(state),
+    loading: selectActivitiesLoading(state),
 });
 
 const mapDispatchToProps = dispatch => ({

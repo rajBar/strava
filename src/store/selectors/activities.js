@@ -9,6 +9,8 @@ export const selectCurrentActivityType = state => state.activities.currentActivi
 
 export const selectActivityUnit = state => state.activities.activityUnit;
 
+export const selectActivitiesLoading = state => state.activities.loading;
+
 export const selectUserActivity = createSelector(
     selectActivities,
     selectCurrentUser,

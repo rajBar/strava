@@ -129,6 +129,7 @@ const createUserObj = (athleteID, name, activities) => {
 
 export function* fetchActivitiesSaga(users) {
     try {
+        yield put(actions.fetchActivities());
         const activities = yield call(getActivities);
 
         const formattedActivities = users.map(user => {

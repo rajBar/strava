@@ -56,18 +56,19 @@ class Home extends Component {
                         alignItems: 'center', 
                         background: isDarkMode ? '#141414' : '#fff', 
                         borderBottom: `1px solid ${isDarkMode ? '#303030' : '#f0f0f0'}`, 
-                        padding: '0 20px',
-                        transition: 'background 0.3s'
+                        padding: isMobile ? '0 10px' : '0 20px',
+                        transition: 'background 0.3s',
+                        overflow: 'hidden'
                     }}>
-                        <div style={{ marginRight: '40px', display: 'flex', alignItems: 'center' }}>
-                            <Title level={3} style={{ margin: 0, display: 'flex', alignItems: 'center' }}>
-                                <a href="https://raj.bar" style={{ color: isDarkMode ? '#fff' : '#000', textDecoration: 'none' }}>raj.Bar</a>
+                        <div style={{ marginRight: isMobile ? '10px' : '40px', display: 'flex', alignItems: 'center', flexShrink: 0 }}>
+                            <Title level={isMobile ? 4 : 3} style={{ margin: 0, display: 'flex', alignItems: 'center' }}>
+                                {!isMobile && <a href="https://raj.bar" style={{ color: isDarkMode ? '#fff' : '#000', textDecoration: 'none' }}>raj.Bar</a>}
                                 <span style={{ 
-                                    marginLeft: '8px', 
-                                    paddingLeft: '8px', 
-                                    borderLeft: `1px solid ${isDarkMode ? '#424242' : '#e8e8e8'}`,
+                                    marginLeft: isMobile ? '0' : '8px', 
+                                    paddingLeft: isMobile ? '0' : '8px', 
+                                    borderLeft: isMobile ? 'none' : `1px solid ${isDarkMode ? '#424242' : '#e8e8e8'}`,
                                     color: '#fc4c02',
-                                    fontSize: '18px',
+                                    fontSize: isMobile ? '16px' : '18px',
                                     fontWeight: 'bold',
                                     letterSpacing: '0.5px'
                                 }}>
@@ -78,33 +79,35 @@ class Home extends Component {
                         <Menu 
                             mode="horizontal" 
                             defaultSelectedKeys={['1']}
-                            style={{ flex: 1, border: 'none', background: 'transparent' }}
+                            style={{ flex: 1, border: 'none', background: 'transparent', minWidth: 0 }}
                             items={[
                                 {
                                     key: '1',
                                     icon: <HomeOutlined />,
-                                    label: <Link to="/home">Dashboard</Link>,
+                                    label: <Link to="/home">{isMobile ? "" : "Dashboard"}</Link>,
                                 },
                                 {
                                     key: '2',
                                     icon: <TrophyOutlined />,
-                                    label: <Link to="/strava-competition">Competition</Link>,
+                                    label: <Link to="/strava-competition">{isMobile ? "" : "Competition"}</Link>,
                                 }
                             ]}
                         />
-                        <div style={{ marginLeft: '20px' }}>
+                        <div style={{ marginLeft: isMobile ? '5px' : '20px', flexShrink: 0 }}>
                             <Switch 
                                 checkedChildren={<BulbFilled />} 
                                 unCheckedChildren={<BulbOutlined />} 
                                 checked={isDarkMode}
                                 onChange={toggleDarkMode}
+                                size={isMobile ? "small" : "default"}
                             />
                         </div>
                     </Header>
+
                     <Content style={{ padding: isMobile ? '10px' : '20px 50px', transition: 'background 0.3s' }}>
                         <div style={{ 
                             background: isDarkMode ? '#1f1f1f' : '#fff', 
-                            padding: 24, 
+                            padding: isMobile ? 12 : 24, 
                             borderRadius: '8px', 
                             minHeight: '280px', 
                             boxShadow: isDarkMode ? '0 1px 2px 0 rgba(0, 0, 0, 0.5)' : '0 1px 2px 0 rgba(0, 0, 0, 0.03), 0 1px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px 0 rgba(0, 0, 0, 0.02)',

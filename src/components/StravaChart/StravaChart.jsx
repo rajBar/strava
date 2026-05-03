@@ -1,6 +1,7 @@
 import React from "react";
 import { Scatter } from "@ant-design/plots";
 import dayjs from "dayjs";
+import { isMobile } from 'react-device-detect';
 
 const StravaChart = ({ currentActivityType, activityUnit, chartData, chartDataCurrentYear, currentYear, isDarkMode }) => {
     const rawData = currentYear ? chartDataCurrentYear : chartData;
@@ -107,7 +108,7 @@ const StravaChart = ({ currentActivityType, activityUnit, chartData, chartDataCu
     };
 
     return (
-        <div style={{ height: "400px" }}>
+        <div style={{ height: isMobile ? "250px" : "400px" }}>
             <Scatter {...config} />
         </div>
     );

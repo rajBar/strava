@@ -6,16 +6,25 @@ const initialState = {
     activityUnit: 'km',
     error: null,
     selectedYear: new Date().getFullYear(),
+    loading: false,
 };
+
+const fetchActivities = (state) => ({
+    ...state,
+    loading: true,
+    error: null,
+});
 
 const fetchActivitiesSuccess = (state, action) => ({
     ...state,
     activities: action.payload.activities,
+    loading: false,
 });
 
 const fetchActivitiesFailure = (state, action) => ({
     ...state,
     error: action.payload.error,
+    loading: false,
 });
 
 const setCurrentActivityType = (state, action) => ({
@@ -35,6 +44,8 @@ const setSelectedYear = (state, action) => ({
 
 export default (state = initialState, action) => {
     switch(action.type) {
+        case actionTypes.FETCH_ACTIVITIES:
+            return fetchActivities(state);
         case actionTypes.FETCH_ACTIVITIES_SUCCESS:
             return fetchActivitiesSuccess(state, action);
         case actionTypes.FETCH_ACTIVITIES_FAILURE:

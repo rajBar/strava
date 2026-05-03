@@ -3,6 +3,7 @@ import StravaChart from "../../containers/StravaChart";
 import { Table, Radio, Space, Typography, Empty, Card } from 'antd';
 import { UserOutlined, DashboardOutlined, ThunderboltOutlined, TrophyOutlined } from '@ant-design/icons';
 import { Link } from "react-router-dom";
+import { isMobile } from 'react-device-detect';
 
 const { Title } = Typography;
 
@@ -46,21 +47,23 @@ class StravaTable extends Component {
 
         return [
             {
-                title: <span><UserOutlined /> Name</span>,
+                title: <span><UserOutlined />{isMobile ? "" : " Name"}</span>,
                 dataIndex: 'name',
                 key: 'name',
                 render: (text) => <Link to={`/home/${text}`} style={{ fontWeight: 500 }}>{text}</Link>,
                 sorter: (a, b) => a.name.localeCompare(b.name),
+                fixed: isMobile ? 'left' : false,
             },
             {
-                title: <span><ThunderboltOutlined /> Runs</span>,
+                title: <span><ThunderboltOutlined />{isMobile ? "" : " Runs"}</span>,
                 dataIndex: 'runQuantity',
                 key: 'runQuantity',
                 sorter: (a, b) => a.runQuantity - b.runQuantity,
                 align: 'center',
+                responsive: ['sm'],
             },
             {
-                title: `Run Dist (${unit})`,
+                title: isMobile ? "Run" : `Run Dist (${unit})`,
                 key: 'runDistance',
                 render: (_, record) => activityUnit === "km" ? record.runDistance : record.runDistanceMile,
                 sorter: (a, b) => {
@@ -71,14 +74,15 @@ class StravaTable extends Component {
                 align: 'right',
             },
             {
-                title: <span><DashboardOutlined /> Cycles</span>,
+                title: <span><DashboardOutlined />{isMobile ? "" : " Cycles"}</span>,
                 dataIndex: 'bikeQuantity',
                 key: 'bikeQuantity',
                 sorter: (a, b) => a.bikeQuantity - b.bikeQuantity,
                 align: 'center',
+                responsive: ['sm'],
             },
             {
-                title: `Cycle Dist (${unit})`,
+                title: isMobile ? "Cycle" : `Cycle Dist (${unit})`,
                 key: 'bikeDistance',
                 render: (_, record) => activityUnit === "km" ? record.bikeDistance : record.bikeDistanceMile,
                 sorter: (a, b) => {
@@ -89,14 +93,15 @@ class StravaTable extends Component {
                 align: 'right',
             },
             {
-                title: <span><TrophyOutlined /> Swims</span>,
+                title: <span><TrophyOutlined />{isMobile ? "" : " Swims"}</span>,
                 dataIndex: 'swimQuantity',
                 key: 'swimQuantity',
                 sorter: (a, b) => a.swimQuantity - b.swimQuantity,
                 align: 'center',
+                responsive: ['sm'],
             },
             {
-                title: `Swim Dist (${unit})`,
+                title: isMobile ? "Swim" : `Swim Dist (${unit})`,
                 key: 'swimDistance',
                 render: (_, record) => activityUnit === "km" ? record.swimDistance : record.swimDistanceMile,
                 sorter: (a, b) => {
@@ -128,21 +133,23 @@ class StravaTable extends Component {
                     return parseDate(a.date) - parseDate(b.date);
                 },
                 defaultSortOrder: 'descend',
+                fixed: isMobile ? 'left' : false,
             },
             {
                 title: 'Activity',
                 dataIndex: 'activity',
                 key: 'activity',
                 sorter: (a, b) => a.activity.localeCompare(b.activity),
+                responsive: ['sm'],
             },
             {
-                title: `Distance (${activityUnit === "km" && currentActivityType === "swim" ? "m" : singleUnit})`,
+                title: isMobile ? 'Dist' : `Distance (${activityUnit === "km" && currentActivityType === "swim" ? "m" : singleUnit})`,
                 key: 'distance',
                 render: (_, record) => {
                     if (activityUnit === "km") {
                         return record.distance + (currentActivityType === "swim" ? "m" : " km");
                     }
-                    return record.distanceMile + " miles";
+                    return record.distanceMile + (isMobile ? "m" : " miles");
                 },
                 sorter: (a, b) => {
                     const valA = activityUnit === "km" ? a.distance : a.distanceMile;
@@ -151,7 +158,7 @@ class StravaTable extends Component {
                 },
             },
             {
-                title: 'Average Speed',
+                title: isMobile ? 'Speed' : 'Average Speed',
                 key: 'averageSpeed',
                 render: (_, record) => {
                     const speed = activityUnit === "km" ? record.averageSpeed : record.averageSpeedMile;
@@ -167,19 +174,21 @@ class StravaTable extends Component {
                 },
             },
             {
-                title: 'Time (min)',
+                title: isMobile ? 'Time' : 'Time (min)',
                 dataIndex: 'movingTime',
                 key: 'movingTime',
                 sorter: (a, b) => Number(a.movingTime) - Number(b.movingTime),
+                responsive: ['sm'],
             },
         ];
 
         if (currentActivityType !== "swim") {
             cols.push({
-                title: 'Elevation (m)',
+                title: isMobile ? 'Elev' : 'Elevation (m)',
                 dataIndex: 'elevationGain',
                 key: 'elevationGain',
                 sorter: (a, b) => Number(a.elevationGain) - Number(b.elevationGain),
+                responsive: ['md'],
             });
         }
 
@@ -195,14 +204,22 @@ class StravaTable extends Component {
             currentActivityType, 
             setCurrentActivityType,
             currentUserCurrentActivityData,
-            isDarkMode
+            isDarkMode,
+            loading
         } = this.props;
 
         return (
             <Space direction="vertical" size="large" style={{ width: '100%' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                <div style={{ 
+                    display: 'flex', 
+                    flexDirection: isMobile ? 'column' : 'row',
+                    justifyContent: 'space-between', 
+                    alignItems: isMobile ? 'flex-start' : 'center', 
+                    marginBottom: '10px',
+                    gap: '10px'
+                }}>
                     <Title level={4} style={{ margin: 0 }}>Activity Overview</Title>
-                    <Radio.Group value={activityUnit} onChange={(e) => setActivityUnit(e.target.value)} buttonStyle="solid">
+                    <Radio.Group value={activityUnit} onChange={(e) => setActivityUnit(e.target.value)} buttonStyle="solid" size={isMobile ? "small" : "middle"}>
                         <Radio.Button value="km">Metric (km)</Radio.Button>
                         <Radio.Button value="miles">Imperial (miles)</Radio.Button>
                     </Radio.Group>
@@ -218,16 +235,24 @@ class StravaTable extends Component {
                         style: { cursor: 'pointer' }
                     })}
                     rowClassName={(record) => record.name === currentUser ? 'ant-table-row-selected' : ''}
-                    size="middle"
+                    size={isMobile ? "small" : "middle"}
                     bordered
+                    scroll={{ x: isMobile ? 'max-content' : undefined }}
+                    loading={loading}
                 />
 
                 {currentUser ? (
-                    <Card style={{ marginTop: '20px', border: '1px solid #f0f0f0' }}>
+                    <Card style={{ marginTop: isMobile ? '10px' : '20px', border: '1px solid #f0f0f0' }} bodyStyle={{ padding: isMobile ? '12px' : '24px' }}>
                         <Space direction="vertical" size="middle" style={{ width: '100%' }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <div style={{ 
+                                display: 'flex', 
+                                flexDirection: isMobile ? 'column' : 'row',
+                                justifyContent: 'space-between', 
+                                alignItems: isMobile ? 'flex-start' : 'center',
+                                gap: '10px'
+                            }}>
                                 <Title level={4} style={{ margin: 0 }}>{currentUser}'s Detailed Stats</Title>
-                                <Radio.Group value={currentActivityType} onChange={(e) => setCurrentActivityType(e.target.value)} buttonStyle="solid">
+                                <Radio.Group value={currentActivityType} onChange={(e) => setCurrentActivityType(e.target.value)} buttonStyle="solid" size={isMobile ? "small" : "middle"}>
                                     <Radio.Button value="run">Run</Radio.Button>
                                     <Radio.Button value="cycle">Cycle</Radio.Button>
                                     <Radio.Button value="swim">Swim</Radio.Button>
@@ -236,7 +261,12 @@ class StravaTable extends Component {
 
                             {currentUserCurrentActivityData && currentUserCurrentActivityData.length > 0 ? (
                                 <>
-                                    <div style={{ background: isDarkMode ? '#1f1f1f' : '#fafafa', padding: '20px', borderRadius: '8px', marginBottom: '20px' }}>
+                                    <div style={{ 
+                                        background: isDarkMode ? '#1f1f1f' : '#fafafa', 
+                                        padding: isMobile ? '10px' : '20px', 
+                                        borderRadius: '8px', 
+                                        marginBottom: '20px' 
+                                    }}>
                                         <StravaChart isDarkMode={isDarkMode} />
                                     </div>
                                     <Table 
@@ -245,6 +275,7 @@ class StravaTable extends Component {
                                         rowKey="startDate"
                                         pagination={false}
                                         size="small"
+                                        scroll={{ x: isMobile ? 'max-content' : undefined }}
                                     />
                                 </>
                             ) : (
@@ -259,3 +290,4 @@ class StravaTable extends Component {
 }
 
 export default StravaTable;
+

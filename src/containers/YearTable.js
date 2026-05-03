@@ -8,6 +8,7 @@ import {
     selectFormattedUserSpecificActivityCurrentYear,
     selectEarliestYearForUserActivity,
     selectSelectedYear,
+    selectActivitiesLoading
 } from "../store/selectors/activities";
 import * as actions from "../store/actions";
 
@@ -20,6 +21,7 @@ const mapStateToProps = state => ({
     activityUnit: selectActivityUnit(state),
     selectedYear: selectSelectedYear(state),
     earliestYear: selectEarliestYearForUserActivity(state),
+    loading: selectActivitiesLoading(state),
 });
 
 const mapDispatchToProps = dispatch => ({
